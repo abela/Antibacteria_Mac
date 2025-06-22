@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <GameKit/GameKit.h>
 
-@interface ScoreManager : NSObject <GKLeaderboardViewControllerDelegate,
-                                    GKAchievementViewControllerDelegate>
+// GameKit delegate protocols are implemented in ScoreManager+GameKit category
+
+@interface ScoreManager : NSObject
 {
     int currentLevelScore;
     int compaignModeHighScore;

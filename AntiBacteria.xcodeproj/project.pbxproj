@@ -52,7 +52,6 @@
 		1BC4B04316C7F15200E6CA95 /* game_world_resources.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1BC4B04116C7F15200E6CA95 /* game_world_resources.plist */; };
 		1BC4B04416C7F15200E6CA95 /* game_world_resources.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BC4B04216C7F15200E6CA95 /* game_world_resources.png */; };
 		1BC4B1D416C80C4B00E6CA95 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC4B1D316C80C4B00E6CA95 /* WebKit.framework */; };
-		1BC4B1D916C80C9C00E6CA95 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC4B1D816C80C9C00E6CA95 /* QTKit.framework */; };
 		1BC4B1DB16C80CF800E6CA95 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC4B1DA16C80CF800E6CA95 /* SystemConfiguration.framework */; };
 		1BC853B71755F25A00889344 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BC853B61755F25A00889344 /* arrow.png */; };
 		1BC853BB175604B700889344 /* SlowMotionBc.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BC853BA175604B700889344 /* SlowMotionBc.png */; };
@@ -195,7 +194,6 @@
 		1BCAE96A16D2BCB400320780 /* CDOpenALSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCAE8B616D2BCB400320780 /* CDOpenALSupport.m */; };
 		1BCAE96B16D2BCB400320780 /* CocosDenshion.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCAE8B816D2BCB400320780 /* CocosDenshion.m */; };
 		1BCAE96C16D2BCB400320780 /* SimpleAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCAE8BA16D2BCB400320780 /* SimpleAudioEngine.m */; };
-		1BCAE96D16D2BCB400320780 /* CDXMacOSXSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCAE8BD16D2BCB400320780 /* CDXMacOSXSupport.m */; };
 		1BCAE96E16D2BCB400320780 /* CDXPropertyModifierAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCAE8BF16D2BCB400320780 /* CDXPropertyModifierAction.m */; };
 		1BCAE96F16D2BCB400320780 /* aabb.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCAE8D316D2BCB400320780 /* aabb.c */; };
 		1BCAE97016D2BCB400320780 /* ChangeLog in Resources */ = {isa = PBXBuildFile; fileRef = 1BCAE8D416D2BCB400320780 /* ChangeLog */; };
@@ -465,7 +463,6 @@
 		1BC4B04116C7F15200E6CA95 /* game_world_resources.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = game_world_resources.plist; sourceTree = "<group>"; };
 		1BC4B04216C7F15200E6CA95 /* game_world_resources.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = game_world_resources.png; sourceTree = "<group>"; };
 		1BC4B1D316C80C4B00E6CA95 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		1BC4B1D816C80C9C00E6CA95 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 		1BC4B1DA16C80CF800E6CA95 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		1BC853B61755F25A00889344 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = arrow.png; path = Resources/arrow.png; sourceTree = "<group>"; };
 		1BC853BA175604B700889344 /* SlowMotionBc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SlowMotionBc.png; path = Resources/SlowMotionBc.png; sourceTree = "<group>"; };
@@ -1079,7 +1076,6 @@
 				1BE78B3116C7B26A00BA8495 /* AppKit.framework in Frameworks */,
 				1BE78B3316C7B26A00BA8495 /* Foundation.framework in Frameworks */,
 				1BC4B1D416C80C4B00E6CA95 /* WebKit.framework in Frameworks */,
-				1BC4B1D916C80C9C00E6CA95 /* QTKit.framework in Frameworks */,
 				1BC4B1DB16C80CF800E6CA95 /* SystemConfiguration.framework in Frameworks */,
 				1BF9447B16CAB0E400AA1257 /* ApplicationServices.framework in Frameworks */,
 				1BF9447E16CAB13000AA1257 /* QuartzCore.framework in Frameworks */,
@@ -2035,7 +2031,6 @@
 				1BF9447D16CAB13000AA1257 /* QuartzCore.framework */,
 				1BF9447A16CAB0E400AA1257 /* ApplicationServices.framework */,
 				1BC4B1DA16C80CF800E6CA95 /* SystemConfiguration.framework */,
-				1BC4B1D816C80C9C00E6CA95 /* QTKit.framework */,
 				1BC4B1D316C80C4B00E6CA95 /* WebKit.framework */,
 				1BE78B2816C7B26A00BA8495 /* QuartzCore.framework */,
 				1BE78B2A16C7B26A00BA8495 /* OpenGL.framework */,
@@ -2837,7 +2832,6 @@
 				1BCAE96A16D2BCB400320780 /* CDOpenALSupport.m in Sources */,
 				1BCAE96B16D2BCB400320780 /* CocosDenshion.m in Sources */,
 				1BCAE96C16D2BCB400320780 /* SimpleAudioEngine.m in Sources */,
-				1BCAE96D16D2BCB400320780 /* CDXMacOSXSupport.m in Sources */,
 				1BCAE96E16D2BCB400320780 /* CDXPropertyModifierAction.m in Sources */,
 				1BCAE96F16D2BCB400320780 /* aabb.c in Sources */,
 				1BCAE97216D2BCB400320780 /* mat4stack.c in Sources */,
@@ -2961,23 +2955,55 @@
 		1BE78CD116C7B26D00BA8495 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer: Giorgi Abelashvili (R4RJ84GWDA)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				CODE_SIGN_IDENTITY = "-";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					DEBUG,
 					"COCOS2D_DEBUG=1",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -2985,18 +3011,51 @@
 		1BE78CD216C7B26D00BA8495 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer: Giorgi Abelashvili (R4RJ84GWDA)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				CODE_SIGN_IDENTITY = "-";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -3021,7 +3080,9 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Bacteria/Prefix.pch;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = "\"Bacteria/libs/kazmath/include\"";
@@ -3030,7 +3091,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Bacteria/libs\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = AntiBacteria;
 				PROVISIONING_PROFILE = "";
@@ -3061,7 +3122,9 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Bacteria/Prefix.pch;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = "\"Bacteria/libs/kazmath/include\"";
@@ -3070,7 +3133,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Bacteria/libs\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = AntiBacteria;
 				PROVISIONING_PROFILE = "";

@@ -239,6 +239,7 @@ static tAudioManagerMode configuredMode;
 static BOOL configured = FALSE;
 
 -(BOOL) audioSessionSetActive:(BOOL) active {
+#if TARGET_OS_IPHONE
 	NSError *activationError = nil;
 	if ([[AVAudioSession sharedInstance] setActive:active error:&activationError]) {
 		_audioSessionActive = active;
@@ -249,9 +250,15 @@ static BOOL configured = FALSE;
 		CDLOG(@"Denshion::CDAudioManager - Audio session set active %i failed with error %@", active, activationError);
 		return NO;
 	}
+#else
+	// On macOS, just set the flag
+	_audioSessionActive = active;
+	return YES;
+#endif
 }
 
 -(BOOL) audioSessionSetCategory:(NSString*) category {
+#if TARGET_OS_IPHONE
 	NSError *categoryError = nil;
 	if ([[AVAudioSession sharedInstance] setCategory:category error:&categoryError]) {
 		CDLOGINFO(@"Denshion::CDAudioManager - Audio session set category %@ succeeded", category);
@@ -261,6 +268,11 @@ static BOOL configured = FALSE;
 		CDLOG(@"Denshion::CDAudioManager - Audio session set category %@ failed with error %@", category, categoryError);
 		return NO;
 	}
+#else
+	// On macOS, just log success
+	CDLOGINFO(@"Denshion::CDAudioManager - Audio session set category %@ succeeded (macOS)", category);
+	return YES;
+#endif
 }
 
 // Init
@@ -317,10 +329,15 @@ static BOOL configured = FALSE;
 }
 
 -(BOOL) isOtherAudioPlaying {
+#if TARGET_OS_IPHONE
 	UInt32 isPlaying = 0;
 	UInt32 varSize = sizeof(isPlaying);
 	AudioSessionGetProperty (kAudioSessionProperty_OtherAudioIsPlaying, &varSize, &isPlaying);
 	return (isPlaying != 0);
+#else
+	// On macOS, assume no other audio is playing
+	return NO;
+#endif
 }
 
 -(void) setMode:(tAudioManagerMode) mode {
@@ -331,32 +348,40 @@ static BOOL configured = FALSE;
 		case kAMM_FxOnly:
 			//Share audio with other app
 			CDLOGINFO(@"Denshion::CDAudioManager - Audio will be shared");
+#if TARGET_OS_IPHONE
 			//_audioSessionCategory = kAudioSessionCategory_AmbientSound;
 			_audioSessionCategory = AVAudioSessionCategoryAmbient;
+#endif
 			willPlayBackgroundMusic = NO;
 			break;
 
 		case kAMM_FxPlusMusic:
 			//Use audio exclusively - if other audio is playing it will be stopped
 			CDLOGINFO(@"Denshion::CDAudioManager -  Audio will be exclusive");
+#if TARGET_OS_IPHONE
 			//_audioSessionCategory = kAudioSessionCategory_SoloAmbientSound;
 			_audioSessionCategory = AVAudioSessionCategorySoloAmbient;
+#endif
 			willPlayBackgroundMusic = YES;
 			break;
 
 		case kAMM_MediaPlayback:
 			//Use audio exclusively, ignore mute switch and sleep
 			CDLOGINFO(@"Denshion::CDAudioManager -  Media playback mode, audio will be exclusive");
+#if TARGET_OS_IPHONE
 			//_audioSessionCategory = kAudioSessionCategory_MediaPlayback;
 			_audioSessionCategory = AVAudioSessionCategoryPlayback;
+#endif
 			willPlayBackgroundMusic = YES;
 			break;
 
 		case kAMM_PlayAndRecord:
 			//Use audio exclusively, ignore mute switch and sleep, has inputs and outputs
 			CDLOGINFO(@"Denshion::CDAudioManager -  Play and record mode, audio will be exclusive");
+#if TARGET_OS_IPHONE
 			//_audioSessionCategory = kAudioSessionCategory_PlayAndRecord;
 			_audioSessionCategory = AVAudioSessionCategoryPlayAndRecord;
+#endif
 			willPlayBackgroundMusic = YES;
 			break;
 
@@ -364,13 +389,17 @@ static BOOL configured = FALSE;
 			//kAudioManagerFxPlusMusicIfNoOtherAudio
 			if ([self isOtherAudioPlaying]) {
 				CDLOGINFO(@"Denshion::CDAudioManager - Other audio is playing audio will be shared");
+#if TARGET_OS_IPHONE
 				//_audioSessionCategory = kAudioSessionCategory_AmbientSound;
 				_audioSessionCategory = AVAudioSessionCategoryAmbient;
+#endif
 				willPlayBackgroundMusic = NO;
 			} else {
 				CDLOGINFO(@"Denshion::CDAudioManager - Other audio is not playing audio will be exclusive");
+#if TARGET_OS_IPHONE
 				//_audioSessionCategory = kAudioSessionCategory_SoloAmbientSound;
 				_audioSessionCategory = AVAudioSessionCategorySoloAmbient;
+#endif
 				willPlayBackgroundMusic = YES;
 			}
 
@@ -398,8 +427,10 @@ static BOOL configured = FALSE;
 	if ((self = [super init])) {
 
 		//Initialise the audio session
+#if TARGET_OS_IPHONE
 		AVAudioSession* session = [AVAudioSession sharedInstance];
 		session.delegate = self;
+#endif
 
 		_mode = mode;
 		backgroundMusicCompletionSelector = nil;
@@ -469,8 +500,8 @@ static BOOL configured = FALSE;
 //determine ringer switch state
 -(BOOL) isDeviceMuted {
 
-#if TARGET_IPHONE_SIMULATOR
-	//Calling audio route stuff on the simulator causes problems
+#if TARGET_IPHONE_SIMULATOR || !TARGET_OS_IPHONE
+	//Calling audio route stuff on the simulator or macOS causes problems
 	return NO;
 #else
 	CFStringRef newAudioRoute;
@@ -611,7 +642,11 @@ static BOOL configured = FALSE;
 	self->_resigned = YES;
 
 	//Set the audio sesssion to one that allows sharing so that other audio won't be clobbered on resume
+#if TARGET_OS_IPHONE
 	[self audioSessionSetCategory:AVAudioSessionCategoryAmbient];
+#else
+	[self audioSessionSetCategory:@"Ambient"];
+#endif
 
 	switch (_resignBehavior) {
 
