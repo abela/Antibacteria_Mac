@@ -37,7 +37,7 @@
 - (int) shoot
 {
     throw [NSException exceptionWithName:@"Ovveriding!" reason:@"Must Oveeride!" userInfo:nil];
-    return nil;
+    return 0;
 }
 //
 -(void)resetCharacter

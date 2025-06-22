@@ -56,22 +56,6 @@ static ScoreManager* _sharedScoreManager = nil;
     //
 }
 //
-- (void) authenticateLocalPlayer
-{
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
-        if (localPlayer.isAuthenticated)
-        {
-            // Player was successfully authenticated.
-            // Perform additional tasks for the authenticated player.
-            NSLog(@"authentication success");
-        }
-        else {
-            NSLog(@"authentication fail");
-        }
-    }];
-}
-//
 -(void) saveScoreForCurrentLevel:(int) score
 {
     currentLevelScore+=score;
@@ -100,27 +84,6 @@ static ScoreManager* _sharedScoreManager = nil;
         //
     }
     currentLevelScore = 0;
-}
-//
--(void) showGameCenterOnWindow:(NSWindow*)window
-{
-    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
-    if (gameCenterController != nil)
-    {
-        GKDialogController *sdc = [GKDialogController sharedDialogController];
-        sdc.parentWindow = window;
-        [sdc presentViewController: gameCenterController];
-    }
-}
-//
--(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController
-{
-    
-}
-//
--(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
-{
-    
 }
 //
 -(int) loadScoreForLevel:(int)levelNumber
