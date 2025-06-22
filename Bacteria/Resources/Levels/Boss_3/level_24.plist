@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>enemiesgrowinterval</key>
+	<string>10</string>
+	<key>maximumenemies</key>
+	<string>4</string>
+	<key>number</key>
+	<integer>24</integer>
+	<key>time</key>
+	<integer>80</integer>
+	<key>enemiescreatetime</key>
+	<real>2</real>
+	<key>enemies</key>
+	<array>
+		<integer>11</integer>
+		<string>11</string>
+		<string>11</string>
+		<string>0</string>
+		<string>0</string>
+		<string>0</string>
+		<string>1</string>
+		<string>1</string>
+		<string>1</string>
+	</array>
+</dict>
+</plist>

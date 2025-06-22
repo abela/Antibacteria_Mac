@@ -1,0 +1,12 @@
+//
+// Prefix header for all source files of the 'cocos2d-mac' target in the 'cocos2d-mac' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+    #import "ConfigConstants.h"
+    #import "CoreSettings.h"
+    #import "GameSettingsManager.h"
+    #import "NSUserDefaults+MPSecureUserDefaults.h"
+    #import "LocalizationManager.h"
+#endif

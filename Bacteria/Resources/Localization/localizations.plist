@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>_LANGUAGE</key>
+		<string>Language</string>
+		<key>_LANGUAGE_VALUE</key>
+		<string>English</string>
+		<key>_START_GAME</key>
+		<string>Start Game</string>
+		<key>_UPGRADE_CHARACTER</key>
+		<string>Upgrade Character</string>
+		<key>_VITAMIN_STORE</key>
+		<string>Vitamin Store</string>
+		<key>_LEADERBOARDS</key>
+		<string>LeaderBoards</string>
+		<key>_GAME_OPTIONS</key>
+		<string>Game Options</string>
+		<key>_ABOUT</key>
+		<string>About</string>
+		<key>_QUIT</key>
+		<string>Quit</string>
+		<key>_CHOOSE_GAME</key>
+		<string>Choose Game Mode</string>
+		<key>_COMPAIGN</key>
+		<string>Compaign</string>
+		<key>_CAPTURE_FLAG</key>
+		<string>Capture The Flag</string>
+		<key>_RUSH</key>
+		<string>Rush</string>
+		<key>_PEACE_WALKER</key>
+		<string>Peace Walker</string>
+		<key>_UPGRADE_SOME_FEATURES</key>
+		<string>Upgrade Some Features</string>
+		<key>_YOU_HAVE</key>
+		<string>You have</string>
+		<key>_NORMAL_SHOOT</key>
+		<string>Normal Shoot</string>
+		<key>_WATER_SHOOT</key>
+		<string>Water Shoot</string>
+		<key>_WINDMLL_SHOOT</key>
+		<string>Windmill Shoot</string>
+		<key>_CIRCLE_SHOOT</key>
+		<string>Circle Shoot</string>
+		<key>_TORNADO_SHOOT</key>
+		<string>Tornado Shoot</string>
+		<key>_DOUBLE_SPEED</key>
+		<string>Double Speed</string>
+		<key>_IMMORTALITY</key>
+		<string>Immortality</string>
+		<key>_VITAMINS</key>
+		<string>Vitamins</string>
+		<key>_DIFFICULTY</key>
+		<string>Difficulty</string>
+		<key>_NORMAL</key>
+		<string>Normal</string>
+		<key>_HARD</key>
+		<string>Hard</string>
+		<key>_IMPOSSIBLE</key>
+		<string>Impossible</string>
+		<key>_AUTO_SHOOT</key>
+		<string>Auto Shoot</string>
+		<key>_CONTROL_TYPE</key>
+		<string>Control Type</string>
+		<key>_WASD_ARROWS</key>
+		<string>WASD + ARROWS</string>
+		<key>_ARROWS</key>
+		<string>Only Arrows</string>
+		<key>_ONLY_MOUSE</key>
+		<string>Only Mouse</string>
+		<key>_SOUND_SFX</key>
+		<string>Sound SFX</string>
+		<key>_GAME_MUSIC</key>
+		<string>Music</string>
+		<key>_CHOOSE_LEVEL</key>
+		<string>Choose Level</string>
+		<key>_RESUME</key>
+		<string>Resume</string>
+		<key>_RESTART</key>
+		<string>Restart</string>
+		<key>_GOTO_MENU</key>
+		<string>Go To Menu</string>
+		<key>_CHOOSE_LEVEL_IN_PAUSE</key>
+		<string>Choose Level</string>
+		<key>_GET_READY</key>
+		<string>Get Ready</string>
+		<key>_LEVEL</key>
+		<string>Level </string>
+		<key>_YOU_WON</key>
+		<string>You Won</string>
+		<key>_GET_READY_FOR_BOSS</key>
+		<string>Get Ready For the Boss</string>
+		<key>_GAME_OVER</key>
+		<string>Game Over</string>
+		<key>_YOUR_TIME_IS</key>
+		<string>Your Time Is</string>
+		<key>_SLOW_MOTION</key>
+		<string>Slow Motion</string>
+		<key>_BOOOM</key>
+		<string>Boooooom!</string>
+		<key>_SCORE</key>
+		<string>Score</string>
+		<key>_NO_VITAMINS</key>
+		<string>You don&apos;t have enough Vitamins</string>
+		<key>_FINISHED_GAME</key>
+		<string>You finished the game</string>
+		<key>_TIME_OFF</key>
+		<string>Time Is Off</string>
+		<key>_LIFE</key>
+		<string>+1 Life</string>
+	</dict>
+	<dict>
+		<key>_LANGUAGE</key>
+		<string>Язык</string>
+		<key>_LANGUAGE_VALUE</key>
+		<string>Русский</string>
+		<key>_START_GAME</key>
+		<string>Начать Игру</string>
+		<key>_UPGRADE_CHARACTER</key>
+		<string>Улучшить Героя</string>
+		<key>_VITAMIN_STORE</key>
+		<string>Магазин Витаминов</string>
+		<key>_LEADERBOARDS</key>
+		<string>Лидерборды</string>
+		<key>_GAME_OPTIONS</key>
+		<string>Настроийки</string>
+		<key>_ABOUT</key>
+		<string>Об игре</string>
+		<key>_QUIT</key>
+		<string>Bыход</string>
+		<key>_CHOOSE_GAME</key>
+		<string>Выбрать тип игры</string>
+		<key>_COMPAIGN</key>
+		<string>Кампания</string>
+		<key>_CAPTURE_FLAG</key>
+		<string>Захватить Флаг</string>
+		<key>_RUSH</key>
+		<string>Схватка</string>
+		<key>_PEACE_WALKER</key>
+		<string>Доброволец</string>
+		<key>_UPGRADE_SOME_FEATURES</key>
+		<string>Улучшить Героя</string>
+		<key>_YOU_HAVE</key>
+		<string>У тебя есть</string>
+		<key>_NORMAL_SHOOT</key>
+		<string>Нормалны выстрел</string>
+		<key>_WATER_SHOOT</key>
+		<string>Напор воды выстрел</string>
+		<key>_WINDMLL_SHOOT</key>
+		<string>Мелница выстрел</string>
+		<key>_CIRCLE_SHOOT</key>
+		<string>Круглы выстрел</string>
+		<key>_TORNADO_SHOOT</key>
+		<string>Торнадо выстрел</string>
+		<key>_DOUBLE_SPEED</key>
+		<string>Двоиная скорось</string>
+		<key>_IMMORTALITY</key>
+		<string>Безсмертие</string>
+		<key>_VITAMINS</key>
+		<string>Витамины</string>
+		<key>_DIFFICULTY</key>
+		<string>Сложность</string>
+		<key>_NORMAL</key>
+		<string>Нормалны</string>
+		<key>_HARD</key>
+		<string>Жесткий</string>
+		<key>_IMPOSSIBLE</key>
+		<string>Неспособны</string>
+		<key>_AUTO_SHOOT</key>
+		<string>Автовыстрел</string>
+		<key>_CONTROL_TYPE</key>
+		<string>Контроль</string>
+		<key>_WASD_ARROWS</key>
+		<string>WASD + Стрелки</string>
+		<key>_ARROWS</key>
+		<string>Только Стрелки</string>
+		<key>_ONLY_MOUSE</key>
+		<string>Только Мыш</string>
+		<key>_SOUND_SFX</key>
+		<string>Громкосьт SFX</string>
+		<key>_GAME_MUSIC</key>
+		<string>Громкость музыки</string>
+		<key>_CHOOSE_LEVEL</key>
+		<string>Выберите уровень</string>
+		<key>_RESUME</key>
+		<string>Продолжить</string>
+		<key>_RESTART</key>
+		<string>Заново</string>
+		<key>_GOTO_MENU</key>
+		<string>Выйти в Меню</string>
+		<key>_CHOOSE_LEVEL_IN_PAUSE</key>
+		<string>Выбрать уровень</string>
+		<key>_GET_READY</key>
+		<string>Готовься</string>
+		<key>_LEVEL</key>
+		<string>Уровень </string>
+		<key>_YOU_WON</key>
+		<string>Ты Выграл</string>
+		<key>_GET_READY_FOR_BOSS</key>
+		<string>Готовься к Боссу</string>
+		<key>_GAME_OVER</key>
+		<string>Игра закончена</string>
+		<key>_YOUR_TIME_IS</key>
+		<string>Твоя время</string>
+		<key>_SLOW_MOTION</key>
+		<string>Замедление</string>
+		<key>_BOOOM</key>
+		<string>Буууум!</string>
+		<key>_SCORE</key>
+		<string>Очки</string>
+		<key>_NO_VITAMINS</key>
+		<string>У тебя нет достаточных витаминов</string>
+		<key>_FINISHED_GAME</key>
+		<string>Ты закончил игру</string>
+		<key>_TIME_OFF</key>
+		<string>Время вьшло</string>
+		<key>_LIFE</key>
+		<string>+1 Жизнь</string>
+	</dict>
+	<dict>
+		<key>_LANGUAGE</key>
+		<string>Langue</string>
+		<key>_LANGUAGE_VALUE</key>
+		<string>Francais</string>
+		<key>_START_GAME</key>
+		<string>Commencer</string>
+		<key>_UPGRADE_CHARACTER</key>
+		<string>Modérniser le caractère</string>
+		<key>_VITAMIN_STORE</key>
+		<string>Le magasin des vitamines</string>
+		<key>_LEADERBOARDS</key>
+		<string>Les classements</string>
+		<key>_GAME_OPTIONS</key>
+		<string>Les options du jeu</string>
+		<key>_ABOUT</key>
+		<string>Sur</string>
+		<key>_QUIT</key>
+		<string>Quitter</string>
+		<key>_CHOOSE_GAME</key>
+		<string>Choisir le mode du jeu</string>
+		<key>_COMPAIGN</key>
+		<string>La campagne</string>
+		<key>_CAPTURE_FLAG</key>
+		<string>Capturer le Drapeau</string>
+		<key>_RUSH</key>
+		<string>S’élancer</string>
+		<key>_PEACE_WALKER</key>
+		<string>Marcher paisiblement</string>
+		<key>_UPGRADE_SOME_FEATURES</key>
+		<string>Améliorer certaines caractéristiques
+</string>
+		<key>_YOU_HAVE</key>
+		<string>Tu as</string>
+		<key>_NORMAL_SHOOT</key>
+		<string>Shoot normal</string>
+		<key>_WATER_SHOOT</key>
+		<string>Shoot de l’eau</string>
+		<key>_WINDMLL_SHOOT</key>
+		<string>Le tornage de Moulin à vent</string>
+		<key>_CIRCLE_SHOOT</key>
+		<string>Shoot circle</string>
+		<key>_TORNADO_SHOOT</key>
+		<string>Le tournage de tornade</string>
+		<key>_DOUBLE_SPEED</key>
+		<string>à double vitesse</string>
+		<key>_IMMORTALITY</key>
+		<string>Immortalité</string>
+		<key>_VITAMINS</key>
+		<string>Vitamines</string>
+		<key>_DIFFICULTY</key>
+		<string>La difficulté</string>
+		<key>_NORMAL</key>
+		<string>Normal</string>
+		<key>_HARD</key>
+		<string>difficile</string>
+		<key>_IMPOSSIBLE</key>
+		<string>Impossible</string>
+		<key>_AUTO_SHOOT</key>
+		<string>Shoot Automatique</string>
+		<key>_CONTROL_TYPE</key>
+		<string>Le type de commande</string>
+		<key>_WASD_ARROWS</key>
+		<string>WASD + Les flèches</string>
+		<key>_ARROWS</key>
+		<string>Les flèches seulement</string>
+		<key>_ONLY_MOUSE</key>
+		<string>La souris seulement</string>
+		<key>_SOUND_SFX</key>
+		<string>La voix SFX</string>
+		<key>_GAME_MUSIC</key>
+		<string>La musique</string>
+		<key>_CHOOSE_LEVEL</key>
+		<string>Choisir le niveau</string>
+		<key>_RESTART</key>
+		<string>Recommencer</string>
+		<key>_RESUME</key>
+		<string>Rèsume</string>
+		<key>_GOTO_MENU</key>
+		<string>Aller vers le menu</string>
+		<key>_CHOOSE_LEVEL_IN_PAUSE</key>
+		<string>Choisir le niveau</string>
+		<key>_GET_READY</key>
+		<string>Prépare-toi</string>
+		<key>_LEVEL</key>
+		<string>Le niveau </string>
+		<key>_YOU_WON</key>
+		<string>Vous avez gagné</string>
+		<key>_GET_READY_FOR_BOSS</key>
+		<string>Préparez-vous pour Le Boss</string>
+		<key>_GAME_OVER</key>
+		<string>Le jeu est fini</string>
+		<key>_YOUR_TIME_IS</key>
+		<string>Votre temps est</string>
+		<key>_SLOW_MOTION</key>
+		<string>Slow Mo!</string>
+		<key>_BOOOM</key>
+		<string>Boum!</string>
+		<key>_SCORE</key>
+		<string>Le compte</string>
+		<key>_NO_VITAMINS</key>
+		<string>Vous  n’avez  pas assez de vitamins</string>
+		<key>_FINISHED_GAME</key>
+		<string>Vous avez terminé jeu</string>
+		<key>_TIME_OFF</key>
+		<string>Le temps est plus</string>
+		<key>_LIFE</key>
+		<string>+1 Vie</string>
+	</dict>
+	<dict>
+		<key>_LANGUAGE</key>
+		<string>Sprache</string>
+		<key>_LANGUAGE_VALUE</key>
+		<string>Deutsche</string>
+		<key>_START_GAME</key>
+		<string>Spielen</string>
+		<key>_UPGRADE_CHARACTER</key>
+		<string>Verbessern Charaktern</string>
+		<key>_VITAMIN_STORE</key>
+		<string>Vitamin Geschäft</string>
+		<key>_LEADERBOARDS</key>
+		<string>Bestenlisten</string>
+		<key>_GAME_OPTIONS</key>
+		<string>Spieloptionen</string>
+		<key>_ABOUT</key>
+		<string>über</string>
+		<key>_QUIT</key>
+		<string>Beenden</string>
+		<key>_CHOOSE_GAME</key>
+		<string>Wählen Spielmodus</string>
+		<key>_COMPAIGN</key>
+		<string>Kampagne</string>
+		<key>_CAPTURE_FLAG</key>
+		<string>Schlagen das Flag</string>
+		<key>_RUSH</key>
+		<string>Treiben</string>
+		<key>_PEACE_WALKER</key>
+		<string>Fridlich Geher</string>
+		<key>_UPGRADE_SOME_FEATURES</key>
+		<string>Anheben einige Eingeschaften</string>
+		<key>_YOU_HAVE</key>
+		<string>Du hast</string>
+		<key>_NORMAL_SHOOT</key>
+		<string>Normale Aufnahmen</string>
+		<key>_WATER_SHOOT</key>
+		<string>Wasser schiessen</string>
+		<key>_WINDMLL_SHOOT</key>
+		<string>Windmühle schiessen</string>
+		<key>_CIRCLE_SHOOT</key>
+		<string>Kreis schiessen</string>
+		<key>_TORNADO_SHOOT</key>
+		<string>Tornado schiessen</string>
+		<key>_DOUBLE_SPEED</key>
+		<string>Doppelter Geschwindigkeit</string>
+		<key>_IMMORTALITY</key>
+		<string>Unsterblichkeit</string>
+		<key>_VITAMINS</key>
+		<string>Vitamine</string>
+		<key>_DIFFICULTY</key>
+		<string>Schwierigkeit</string>
+		<key>_NORMAL</key>
+		<string>Normale</string>
+		<key>_HARD</key>
+		<string>Schwer</string>
+		<key>_IMPOSSIBLE</key>
+		<string>Unmöglich</string>
+		<key>_AUTO_SHOOT</key>
+		<string>Auto schießen</string>
+		<key>_CONTROL_TYPE</key>
+		<string>Steuerart</string>
+		<key>_WASD_ARROWS</key>
+		<string>WASD + Pfeile</string>
+		<key>_ARROWS</key>
+		<string>Nur Pfeile</string>
+		<key>_ONLY_MOUSE</key>
+		<string>Nur mit der Maus</string>
+		<key>_SOUND_SFX</key>
+		<string>Ton SFX</string>
+		<key>_GAME_MUSIC</key>
+		<string>Musik</string>
+		<key>_CHOOSE_LEVEL</key>
+		<string>Wählen Sie die Ebene</string>
+		<key>_RESTART</key>
+		<string>Wieder starten</string>
+		<key>_RESUME</key>
+		<string>Weiter</string>
+		<key>_GOTO_MENU</key>
+		<string>Zum Menü</string>
+		<key>_CHOOSE_LEVEL_IN_PAUSE</key>
+		<string>Wählen Sie die Ebenèè</string>
+		<key>_GET_READY</key>
+		<string>Machen sie fertig</string>
+		<key>_LEVEL</key>
+		<string>Die Ebene  </string>
+		<key>_YOU_WON</key>
+		<string>Sie gewann</string>
+		<key>_GET_READY_FOR_BOSS</key>
+		<string>Machen Sie sich bereit für den Boss</string>
+		<key>_GAME_OVER</key>
+		<string>Das spiel ist vorbei</string>
+		<key>_YOUR_TIME_IS</key>
+		<string>Ihre Zeit ist</string>
+		<key>_SLOW_MOTION</key>
+		<string>Slow Mo</string>
+		<key>_BOOOM</key>
+		<string>Buum</string>
+		<key>_SCORE</key>
+		<string>Die Kerbe</string>
+		<key>_NO_VITAMINS</key>
+		<string>Sie haben nicht genug Vitamine</string>
+		<key>_FINISHED_GAME</key>
+		<string>Sie beendete Spiel</string>
+		<key>_TIME_OFF</key>
+		<string>Zeit ist vorbei</string>
+		<key>_LIFE</key>
+		<string>+1 Leben</string>
+	</dict>
+	<dict>
+		<key>_LANGUAGE</key>
+		<string>Idioma</string>
+		<key>_LANGUAGE_VALUE</key>
+		<string>Español</string>
+		<key>_START_GAME</key>
+		<string>Juego</string>
+		<key>_UPGRADE_CHARACTER</key>
+		<string>Actualiza carácter</string>
+		<key>_VITAMIN_STORE</key>
+		<string>Vitamina tienda</string>
+		<key>_LEADERBOARDS</key>
+		<string>Clasificaciones</string>
+		<key>_GAME_OPTIONS</key>
+		<string>Opciones del juego</string>
+		<key>_ABOUT</key>
+		<string>Sobre</string>
+		<key>_QUIT</key>
+		<string>Dejar</string>
+		<key>_CHOOSE_GAME</key>
+		<string>Seleccione el modo de juego</string>
+		<key>_COMPAIGN</key>
+		<string>Campaña</string>
+		<key>_CAPTURE_FLAG</key>
+		<string>Capturar la bandera</string>
+		<key>_RUSH</key>
+		<string>Acometida</string>
+		<key>_PEACE_WALKER</key>
+		<string>Pacíficamente  paseante</string>
+		<key>_UPGRADE_SOME_FEATURES</key>
+		<string>Actualiza algunas características</string>
+		<key>_YOU_HAVE</key>
+		<string>Tu tienes</string>
+		<key>_NORMAL_SHOOT</key>
+		<string>Rodaje normal</string>
+		<key>_WATER_SHOOT</key>
+		<string>Disparar agua</string>
+		<key>_WINDMLL_SHOOT</key>
+		<string>Disparar del molino de viente</string>
+		<key>_CIRCLE_SHOOT</key>
+		<string>Círculo de penaltis</string>
+		<key>_TORNADO_SHOOT</key>
+		<string>Disparar Tornado</string>
+		<key>_DOUBLE_SPEED</key>
+		<string>Doble velocidad</string>
+		<key>_IMMORTALITY</key>
+		<string>Inmortalidad</string>
+		<key>_VITAMINS</key>
+		<string>Vitaminas</string>
+		<key>_DIFFICULTY</key>
+		<string>Dificultad</string>
+		<key>_NORMAL</key>
+		<string>Normal</string>
+		<key>_HARD</key>
+		<string>Duro</string>
+		<key>_IMPOSSIBLE</key>
+		<string>Imposible</string>
+		<key>_AUTO_SHOOT</key>
+		<string>Disparar Auto</string>
+		<key>_CONTROL_TYPE</key>
+		<string>Controlar</string>
+		<key>_WASD_ARROWS</key>
+		<string>WASD + fleches</string>
+		<key>_ARROWS</key>
+		<string>Sólo fleches</string>
+		<key>_ONLY_MOUSE</key>
+		<string>Sólo mouse</string>
+		<key>_SOUND_SFX</key>
+		<string>Sonido SFX</string>
+		<key>_GAME_MUSIC</key>
+		<string>Música</string>
+		<key>_CHOOSE_LEVEL</key>
+		<string>Elija el nivel</string>
+		<key>_RESTART</key>
+		<string>Empezar de nuevo</string>
+		<key>_RESUME</key>
+		<string>Reanudar</string>
+		<key>_GOTO_MENU</key>
+		<string>Ir al menú</string>
+		<key>_CHOOSE_LEVEL_IN_PAUSE</key>
+		<string>Elija el nivel</string>
+		<key>_GET_READY</key>
+		<string>Preparete</string>
+		<key>_LEVEL</key>
+		<string>El nivel  </string>
+		<key>_YOU_WON</key>
+		<string>Tu ganaste</string>
+		<key>_GET_READY_FOR_BOSS</key>
+		<string>Prepárate para el Boss</string>
+		<key>_GAME_OVER</key>
+		<string>El juego ha terminado</string>
+		<key>_YOUR_TIME_IS</key>
+		<string>Su tiempo es</string>
+		<key>_SLOW_MOTION</key>
+		<string>Slow Mo</string>
+		<key>_BOOOM</key>
+		<string>Buuuuum</string>
+		<key>_SCORE</key>
+		<string>El resultado</string>
+		<key>_NO_VITAMINS</key>
+		<string>Usted no tiene suficientes vitaminas</string>
+		<key>_FINISHED_GAME</key>
+		<string>Has terminado el juego</string>
+		<key>_TIME_OFF</key>
+		<string>El tiempo ha terminado</string>
+		<key>_LIFE</key>
+		<string>+1 Vida</string>
+	</dict>
+</array>
+</plist>

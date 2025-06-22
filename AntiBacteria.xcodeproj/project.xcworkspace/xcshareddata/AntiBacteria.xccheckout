@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>BE5A5C61-D296-4130-8A60-6D16F73178F2</string>
+	<key>IDESourceControlProjectName</key>
+	<string>AntiBacteria</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>04E2E33E-C304-45A0-B4A6-6A954A4D248C</key>
+		<string>https://bitbucket.org/gio_abelix/antibacteria.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>AntiBacteria.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>04E2E33E-C304-45A0-B4A6-6A954A4D248C</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://bitbucket.org/gio_abelix/antibacteria.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>04E2E33E-C304-45A0-B4A6-6A954A4D248C</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>04E2E33E-C304-45A0-B4A6-6A954A4D248C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>antibacteria</string>
+		</dict>
+	</array>
+</dict>
+</plist>
