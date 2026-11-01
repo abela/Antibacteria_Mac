@@ -1,0 +1,87 @@
+# ---------------------------------------------------------------------------
+# Line endings: normalise all text files
+# ---------------------------------------------------------------------------
+* text=auto
+
+# ---------------------------------------------------------------------------
+# Unity YAML files: keep as TEXT (diffable, mergeable). Never put these in LFS.
+# merge=unityyamlmerge only takes effect if Unity's Smart Merge is configured;
+# otherwise git falls back to its normal merge.
+# ---------------------------------------------------------------------------
+*.unity               text eol=lf merge=unityyamlmerge
+*.prefab              text eol=lf merge=unityyamlmerge
+*.asset               text eol=lf merge=unityyamlmerge
+*.mat                 text eol=lf merge=unityyamlmerge
+*.anim                text eol=lf merge=unityyamlmerge
+*.controller          text eol=lf merge=unityyamlmerge
+*.overrideController  text eol=lf merge=unityyamlmerge
+*.physicMaterial      text eol=lf merge=unityyamlmerge
+*.physicsMaterial2D   text eol=lf merge=unityyamlmerge
+*.spriteatlas         text eol=lf merge=unityyamlmerge
+*.spriteatlasv2       text eol=lf merge=unityyamlmerge
+*.mixer               text eol=lf merge=unityyamlmerge
+*.playable            text eol=lf merge=unityyamlmerge
+*.preset              text eol=lf merge=unityyamlmerge
+*.lighting            text eol=lf merge=unityyamlmerge
+*.renderTexture       text eol=lf merge=unityyamlmerge
+*.fontsettings        text eol=lf merge=unityyamlmerge
+*.shadervariants      text eol=lf merge=unityyamlmerge
+*.meta                text eol=lf merge=unityyamlmerge
+
+# Code and other text
+*.cs                  text eol=lf diff=csharp
+*.shader              text eol=lf
+*.hlsl                text eol=lf
+*.cginc               text eol=lf
+*.shadergraph         text eol=lf
+*.inputactions        text eol=lf
+*.uss                 text eol=lf
+*.uxml                text eol=lf
+*.json                text eol=lf
+*.asmdef              text eol=lf
+
+# ---------------------------------------------------------------------------
+# Large binaries in the Unity project -> Git LFS
+# (scoped to Unity/ so the legacy Mac/ files stay as they are)
+# ---------------------------------------------------------------------------
+# Images
+Unity/**/*.png        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.jpg        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.jpeg       filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.psd        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.tga        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.tif        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.tiff       filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.gif        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.bmp        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.exr        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.hdr        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.dds        filter=lfs diff=lfs merge=lfs -text
+# Audio
+Unity/**/*.wav        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.mp3        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.ogg        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.aif        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.aiff       filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.flac       filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.caf        filter=lfs diff=lfs merge=lfs -text
+# Video
+Unity/**/*.mp4        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.mov        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.webm       filter=lfs diff=lfs merge=lfs -text
+# 3D / source art
+Unity/**/*.fbx        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.obj        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.blend      filter=lfs diff=lfs merge=lfs -text
+# Fonts
+Unity/**/*.ttf        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.otf        filter=lfs diff=lfs merge=lfs -text
+# Native plugins / archives
+Unity/**/*.dll        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.so         filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.dylib      filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.a          filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.aar        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.jar        filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.bundle     filter=lfs diff=lfs merge=lfs -text
+Unity/**/*.zip        filter=lfs diff=lfs merge=lfs -text

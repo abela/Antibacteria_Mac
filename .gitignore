@@ -1,0 +1,21 @@
+# Repository-wide ignores.
+# Unity-specific ignores live in Unity/AntiBacteria_Unity/.gitignore
+
+# macOS
+.DS_Store
+._*
+
+# Xcode (legacy Mac version in Mac/)
+xcuserdata/
+*.xcuserstate
+DerivedData/
+/Mac/build/
+/Mac/build.log
+
+# Backups left from the 2013 -> modern Xcode fix (originals are in git history)
+*.orig
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
