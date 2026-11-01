@@ -124,6 +124,7 @@ namespace AntiBacteria.Gameplay.Enemies
             if (killedByPlayer)
             {
                 GameSession.AddScore(Definition.killScore);
+                GameSession.AddKill();
                 RewardSpawner.Instance?.DropVitamins(transform.position, Definition.vitamins);
                 RewardSpawner.Instance?.SpawnPop(transform.position);
                 Killed?.Invoke(this);

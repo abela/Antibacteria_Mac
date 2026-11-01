@@ -23,13 +23,11 @@ namespace AntiBacteria.Gameplay.Player
 
         public event Action<bool> ActiveChanged;
 
-        private float baseFixedDelta;
-
-        private void Awake() => baseFixedDelta = Time.fixedDeltaTime;
+        private const float BaseFixedDelta = 1f / 60f; // constant, so a reload during slow motion can't capture the slowed step
 
         private void Update()
         {
-            if (PauseController.IsPaused) return;
+            if (PauseController.IsPaused || PauseController.JustResumed) return; // Space = Confirm in menus too
             float dt = Time.unscaledDeltaTime;
             PlayerController player = PlayerController.Current;
 
@@ -53,8 +51,15 @@ namespace AntiBacteria.Gameplay.Player
             IsActive = active;
             if (!active) Meter01 = Mathf.Max(0f, Meter01);
             Time.timeScale = active ? slowTimeScale : 1f;
-            Time.fixedDeltaTime = baseFixedDelta * Time.timeScale; // keep physics smooth in slow motion
+            Time.fixedDeltaTime = BaseFixedDelta * Time.timeScale; // keep physics smooth in slow motion
             ActiveChanged?.Invoke(active);
+        }
+
+        /// <summary>Ends slow motion now and blocks re-activation (level over).</summary>
+        public void ForceEnd()
+        {
+            Enabled = false;
+            if (IsActive) SetActive(false);
         }
 
         private void OnDisable()

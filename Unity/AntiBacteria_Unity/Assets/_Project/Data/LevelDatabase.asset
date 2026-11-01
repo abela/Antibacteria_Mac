@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe7aa8a12fe44a0f9031a502911e408, type: 3}
+  m_Name: LevelDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Level.LevelDatabase
+  levels:
+  - {fileID: 11400000, guid: ad49ff51e7de14589b19c07888349206, type: 2}
+  - {fileID: 11400000, guid: c484104729885485b9467f9072393ff5, type: 2}
+  - {fileID: 11400000, guid: 05126b13d5eba47479005717b89229c2, type: 2}
+  - {fileID: 11400000, guid: e8953feb2c3474bc1a99b2f318cf7ad0, type: 2}
+  - {fileID: 11400000, guid: 09ae37d3a849e4717b225ab2af8adc42, type: 2}
+  - {fileID: 11400000, guid: dcc0ee3bc2c604789a76236c0f925210, type: 2}
+  - {fileID: 11400000, guid: c7580d5eda53546dba7db3a901d8832b, type: 2}
+  - {fileID: 11400000, guid: 83850dfb33a2145aea040472cf624a5c, type: 2}
+  - {fileID: 11400000, guid: 2932e6b4bed414a65b5a1c95a61a8152, type: 2}
+  - {fileID: 11400000, guid: a7d71a97605f14da48d0ab014e36e942, type: 2}
+  - {fileID: 11400000, guid: 27d572341c4d14de8b609d04cf50685a, type: 2}
+  - {fileID: 11400000, guid: 20ef125cc13fc48778dec740863b25eb, type: 2}
+  - {fileID: 11400000, guid: 049ed95e0b3664e199027b76b9e36818, type: 2}
+  - {fileID: 11400000, guid: f851f4191b29840db98aa7e5a69351da, type: 2}
+  - {fileID: 11400000, guid: ac2d62a8267ec40978f306058792865c, type: 2}
+  - {fileID: 11400000, guid: d8c3ea646551c4be5835b59e297909f3, type: 2}
+  - {fileID: 11400000, guid: ecd06ad25dbf1434bbe1b356a465eaf2, type: 2}
+  - {fileID: 11400000, guid: ecff6c7ef24ca465490d9ed76cad784f, type: 2}
+  - {fileID: 11400000, guid: 54a813d0b4f7644eabb52b25837ba792, type: 2}
+  - {fileID: 11400000, guid: 4eb8551cb85854c17981d0b4c79070e2, type: 2}
+  - {fileID: 11400000, guid: 7d739d2dbd7574413aa929d349cdca3e, type: 2}
+  - {fileID: 11400000, guid: fa6492e41c9674c278098787e1b26c0e, type: 2}
+  - {fileID: 11400000, guid: f6b0649185d8a49f69a526aad73250eb, type: 2}
+  - {fileID: 11400000, guid: 8aefe1e709ac847c1b6ab3a44f431503, type: 2}
+  - {fileID: 11400000, guid: 24d12598b4f5d42e0bbcbd89f80d6ae6, type: 2}
+  - {fileID: 11400000, guid: 22741061943a64c4bbfbcb3a1945664e, type: 2}
+  - {fileID: 11400000, guid: 0ea736bed05884b0c8737dd377c8d274, type: 2}
+  - {fileID: 11400000, guid: c6439a2f5c2414f9e91e5dbe1d7fe3eb, type: 2}
+  - {fileID: 11400000, guid: 44c5f7fc26ea847eea6a024bd6a24aff, type: 2}
+  - {fileID: 11400000, guid: 668229fc678534b99bf8549b0821e742, type: 2}
+  - {fileID: 11400000, guid: ae71e4f6be87e4e1d96ece7e2ed2bb00, type: 2}
+  - {fileID: 11400000, guid: 3d6f246cdbfee421a8b9ee7d11599b96, type: 2}
+  - {fileID: 11400000, guid: c46dbbbf9a25d41c9a6567e35057093a, type: 2}
+  - {fileID: 11400000, guid: 736b9b58139c74a758d5c55717d0776e, type: 2}
+  - {fileID: 11400000, guid: dbb5ccf1bdfbc4df1b48936096738be7, type: 2}
+  - {fileID: 11400000, guid: f3fff95289d7448bd8f2105e8e7938cf, type: 2}
+  - {fileID: 11400000, guid: a8d37d580168d4984964376ae0bb416e, type: 2}
+  - {fileID: 11400000, guid: d63bd7122346749538eee76d66b74738, type: 2}
+  - {fileID: 11400000, guid: 7fa82649159bf41b8af2c0e65fe2f086, type: 2}
+  - {fileID: 11400000, guid: 5388e0fa10d0844e59d4336072ed1238, type: 2}
+  - {fileID: 11400000, guid: afce08a068f4946f0a3f0b1335966323, type: 2}
+  - {fileID: 11400000, guid: 7150b41c4225c4e568062bd23c3afc15, type: 2}
+  - {fileID: 11400000, guid: 658f1500923954d4fb200cfe550e1c78, type: 2}
+  - {fileID: 11400000, guid: b6b460e1bd96a477ba7d6d023116ebac, type: 2}
+  - {fileID: 11400000, guid: e1d8478bc3a5c44f7af845f6ec870647, type: 2}
+  - {fileID: 11400000, guid: 5e5bb9086897f48c89d9f5e48793a611, type: 2}
+  - {fileID: 11400000, guid: 6321ebe651587457d91eeaf074e7192c, type: 2}
+  - {fileID: 11400000, guid: 3eb79709631df49b6a3c389bab9be5d2, type: 2}
+  - {fileID: 11400000, guid: 5f76764201a8c4765a040d26a75d0a21, type: 2}
+  - {fileID: 11400000, guid: c9ad714d6365f45deb036396923b26b2, type: 2}

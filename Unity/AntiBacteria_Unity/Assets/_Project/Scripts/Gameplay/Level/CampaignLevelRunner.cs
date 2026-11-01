@@ -3,7 +3,6 @@ using AntiBacteria.Core;
 using AntiBacteria.Gameplay.Enemies;
 using AntiBacteria.Gameplay.Player;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AntiBacteria.Gameplay.Level
 {
@@ -17,21 +16,35 @@ namespace AntiBacteria.Gameplay.Level
     {
         public enum Phase { GetReady, Playing, Won, Lost }
 
+        [Tooltip("Levels by number; the one played is GameSession.CurrentLevel.")]
+        [SerializeField] private LevelDatabase database;
+        [Tooltip("Used when there is no database, or when testing a single level.")]
         [SerializeField] private LevelData level;
         [SerializeField] private EnemyCatalog catalog;
         [SerializeField] private float getReadySeconds = 2f;
-        [SerializeField] private float endScreenSeconds = 3f;
         [Tooltip("Enemies appear this far inside the walls (original: on the border, inset 20 pt).")]
         [SerializeField] private float spawnInsetPoints = 20f;
 
         public LevelData Level => level;
         public Phase Current { get; private set; } = Phase.GetReady;
         public float TimeLeft { get; private set; }
+        /// <summary>Seconds of play so far (shown on the result screens).</summary>
+        public float ElapsedSeconds { get; private set; }
         public int EnemiesPerWave { get; private set; } = 1;
 
         public event Action<Phase> PhaseChanged;
 
         private float phaseTimer, spawnTimer, growTimer;
+
+        private void Awake()
+        {
+            if (database != null)
+            {
+                LevelData fromDb = database.Get(GameSession.CurrentLevel);
+                if (fromDb != null) level = fromDb;
+            }
+            if (level != null) GameSession.CurrentLevel = level.number;
+        }
 
         private void Start()
         {
@@ -59,6 +72,7 @@ namespace AntiBacteria.Gameplay.Level
                     break;
 
                 case Phase.Playing:
+                    ElapsedSeconds += dt;
                     TimeLeft = Mathf.Max(0f, TimeLeft - dt);
                     if (level.growIntervalSeconds > 0f)
                     {
@@ -78,11 +92,6 @@ namespace AntiBacteria.Gameplay.Level
                     if (TimeLeft <= 0f) Win();
                     break;
 
-                case Phase.Won:
-                case Phase.Lost:
-                    phaseTimer -= Time.unscaledDeltaTime;
-                    if (phaseTimer <= 0f) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // slice: replay
-                    break;
             }
         }
 
@@ -103,16 +112,23 @@ namespace AntiBacteria.Gameplay.Level
         private void Win()
         {
             foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None)) e.Despawn();
-            SetPhase(Phase.Won, endScreenSeconds);
+            SetPhase(Phase.Won, 0f); // GameplayMenuController shows Level Clear
         }
 
-        private void OnPlayerDied() => SetPhase(Phase.Lost, endScreenSeconds);
+        private void OnPlayerDied() => SetPhase(Phase.Lost, 0f); // GameplayMenuController shows Game Over
 
         private void SetPhase(Phase p, float duration)
         {
             Current = p;
             phaseTimer = duration;
-            if (p == Phase.Won || p == Phase.Lost) Time.timeScale = 1f;
+            if (p == Phase.Won || p == Phase.Lost)
+            {
+                // Level over: no slow motion, no pause, no player input (all three leaked in the 2013 build).
+                GetComponent<SlowMotionAbility>()?.ForceEnd();
+                Time.timeScale = 1f;
+                PauseController.Locked = true;
+                if (PlayerController.Current != null) PlayerController.Current.ControlsEnabled = false;
+            }
             PhaseChanged?.Invoke(p);
         }
     }

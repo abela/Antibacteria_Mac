@@ -65,6 +65,23 @@ namespace AntiBacteria.Input
             }
         }
 
+        /// <summary>Menu navigation from arrows / WASD / left stick / d-pad, each axis -1..1.</summary>
+        public static Vector2 UINavigation
+        {
+            get
+            {
+                Player p = Player;
+                if (p == null) return Vector2.zero;
+                return new Vector2(p.GetAxis(InputActions.UIHorizontal), p.GetAxis(InputActions.UIVertical));
+            }
+        }
+
+        public static bool UISubmitPressed => Player != null && Player.GetButtonDown(InputActions.UISubmit);
+        public static bool UICancelPressed => Player != null && Player.GetButtonDown(InputActions.UICancel);
+
+        public static bool MouseLeftPressed =>
+            ReInput.isReady && ReInput.controllers.Mouse != null && ReInput.controllers.Mouse.GetButtonDown(0);
+
         /// <summary>Mouse position in screen pixels.</summary>
         public static Vector2 MouseScreenPosition =>
             ReInput.isReady && ReInput.controllers.Mouse != null ? ReInput.controllers.Mouse.screenPosition : Vector2.zero;

@@ -90,6 +90,8 @@ namespace AntiBacteria.EditorTools
             vitamin = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabDir + "/Vitamin.prefab");
             pop = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabDir + "/FxPop.prefab");
             Set(runner, "level", level1); Set(runner, "catalog", catalog);
+            var levelDb = AssetDatabase.LoadAssetAtPath<LevelDatabase>(MenuBuilder.LevelDatabasePath);
+            if (levelDb != null) Set(runner, "database", levelDb);
             if (level1 == null || catalog == null) Debug.LogError("SliceBuilder: level or catalog missing");
             var spawner = systems.AddComponent<RewardSpawner>();
             Set(spawner, "vitaminPrefab", vitamin); Set(spawner, "popPrefab", pop);
@@ -103,7 +105,7 @@ namespace AntiBacteria.EditorTools
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+            MenuBuilder.SetBuildScenes(); // keeps MainMenu first when it exists
             AssetDatabase.SaveAssets();
             log.AppendLine("Gameplay scene rebuilt and set as the first build scene.");
             return log.ToString();

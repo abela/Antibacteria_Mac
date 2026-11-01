@@ -48,6 +48,9 @@ namespace AntiBacteria.Gameplay.Player
         public bool IsShooting { get; private set; }
         public Vector2 AimDirection { get; private set; } = Vector2.up;
 
+        /// <summary>Off during the level-over interlude (2013 bug: the player could keep acting after "You Won").</summary>
+        public bool ControlsEnabled { get; set; } = true;
+
         public event Action LivesChanged;
         public event Action Died;
 
@@ -57,6 +60,7 @@ namespace AntiBacteria.Gameplay.Player
         private ObjectPool<PlayerShot> shots;
         private float fireCooldown;
         private float invulnerableUntil = -1f;
+        private bool fireBlockedUntilRelease;
 
         private void Awake()
         {
@@ -83,15 +87,16 @@ namespace AntiBacteria.Gameplay.Player
         private void Update()
         {
             if (!IsAlive || PauseController.IsPaused) return;
+            UpdateBlink();
+            if (!ControlsEnabled) { IsShooting = false; return; }
             UpdateAim();
             UpdateFire();
-            UpdateBlink();
         }
 
         private void FixedUpdate()
         {
             if (!IsAlive) return;
-            Vector2 target = GameInput.Move * Legacy.Units(maxSpeedPoints);
+            Vector2 target = ControlsEnabled ? GameInput.Move * Legacy.Units(maxSpeedPoints) : Vector2.zero;
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, target, 1f - Mathf.Exp(-responsiveness * Time.fixedDeltaTime));
         }
 
@@ -120,7 +125,11 @@ namespace AntiBacteria.Gameplay.Player
         private void UpdateFire()
         {
             bool stickHeld = GameInput.UsingGamepad && GameInput.AimStick.magnitude > GameInput.AimDeadZone;
-            IsShooting = GameInput.FireHeld || (gamepadAutoFire && stickHeld);
+            // The click / key that closed the pause menu is still held: don't let it fire until released.
+            if (PauseController.JustResumed) fireBlockedUntilRelease = true;
+            if (fireBlockedUntilRelease && !GameInput.FireHeld) fireBlockedUntilRelease = false;
+            IsShooting = !fireBlockedUntilRelease &&
+                         (GameSettings.AutoShoot || GameInput.FireHeld || (gamepadAutoFire && stickHeld));
 
             fireCooldown -= Time.deltaTime;
             if (!IsShooting)

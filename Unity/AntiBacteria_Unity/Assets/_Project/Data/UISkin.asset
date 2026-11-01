@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae106edb828ba4b81a3f4d2eb17baee8, type: 3}
+  m_Name: UISkin
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.UI.Menu.UISkin
+  font: {fileID: 11400000, guid: 3bd28270b4c83402d9fe40b8320afc02, type: 2}
+  fontSize: 16
+  rowHeight: 16
+  pixel: {fileID: 21300000, guid: cba2c3379ccee40c09b23c9a391242cb, type: 3}
+  arrow: {fileID: 21300000, guid: ea19f660caedc4fdfa90b36f27487903, type: 3}
+  dot: {fileID: 21300000, guid: f047b8d58630d46a882f1ff59e4e5749, type: 3}
+  blockEmpty: {fileID: 21300000, guid: 6e9d62436a486416ea552e3d0318996b, type: 3}
+  paletteMaterial: {fileID: 2100000, guid: b70fd501603da4abfb6e2451e2183b95, type: 2}
+  heartFull: {fileID: 21300000, guid: 2235c52ed1dba44ebad624598779bf65, type: 3}
+  heartEmpty: {fileID: 21300000, guid: 3dc9e7c11bc9440039492dd8f151249e, type: 3}
+  backdropSprites:
+  - {fileID: 21300000, guid: 7847c6603c88e4455ad0bb2207583d0b, type: 3}
+  - {fileID: 21300000, guid: 51ac8b73a4e4d404aa041a56e507b342, type: 3}
+  - {fileID: 21300000, guid: 3eb0c278317b04e069ef87ad094ff733, type: 3}
+  - {fileID: 21300000, guid: 8e4eef50df57843b4bd00e576aedad18, type: 3}
