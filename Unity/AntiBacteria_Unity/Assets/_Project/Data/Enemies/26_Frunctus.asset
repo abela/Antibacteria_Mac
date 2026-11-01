@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8140de47411154acc87d3a2b06d7f1ea, type: 3}
+  m_Name: 26_Frunctus
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyDefinition
+  legacyId: 26
+  displayName: Frunctus
+  prefab: {fileID: 2554253561948318377, guid: 595ba28c5c9c64b54aef51e27923e73c, type: 3}
+  movement: 2
+  speedPoints: 192
+  arriveDistancePoints: 10
+  spinDegreesPerSecond: 0
+  orbitSpeedPointsMin: 320
+  orbitSpeedPointsMax: 640
+  orbitDegreesPerSecondMin: 200
+  orbitDegreesPerSecondMax: 500
+  wobbleSpeedPoints: 640
+  wobbleDegreesPerSecond: 600
+  dashSpeedPointsMin: 576
+  dashSpeedPointsMax: 800
+  dashPlayerChance: 0.5
+  dodgeWhenAimedAt: 1
+  dodgeSpeedPoints: 192
+  dodgeConeDegrees: 45
+  eyeOffsetPixels: 3
+  hits: 150
+  fadeInSeconds: 0.1
+  invulnerable: 0
+  shotPattern: 2
+  bulletPrefab: {fileID: 536787989211215421, guid: 90451687233de47379e686057f591ad3, type: 3}
+  shotIntervalSeconds: 1.5
+  shotCount: 4
+  shotsFollowSpin: 1
+  shotOffsetPoints: 50
+  shotSpeedPoints: 960
+  spawnIntervalSeconds: 0
+  spawnIds: 
+  maxChildren: 8
+  chainSegments: 6
+  segmentDefinition: {fileID: 0}
+  headHits: 0
+  segmentSpacingPoints: 36
+  chainDeath: 0
+  bloomDefinition: {fileID: 0}
+  headSprite: {fileID: 0}
+  bodySprites: []
+  headFacingDegrees: 180
+  speedPointsByDifficulty: []
+  shotIntervalByDifficulty:
+  - 1.5
+  - 0.7
+  - 0.3
+  countByDifficulty: 
+  growIntervalByDifficulty: []
+  isBoss: 1
+  damageStages:
+  - {fileID: 21300000, guid: 3f19a32e2597f431988498482a79daa5, type: 3}
+  - {fileID: 21300000, guid: 0b2d07b5319264ab88f34fda8b166354, type: 3}
+  - {fileID: 21300000, guid: 66311c82421174ba5968d5055b97e4cd, type: 3}
+  - {fileID: 21300000, guid: e6d18bcad9eb649bfa9cf73113562739, type: 3}
+  killScore: 5000
+  vitamins: 10

@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8140de47411154acc87d3a2b06d7f1ea, type: 3}
+  m_Name: 25_Anakonda
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyDefinition
+  legacyId: 25
+  displayName: Anakonda
+  prefab: {fileID: 144013006868909768, guid: f58e80518097945a8abe61977db1939b, type: 3}
+  movement: 7
+  speedPoints: 544
+  arriveDistancePoints: 10
+  spinDegreesPerSecond: 0
+  orbitSpeedPointsMin: 320
+  orbitSpeedPointsMax: 640
+  orbitDegreesPerSecondMin: 120
+  orbitDegreesPerSecondMax: 360
+  wobbleSpeedPoints: 640
+  wobbleDegreesPerSecond: 600
+  dashSpeedPointsMin: 576
+  dashSpeedPointsMax: 800
+  dashPlayerChance: 0.5
+  dodgeWhenAimedAt: 0
+  dodgeSpeedPoints: 512
+  dodgeConeDegrees: 30
+  eyeOffsetPixels: 0
+  hits: 14
+  fadeInSeconds: 0.1
+  invulnerable: 0
+  shotPattern: 2
+  bulletPrefab: {fileID: 536787989211215421, guid: 90451687233de47379e686057f591ad3, type: 3}
+  shotIntervalSeconds: 1.5
+  shotCount: 4
+  shotsFollowSpin: 1
+  shotOffsetPoints: 40
+  shotSpeedPoints: 960
+  spawnIntervalSeconds: 0
+  spawnIds: 
+  maxChildren: 8
+  chainSegments: 24
+  segmentDefinition: {fileID: 11400000, guid: de72d1029b2514d3aaba8e5900ac3d40, type: 2}
+  headHits: 0
+  segmentSpacingPoints: 61
+  chainDeath: 0
+  bloomDefinition: {fileID: 0}
+  headSprite: {fileID: 21300000, guid: 2958627cff3ce4f3fb914296463258d7, type: 3}
+  bodySprites:
+  - {fileID: 21300000, guid: 06769df40c50c42feb44750f2cd94ba3, type: 3}
+  - {fileID: 21300000, guid: 06769df40c50c42feb44750f2cd94ba3, type: 3}
+  - {fileID: 21300000, guid: 57f60af17a438422bb5f48495f4710a7, type: 3}
+  - {fileID: 21300000, guid: 57f60af17a438422bb5f48495f4710a7, type: 3}
+  - {fileID: 21300000, guid: aa353948e449c4bebb74d178a552dbd4, type: 3}
+  headFacingDegrees: 180
+  speedPointsByDifficulty: []
+  shotIntervalByDifficulty:
+  - 1.5
+  - 1
+  - 0.5
+  countByDifficulty: 
+  growIntervalByDifficulty:
+  - 3
+  - 2
+  - 1.8
+  isBoss: 1
+  damageStages: []
+  killScore: 2500
+  vitamins: 0

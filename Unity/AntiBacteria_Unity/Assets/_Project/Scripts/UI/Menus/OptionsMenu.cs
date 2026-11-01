@@ -16,7 +16,8 @@ namespace AntiBacteria.UI.Menus
         {
             MenuScreen s = MenuScreen.Create(parent, "Options");
             Transform t = s.transform;
-            if (opaque) UIFactory.Image(t, "Backing", skin.pixel, 0f, 0f, UIFactory.ScreenW, UIFactory.ScreenH, PaletteRole.Background);
+            // Oversized: the screen is wider than the 320x180 layout and the backing must hide the whole paused game.
+            if (opaque) UIFactory.Image(t, "Backing", skin.pixel, -400f, -300f, 1120f, 780f, PaletteRole.Background);
 
             LiveText.Create(skin, t, "Title", 160f, 10f, () => Loc.Get(WordIDs.GameOptions).ToUpperInvariant(), role: PaletteRole.Accent);
 

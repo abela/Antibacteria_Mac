@@ -14,12 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyDefinition
   legacyId: 0
   displayName: BlueCorosia
-  prefab: {fileID: 6155154341022178335, guid: c5fe86648be5f42b8a1f87a3b54e5c66, type: 3}
+  prefab: {fileID: 7735141787933957255, guid: 9004a096404ca48419a7b220cf0694e2, type: 3}
   movement: 0
   speedPoints: 256
   arriveDistancePoints: 10
   spinDegreesPerSecond: 300
+  orbitSpeedPointsMin: 320
+  orbitSpeedPointsMax: 640
+  orbitDegreesPerSecondMin: 120
+  orbitDegreesPerSecondMax: 360
+  wobbleSpeedPoints: 640
+  wobbleDegreesPerSecond: 600
+  dashSpeedPointsMin: 576
+  dashSpeedPointsMax: 800
+  dashPlayerChance: 0.5
+  dodgeWhenAimedAt: 0
+  dodgeSpeedPoints: 512
+  dodgeConeDegrees: 30
+  eyeOffsetPixels: 0
   hits: 1
   fadeInSeconds: 0.1
+  invulnerable: 0
+  shotPattern: 0
+  bulletPrefab: {fileID: 0}
+  shotIntervalSeconds: 2
+  shotCount: 4
+  shotsFollowSpin: 1
+  shotOffsetPoints: 80
+  shotSpeedPoints: 960
+  spawnIntervalSeconds: 0
+  spawnIds: 
+  maxChildren: 8
+  chainSegments: 6
+  segmentDefinition: {fileID: 0}
+  headHits: 0
+  segmentSpacingPoints: 36
+  chainDeath: 0
+  bloomDefinition: {fileID: 0}
+  headSprite: {fileID: 0}
+  bodySprites: []
+  headFacingDegrees: 180
+  speedPointsByDifficulty: []
+  shotIntervalByDifficulty: []
+  countByDifficulty: 
+  growIntervalByDifficulty: []
+  isBoss: 0
+  damageStages: []
   killScore: 50
   vitamins: 2

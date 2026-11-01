@@ -84,7 +84,11 @@ namespace AntiBacteria.Core
             }
             else
             {
-                Screen.SetResolution(1280, 720, FullScreenMode.Windowed); // 4x the 320x180 canvas
+                // The largest whole-number multiple of the view that fits with room for the title bar and taskbar
+                // (1536x864 on a 1080p monitor).
+                Resolution r = Screen.currentResolution;
+                int s = PixelScreen.ScaleFor(r.width - 64, r.height - 96);
+                Screen.SetResolution(PixelScreen.ViewWidth * s, PixelScreen.ViewHeight * s, FullScreenMode.Windowed);
             }
         }
     }

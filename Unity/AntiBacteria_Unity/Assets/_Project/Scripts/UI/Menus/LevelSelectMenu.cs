@@ -38,6 +38,12 @@ namespace AntiBacteria.UI.Menus
             s.Add(DifficultyRow.Create(skin, t, 144f, () => { grid.Refresh(); info.Refresh(); }, () => grid.Submit()));
             s.Add(MenuButton.Create(skin, t, "Back", 160f, 162f, () => Loc.Get(WordIDs.Back), nav.Back));
 
+#if UNITY_EDITOR
+            // Testing aid, compiled out of builds: open every level without touching the save.
+            s.Add(MenuOption.CompactToggle(skin, t, "UnlockAll", 4f, 162f, 110f, () => "Unlock all levels",
+                () => Progress.UnlockAll, on => { Progress.UnlockAll = on; grid.Refresh(); info.Refresh(); }));
+#endif
+
             s.OnShown = () => grid.SetCursor(Progress.NextToPlay());
             return s;
         }

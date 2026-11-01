@@ -159,7 +159,7 @@ namespace AntiBacteria.EditorTools
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
             var cam = camGo.AddComponent<Camera>();
             cam.orthographic = true;
-            cam.orthographicSize = 5.625f;
+            cam.orthographicSize = AntiBacteria.Core.PixelScreen.ViewHeight / 2f / 16f;
             cam.clearFlags = CameraClearFlags.SolidColor;
             camGo.transform.position = new Vector3(0f, 0f, -10f);
 

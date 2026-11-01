@@ -42,25 +42,12 @@ namespace AntiBacteria.EditorTools
             GameObject shot = SavePrefab(BuildShot(mat), "PlayerShot");
             GameObject vitamin = SavePrefab(BuildVitamin(mat), "Vitamin");
             GameObject pop = SavePrefab(BuildPop(mat), "FxPop");
-            GameObject blue = SavePrefab(BuildEnemy(mat, "Enemy_BlueCorosia", "enemy_spiky", 6.4f), "Enemy_BlueCorosia");
             GameObject player = SavePrefab(BuildPlayer(mat, shot.GetComponent<PlayerShot>()), "Player");
 
             // ---------------- data
-            var blueDef = LoadOrCreate<EnemyDefinition>(EnemyDataDir + "/00_BlueCorosia.asset");
-            blueDef.legacyId = 0; blueDef.displayName = "BlueCorosia";
-            blueDef.prefab = blue.GetComponent<Enemy>();
-            blueDef.movement = EnemyMovement.Wander;
-            blueDef.speedPoints = 8f * Legacy.PointsPerMetre; // 8 m/s (BlueCorosia.mm:28)
-            blueDef.arriveDistancePoints = 10f;
-            blueDef.spinDegreesPerSecond = 300f;               // 90 deg / 0.3 s (BlueCorosia.mm:86)
-            blueDef.hits = 1; blueDef.fadeInSeconds = 0.1f; blueDef.killScore = 50; blueDef.vitamins = 2;
-            EditorUtility.SetDirty(blueDef);
-
-            var catalog = LoadOrCreate<EnemyCatalog>(Root + "/Data/EnemyCatalog.asset");
-            var cso = new SerializedObject(catalog);
-            var list = cso.FindProperty("enemies");
-            list.arraySize = 1; list.GetArrayElementAtIndex(0).objectReferenceValue = blueDef;
-            cso.ApplyModifiedPropertiesWithoutUndo();
+            // All enemy prefabs, definitions and the catalog come from EnemyBuilder (AntiBacteria > Build > Enemies).
+            log.AppendLine(EnemyBuilder.BuildAll());
+            var catalog = AssetDatabase.LoadAssetAtPath<EnemyCatalog>(EnemyBuilder.CatalogPath);
 
             log.AppendLine(LevelImporter.ImportAll());
             var level1 = AssetDatabase.LoadAssetAtPath<LevelData>(LevelImporter.AssetPath(1));
@@ -132,6 +119,9 @@ namespace AntiBacteria.EditorTools
             tagManager.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        /// <summary>Layers' collision matrix and the 60 Hz physics step (also used by EnemyBuilder).</summary>
+        public static void ConfigurePhysicsPublic() => ConfigurePhysics();
+
         private static void ConfigurePhysics()
         {
             Physics2D.gravity = Vector2.zero;
@@ -172,18 +162,6 @@ namespace AntiBacteria.EditorTools
             return go;
         }
 
-        private static GameObject BuildEnemy(Material mat, string name, string sprite, float radiusPx)
-        {
-            var go = new GameObject(name) { layer = GameLayers.Get(GameLayers.Enemy) };
-            var rb = go.AddComponent<Rigidbody2D>(); rb.gravityScale = 0f; rb.freezeRotation = true; rb.interpolation = RigidbodyInterpolation2D.Interpolate;
-            var col = go.AddComponent<CircleCollider2D>(); col.isTrigger = true; col.radius = Px(radiusPx);
-            var body = MakeSprite(go.transform, "Body", S(sprite), mat, 5);
-            var enemy = go.AddComponent<Enemy>();
-            Set(enemy, "bodyRenderer", body); Set(enemy, "hitbox", col);
-            var flash = go.AddComponent<SpriteFlash>(); Set(flash, "renderers", new Object[] { body });
-            return go;
-        }
-
         private static GameObject BuildVitamin(Material mat)
         {
             var go = new GameObject("Vitamin") { layer = GameLayers.Get(GameLayers.Pickup) };
@@ -208,11 +186,8 @@ namespace AntiBacteria.EditorTools
         {
             var hud = new GameObject("HUD", typeof(RectTransform));
             var canvas = hud.AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.pixelPerfect = true;
-            var scaler = hud.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(320f, 180f);
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight; scaler.matchWidthOrHeight = 0.5f;
-            scaler.referencePixelsPerUnit = Legacy.PixelsPerUnit;
+            hud.AddComponent<CanvasScaler>();
+            hud.AddComponent<AntiBacteria.UI.Menu.PixelCanvasScaler>(); // same whole-number scale as the world
 
             var hearts = new Image[3];
             for (int i = 0; i < 3; i++) hearts[i] = Img(hud.transform, "Heart" + i, S("hud_heart"), mat, new Vector2(0f, 1f), new Vector2(8 + i * 9, -7));

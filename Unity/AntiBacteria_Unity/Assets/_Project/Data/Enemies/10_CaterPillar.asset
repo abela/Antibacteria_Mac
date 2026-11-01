@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8140de47411154acc87d3a2b06d7f1ea, type: 3}
+  m_Name: 10_CaterPillar
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyDefinition
+  legacyId: 10
+  displayName: CaterPillar
+  prefab: {fileID: 1436494148282154174, guid: eb244e1731901444b829cb16343c29c5, type: 3}
+  movement: 7
+  speedPoints: 320
+  arriveDistancePoints: 10
+  spinDegreesPerSecond: 0
+  orbitSpeedPointsMin: 320
+  orbitSpeedPointsMax: 640
+  orbitDegreesPerSecondMin: 120
+  orbitDegreesPerSecondMax: 360
+  wobbleSpeedPoints: 640
+  wobbleDegreesPerSecond: 600
+  dashSpeedPointsMin: 576
+  dashSpeedPointsMax: 800
+  dashPlayerChance: 0.5
+  dodgeWhenAimedAt: 0
+  dodgeSpeedPoints: 512
+  dodgeConeDegrees: 30
+  eyeOffsetPixels: 0
+  hits: 10
+  fadeInSeconds: 0.1
+  invulnerable: 0
+  shotPattern: 0
+  bulletPrefab: {fileID: 0}
+  shotIntervalSeconds: 2
+  shotCount: 4
+  shotsFollowSpin: 1
+  shotOffsetPoints: 80
+  shotSpeedPoints: 960
+  spawnIntervalSeconds: 0
+  spawnIds: 
+  maxChildren: 8
+  chainSegments: 20
+  segmentDefinition: {fileID: 11400000, guid: 4df9757a350664e02a4d92465385579b, type: 2}
+  headHits: 0
+  segmentSpacingPoints: 30
+  chainDeath: 1
+  bloomDefinition: {fileID: 0}
+  headSprite: {fileID: 21300000, guid: 34647e8077bb34772801fd50f0d24dbb, type: 3}
+  bodySprites:
+  - {fileID: 21300000, guid: 7ffc90c9d161749568195ba6f0e1da6f, type: 3}
+  headFacingDegrees: 90
+  speedPointsByDifficulty: []
+  shotIntervalByDifficulty: []
+  countByDifficulty: 
+  growIntervalByDifficulty: []
+  isBoss: 0
+  damageStages: []
+  killScore: 0
+  vitamins: 0

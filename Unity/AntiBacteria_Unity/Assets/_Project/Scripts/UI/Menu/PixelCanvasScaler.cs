@@ -4,9 +4,9 @@ using UnityEngine.UI;
 namespace AntiBacteria.UI.Menu
 {
     /// <summary>
-    /// Scales a 320x180 canvas by the largest WHOLE number that fits the screen (6x at 1920x1080, 4x at 1280x720,
-    /// 8x at 2560x1440), so every game pixel is the same size and text stays sharp. The content lives in a
-    /// 320x180 child centred on screen; any leftover border shows the camera background.
+    /// Scales a canvas by the same WHOLE number as the world camera (PixelScreen: 5x at 1920x1080), so UI and world
+    /// pixels are the same size and text stays sharp. Menus are laid out in a 320x180 child centred on screen;
+    /// things that belong to the screen edges (HUD, boss bar) anchor to the canvas itself.
     /// </summary>
     [ExecuteAlways]
     [RequireComponent(typeof(CanvasScaler))]
@@ -16,10 +16,9 @@ namespace AntiBacteria.UI.Menu
         public const int Height = 180;
 
         private CanvasScaler scaler;
-        private int lastW, lastH;
+        private int lastW, lastH, lastVersion = -1;
 
-        public static int ScaleFor(int screenW, int screenH) =>
-            Mathf.Max(1, Mathf.Min(screenW / Width, screenH / Height));
+        public static int ScaleFor(int screenW, int screenH) => AntiBacteria.Core.PixelScreen.ScaleFor(screenW, screenH);
 
         private void OnEnable()
         {
@@ -33,9 +32,10 @@ namespace AntiBacteria.UI.Menu
         private void Apply()
         {
             if (scaler == null) return;
-            if (Screen.width == lastW && Screen.height == lastH) return;
+            if (Screen.width == lastW && Screen.height == lastH && lastVersion == AntiBacteria.Core.PixelScreen.Version) return;
             lastW = Screen.width;
             lastH = Screen.height;
+            lastVersion = AntiBacteria.Core.PixelScreen.Version;
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
             scaler.referencePixelsPerUnit = 16f;
             scaler.scaleFactor = ScaleFor(lastW, lastH);

@@ -29,6 +29,13 @@ namespace AntiBacteria.UI
         {
             RefreshSession();
             if (levelText != null && runner != null && runner.Level != null) levelText.SetText(runner.Level.Label);
+            // Boss levels: no clock and no slow motion; the boss bar (GameplayMenuController) takes the meter's place.
+            if (runner != null && runner.IsBossLevel)
+                foreach (string n in new[] { "MeterFrame", "MeterFill", "Timer" })
+                {
+                    Transform t = transform.Find(n);
+                    if (t != null) t.gameObject.SetActive(false);
+                }
         }
 
         private void Update()

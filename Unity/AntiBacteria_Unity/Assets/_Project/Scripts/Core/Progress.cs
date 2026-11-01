@@ -47,7 +47,28 @@ namespace AntiBacteria.Core
         }
 
         public static bool IsUnlocked(int level) =>
-            level == 1 || (level >= 2 && level <= LevelCount && IsClearedOnAny(level - 1));
+            level == 1 || (level >= 2 && level <= LevelCount && (UnlockAll || IsClearedOnAny(level - 1)));
+
+#if UNITY_EDITOR
+        private const string UnlockAllKey = "AntiBacteria.UnlockAllLevels";
+
+        /// <summary>
+        /// Editor-only testing switch: every level counts as unlocked. Kept in EditorPrefs, never in save.json,
+        /// so switching it off returns to the real progress. Always false in builds.
+        /// </summary>
+        public static bool UnlockAll
+        {
+            get => UnityEditor.EditorPrefs.GetBool(UnlockAllKey, false);
+            set
+            {
+                if (value == UnlockAll) return;
+                UnityEditor.EditorPrefs.SetBool(UnlockAllKey, value);
+                Changed?.Invoke();
+            }
+        }
+#else
+        public static bool UnlockAll => false;
+#endif
 
         public static bool IsCleared(int level, Difficulty d) => InRange(level) && Data.campaign.cleared[Index(level, d)];
 

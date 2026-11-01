@@ -25,6 +25,11 @@ namespace AntiBacteria.UI.Menus
 
         private MenuScreen pause, options, gameOver, levelWon;
         private MenuButton nextLevelButton;
+        private LiveText banner;
+        private GameObject bossBar;
+        private UnityEngine.UI.Image bossFill;
+        private PaletteGraphic bossFillTint;
+        private const float BossBarInner = 97f;
 
         public MenuScreen PauseScreen => pause;
         public MenuScreen GameOverScreen => gameOver;
@@ -38,6 +43,8 @@ namespace AntiBacteria.UI.Menus
             options = OptionsMenu.Build(skin, root, navigator, true);
             gameOver = BuildGameOver();
             levelWon = BuildLevelWon();
+            BuildBanner();
+            BuildBossBar();
             if (runner != null) runner.PhaseChanged += OnPhaseChanged;
         }
 
@@ -48,6 +55,8 @@ namespace AntiBacteria.UI.Menus
 
         private void Update()
         {
+            UpdateBannerAndBossBar();
+
             // JustResumed: the Esc that closed the pause menu must not reopen it in the same frame.
             if (navigator.IsOpen || PauseController.IsPaused || PauseController.Locked || PauseController.JustResumed) return;
             if (GameInput.PausePressed) OpenPause();
@@ -77,6 +86,53 @@ namespace AntiBacteria.UI.Menus
             yield return new WaitForSecondsRealtime(resultDelaySeconds);
             if (PauseController.IsPaused) PauseController.Resume();
             navigator.Show(screen);
+        }
+
+        // ------------------------------------------------------------------ banner & boss bar
+
+        /// <summary>"GET READY" / "GET READY FOR THE BOSS" during the level's opening seconds (2013 HUD label).</summary>
+        private void BuildBanner()
+        {
+            banner = LiveText.Create(skin, root, "Banner", 160f, 70f,
+                () => Loc.Get(runner != null && runner.IsBossLevel ? WordIDs.GetReadyForBoss : WordIDs.GetReady).ToUpperInvariant(),
+                scale: 2, role: PaletteRole.Accent, maxWidth: 300f);
+            banner.gameObject.SetActive(false);
+        }
+
+        /// <summary>A real boss health bar (2013 had none: its "boss_life" art was the slow-motion meter).</summary>
+        private void BuildBossBar()
+        {
+            // Anchored to the top of the SCREEN (like the HUD hearts), not the 320x180 menu layout, and drawn
+            // under the menus.
+            var holder = UIFactory.Rect(root.parent, "BossBar", 0f, 0f, 0f, 0f, new Vector2(0f, 1f));
+            holder.anchorMin = holder.anchorMax = new Vector2(0.5f, 1f);
+            holder.anchoredPosition = new Vector2(-PixelCanvasScaler.Width / 2f, 0f);
+            holder.SetAsFirstSibling();
+            UIFactory.Frame(skin, holder, 110f, 7f, 210f, 12f, PaletteRole.Foreground, false);
+            bossFill = UIFactory.Image(holder, "Fill", skin.pixel, 112f, 9f, BossBarInner, 2f, PaletteRole.Accent);
+            bossFillTint = bossFill.GetComponent<PaletteGraphic>();
+            bossBar = holder.gameObject;
+            bossBar.SetActive(false);
+        }
+
+        private void UpdateBannerAndBossBar()
+        {
+            if (runner == null) return;
+            bool showBanner = runner.Current == CampaignLevelRunner.Phase.GetReady && !navigator.IsOpen;
+            if (banner.gameObject.activeSelf != showBanner)
+            {
+                banner.gameObject.SetActive(showBanner);
+                if (showBanner) banner.Refresh();
+            }
+
+            var boss = runner.Boss;
+            bool showBar = boss != null && !boss.IsDefeated && runner.Current == CampaignLevelRunner.Phase.Playing;
+            if (bossBar.activeSelf != showBar) bossBar.SetActive(showBar);
+            if (!showBar) return;
+            bossFill.rectTransform.sizeDelta = new Vector2(Mathf.Round(BossBarInner * boss.Health01), 2f);
+            // While the boss can't be hurt (BigRedNoise spawning) the bar turns white.
+            PaletteRole role = boss.Shielded ? PaletteRole.Foreground : PaletteRole.Accent;
+            if (bossFillTint.Role != role) bossFillTint.Role = role;
         }
 
         // ------------------------------------------------------------------ screens

@@ -42,12 +42,18 @@ namespace AntiBacteria.Gameplay.Player
             if (layer == GameLayers.Get(GameLayers.Enemy))
             {
                 Enemy enemy = other.GetComponentInParent<Enemy>();
-                if (enemy == null || !enemy.CanBeHit) return; // still fading in: pass through
-                enemy.TakeHit();
+                if (enemy == null || !enemy.BlocksShots) return; // fading in / broken Chorux core: pass through
+                enemy.TakeHit(); // does nothing to shields, chain bodies and Tentacles, but the shot is spent
                 Release();
             }
             else if (layer == GameLayers.Get(GameLayers.Wall))
             {
+                Release();
+            }
+            else if (layer == GameLayers.Get(GameLayers.EnemyShot))
+            {
+                // Shots cancel each other, as in 2013 (the player can shoot bullets down).
+                other.GetComponent<EnemyBullet>()?.Kill();
                 Release();
             }
         }

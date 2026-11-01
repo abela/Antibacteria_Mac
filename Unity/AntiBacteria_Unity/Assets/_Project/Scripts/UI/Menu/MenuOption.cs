@@ -66,6 +66,26 @@ namespace AntiBacteria.UI.Menu
             return o;
         }
 
+        /// <summary>
+        /// Small toggle for corners: box first, then the label ("[x] Unlock all levels"). x is the left edge
+        /// of the selection arrow; width is the clickable width.
+        /// </summary>
+        public static MenuOption CompactToggle(UISkin skin, Transform parent, string name, float x, float y, float width,
+            Func<string> label, Func<bool> get, Action<bool> set)
+        {
+            MenuOption o = CreateRow(skin, parent, name, y, label, Kind.Toggle, x, width);
+            o.getToggle = get;
+            o.setToggle = set;
+            const float bx = 9f;
+            var holder = UIFactory.Rect(o.transform, "Box", 0f, 0f, 0f, 0f, new Vector2(0f, 1f));
+            UIFactory.Frame(skin, holder, bx, 3f, bx + 8f, 11f, PaletteRole.Foreground, false);
+            o.boxFrame = holder.GetComponentsInChildren<Image>();
+            o.boxFill = UIFactory.Image(o.transform, "Fill", skin.pixel, bx + 2f, 5f, 5f, 5f, PaletteRole.Accent);
+            o.label.rectTransform.anchoredPosition = new Vector2(bx + 12f, o.label.rectTransform.anchoredPosition.y);
+            o.Refresh();
+            return o;
+        }
+
         public static MenuOption Bar(UISkin skin, Transform parent, string name, float y, Func<string> label,
             Func<int> get, Action<int> set)
         {
@@ -81,10 +101,13 @@ namespace AntiBacteria.UI.Menu
         }
 
         private static MenuOption CreateRow(UISkin skin, Transform parent, string name, float y, Func<string> label, Kind kind)
+            => CreateRow(skin, parent, name, y, label, kind, LabelX - 12f, RowRight - (LabelX - 12f));
+
+        private static MenuOption CreateRow(UISkin skin, Transform parent, string name, float y, Func<string> label, Kind kind,
+            float x, float width)
         {
             // Row starts 12 px left of the label so the selection arrow is inside the clickable area.
-            RectTransform row = UIFactory.Rect(parent, name, LabelX - 12f, y, RowRight - (LabelX - 12f),
-                skin.rowHeight, new Vector2(0f, 1f));
+            RectTransform row = UIFactory.Rect(parent, name, x, y, width, skin.rowHeight, new Vector2(0f, 1f));
             var o = row.gameObject.AddComponent<MenuOption>();
             o.Hit = row;
             o.skin = skin;

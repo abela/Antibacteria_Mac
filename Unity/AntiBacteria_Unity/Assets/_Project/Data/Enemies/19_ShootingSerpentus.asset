@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8140de47411154acc87d3a2b06d7f1ea, type: 3}
+  m_Name: 19_ShootingSerpentus
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyDefinition
+  legacyId: 19
+  displayName: ShootingSerpentus
+  prefab: {fileID: 4229980069143357216, guid: cc4483c51d9154a998464a68b307ac7a, type: 3}
+  movement: 7
+  speedPoints: 320
+  arriveDistancePoints: 10
+  spinDegreesPerSecond: 0
+  orbitSpeedPointsMin: 320
+  orbitSpeedPointsMax: 640
+  orbitDegreesPerSecondMin: 120
+  orbitDegreesPerSecondMax: 360
+  wobbleSpeedPoints: 640
+  wobbleDegreesPerSecond: 600
+  dashSpeedPointsMin: 576
+  dashSpeedPointsMax: 800
+  dashPlayerChance: 0.5
+  dodgeWhenAimedAt: 0
+  dodgeSpeedPoints: 512
+  dodgeConeDegrees: 30
+  eyeOffsetPixels: 0
+  hits: 4
+  fadeInSeconds: 0.1
+  invulnerable: 0
+  shotPattern: 2
+  bulletPrefab: {fileID: 536787989211215421, guid: 90451687233de47379e686057f591ad3, type: 3}
+  shotIntervalSeconds: 1.5
+  shotCount: 4
+  shotsFollowSpin: 1
+  shotOffsetPoints: 30
+  shotSpeedPoints: 960
+  spawnIntervalSeconds: 0
+  spawnIds: 
+  maxChildren: 8
+  chainSegments: 5
+  segmentDefinition: {fileID: 11400000, guid: 5933f14943d3249e9a3bc59885fe3407, type: 2}
+  headHits: 0
+  segmentSpacingPoints: 36
+  chainDeath: 0
+  bloomDefinition: {fileID: 0}
+  headSprite: {fileID: 21300000, guid: 9e9d0f1f37cc640639db179edbd31b0b, type: 3}
+  bodySprites:
+  - {fileID: 21300000, guid: f0260fab6d91c4bf7a79657e584460c2, type: 3}
+  - {fileID: 21300000, guid: 9ca55dc356b514698a4101127186b00d, type: 3}
+  - {fileID: 21300000, guid: ddfada93073254667a904cc688a1a9ac, type: 3}
+  headFacingDegrees: 180
+  speedPointsByDifficulty: []
+  shotIntervalByDifficulty: []
+  countByDifficulty: 
+  growIntervalByDifficulty: []
+  isBoss: 0
+  damageStages: []
+  killScore: 0
+  vitamins: 0

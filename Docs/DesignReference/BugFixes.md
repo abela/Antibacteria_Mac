@@ -64,12 +64,12 @@ Status: **Done** = fixed in the Unity code today. **By design** = the Unity arch
 
 | # | 2013 bug | Fix | Status |
 |---|---|---|---|
-| 39 | Final boss Frunctus has 1 HP (comment says 150). | 150 HP. | When porting bosses |
-| 40 | Anakonda and Frunctus fire every frame after bullet time on Normal (`prevShootRate` = 0). | Fire rate from data only. | When porting bosses |
-| 41 | BigRedNoise: big-explosion kill doesn't win the level (soft-lock); can become permanently invulnerable. | Boss death always ends the level; invulnerability tied to live children. | When porting bosses |
-| 42 | Level 20 spawns 1 or 2 Infernos depending on frame rate. | Explicit boss count in level data. | When porting bosses |
-| 43 | Boss win requires exactly 1 agent alive. | Win = boss defeated. | When porting bosses |
-| 44 | No boss HP bar (the asset is the ability meter). | Real boss HP bar. | When porting bosses |
+| 39 | Final boss Frunctus has 1 HP (comment says 150). | 150 HP. | Done |
+| 40 | Anakonda and Frunctus fire every frame after bullet time on Normal (`prevShootRate` = 0). | Fire rate from data only. | Done |
+| 41 | BigRedNoise: big-explosion kill doesn't win the level (soft-lock); can become permanently invulnerable. | Boss death always ends the level; invulnerability tied to live children. | Done |
+| 42 | Level 20 spawns 1 or 2 Infernos depending on frame rate. | Explicit boss count in level data. | Done |
+| 43 | Boss win requires exactly 1 agent alive. | Win = boss defeated. | Done |
+| 44 | No boss HP bar (the asset is the ability meter). | Real boss HP bar. | Done |
 | 45 | Level 49 has `number 48` (wrong "boss next" banner). | Fixed in the importer. | Done |
 | 46 | Grow-counter guard uses `||` instead of `&&`. | Runner stops when paused or won. | Done |
 
@@ -86,5 +86,5 @@ Status: **Done** = fixed in the Unity code today. **By design** = the Unity arch
 | 53 | "Music" setting does nothing; control labels wrong; About is blank; level-select icons have no numbers. | Options saved and applied (volumes wait for audio); Control Type removed; About shows credits; numbered level select still to do. | Partly done |
 | 54 | No Get Ready on Restart; two 5 s timers race at level change. | One level-flow state machine (`CampaignLevelRunner`). | Done for the slice |
 | 55 | Localised strings used as format strings. | Localised words are concatenated in code, never used as format strings. | Done |
-| 57 | Many 2013 translations were wrong or machine-made ("Compaign", "Bыход" with a Latin B, "Die Kerbe" for Score). | Menu strings corrected in all 5 languages; gameplay strings (weapons, bonuses) still to review. | Partly done |
 | 56 | StoreKit observer leak, missing `[super onExit]`, layers passed to `replaceScene`. | Not applicable in Unity. | By design |
+| 57 | Many 2013 translations were wrong or machine-made ("Compaign", "Bыход" with a Latin B, "Die Kerbe" for Score). | Menu strings corrected in all 5 languages; gameplay strings (weapons, bonuses) still to review. | Partly done |

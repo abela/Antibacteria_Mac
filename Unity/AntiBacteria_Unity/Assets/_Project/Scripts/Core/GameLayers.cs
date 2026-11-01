@@ -19,7 +19,7 @@ namespace AntiBacteria.Core
         public static readonly string[,] Pairs =
         {
             { Player, Enemy }, { Player, EnemyShot }, { Player, Pickup }, { Player, Wall },
-            { PlayerShot, Enemy }, { PlayerShot, Wall },
+            { PlayerShot, Enemy }, { PlayerShot, Wall }, { PlayerShot, EnemyShot },
             { EnemyShot, Wall },
         };
 

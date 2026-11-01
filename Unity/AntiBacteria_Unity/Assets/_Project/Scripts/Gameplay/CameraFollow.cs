@@ -22,10 +22,28 @@ namespace AntiBacteria.Gameplay
         private Vector2 smoothed;
         private bool initialised;
 
-        private void Awake() => cam = GetComponent<Camera>();
+        private UnityEngine.Rendering.Universal.PixelPerfectCamera ppc;
+        private int viewVersion = -1;
+
+        private void Awake()
+        {
+            cam = GetComponent<Camera>();
+            ppc = GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>();
+            SyncView();
+        }
+
+        /// <summary>How much of the arena you see comes from Project Settings > AntiBacteria > View (PixelScreen).</summary>
+        private void SyncView()
+        {
+            viewVersion = PixelScreen.Version;
+            if (ppc == null) return;
+            ppc.refResolutionX = PixelScreen.ViewWidth;
+            ppc.refResolutionY = PixelScreen.ViewHeight;
+        }
 
         private void LateUpdate()
         {
+            if (viewVersion != PixelScreen.Version) SyncView(); // the setting was changed while playing
             PlayerController player = PlayerController.Current;
             if (player == null) return;
 

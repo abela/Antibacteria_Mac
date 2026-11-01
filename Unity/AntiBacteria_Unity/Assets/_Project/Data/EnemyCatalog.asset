@@ -14,3 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyCatalog
   enemies:
   - {fileID: 11400000, guid: 2e304c5aff5334d49b5003284f3c6af5, type: 2}
+  - {fileID: 11400000, guid: 8f082f6a39b56473eafcf815e1da28c0, type: 2}
+  - {fileID: 11400000, guid: c1c7da77fff9241b492b3bb3a262cce0, type: 2}
+  - {fileID: 11400000, guid: a9c45892479e84590889531a6d0d0cd0, type: 2}
+  - {fileID: 11400000, guid: f4811d7a9de1a42d3af4e89d71ff3c51, type: 2}
+  - {fileID: 11400000, guid: f43e6ee88e18545148482ed30fde2704, type: 2}
+  - {fileID: 11400000, guid: de21bdeabbb3e497f9b760843db76d85, type: 2}
+  - {fileID: 11400000, guid: fd9e52f4cc767491d80ac0592abcd554, type: 2}
+  - {fileID: 11400000, guid: d81350bc3165341efa892471fd246dea, type: 2}
+  - {fileID: 11400000, guid: f1ce7135f757646ef8d1cdce57c0af52, type: 2}
+  - {fileID: 11400000, guid: 603cd6b82559a48c7a2e8edbe2f27d29, type: 2}
+  - {fileID: 11400000, guid: d692ba2fbe2fa4e028d69200f59dd2e6, type: 2}
+  - {fileID: 11400000, guid: dfb1eb53204b941be81e74a7669dd8ca, type: 2}
+  - {fileID: 11400000, guid: 7a46fac7f24fc41e190bc0501c652232, type: 2}
+  - {fileID: 11400000, guid: c31215a8c811c4eb1b10a0b010d01a0a, type: 2}
+  - {fileID: 11400000, guid: 3029121ae0ecf4ef0a21eb59f5c249dd, type: 2}
+  - {fileID: 11400000, guid: d1b3744329be64d81b7724a8d4b45c43, type: 2}
+  - {fileID: 11400000, guid: 7bb99390771034e85b3d0334ac616b95, type: 2}
+  - {fileID: 11400000, guid: 702f64a5cf012434a951de9be2460fa4, type: 2}
+  - {fileID: 11400000, guid: 366ce068914f943baa0a584d6ed85cea, type: 2}
+  - {fileID: 11400000, guid: b389f01d03bfa48248c4e6f54aabdafe, type: 2}
+  - {fileID: 11400000, guid: 4826e933634e34515b828ebca2619b02, type: 2}
+  - {fileID: 11400000, guid: 7c8e965624fa846eb81f28d08eb8a9eb, type: 2}
+  - {fileID: 11400000, guid: 2d57a2bcb68064bdf82009bdcb62562a, type: 2}
+  - {fileID: 11400000, guid: c03155d801a50445696dfec275b37749, type: 2}
+  - {fileID: 11400000, guid: f061d8f2176c94ca186e2e0f77ef9dd6, type: 2}

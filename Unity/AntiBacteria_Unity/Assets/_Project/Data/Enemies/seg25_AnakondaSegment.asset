@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8140de47411154acc87d3a2b06d7f1ea, type: 3}
+  m_Name: seg25_AnakondaSegment
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Enemies.EnemyDefinition
+  legacyId: -25
+  displayName: AnakondaSegment
+  prefab: {fileID: 8578808620335324764, guid: ab62aec07df5e49a48a80ea921414033, type: 3}
+  movement: 6
+  speedPoints: 256
+  arriveDistancePoints: 10
+  spinDegreesPerSecond: 0
+  orbitSpeedPointsMin: 320
+  orbitSpeedPointsMax: 640
+  orbitDegreesPerSecondMin: 120
+  orbitDegreesPerSecondMax: 360
+  wobbleSpeedPoints: 640
+  wobbleDegreesPerSecond: 600
+  dashSpeedPointsMin: 576
+  dashSpeedPointsMax: 800
+  dashPlayerChance: 0.5
+  dodgeWhenAimedAt: 0
+  dodgeSpeedPoints: 512
+  dodgeConeDegrees: 30
+  eyeOffsetPixels: 0
+  hits: 14
+  fadeInSeconds: 0.1
+  invulnerable: 0
+  shotPattern: 0
+  bulletPrefab: {fileID: 0}
+  shotIntervalSeconds: 2
+  shotCount: 4
+  shotsFollowSpin: 1
+  shotOffsetPoints: 80
+  shotSpeedPoints: 960
+  spawnIntervalSeconds: 0
+  spawnIds: 
+  maxChildren: 8
+  chainSegments: 6
+  segmentDefinition: {fileID: 0}
+  headHits: 0
+  segmentSpacingPoints: 36
+  chainDeath: 0
+  bloomDefinition: {fileID: 0}
+  headSprite: {fileID: 0}
+  bodySprites: []
+  headFacingDegrees: 180
+  speedPointsByDifficulty: []
+  shotIntervalByDifficulty: []
+  countByDifficulty: 
+  growIntervalByDifficulty: []
+  isBoss: 0
+  damageStages: []
+  killScore: 80
+  vitamins: 3

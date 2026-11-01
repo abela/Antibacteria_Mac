@@ -1,6 +1,7 @@
 using System;
 using AntiBacteria.Core;
 using AntiBacteria.Gameplay.Enemies;
+using AntiBacteria.Gameplay.Enemies.Bosses;
 using AntiBacteria.Gameplay.Player;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace AntiBacteria.Gameplay.Level
     /// Campaign rules for a normal level: survive the clock while waves spawn on the arena border.
     /// Waves every spawnInterval; enemies per wave start at 1 and grow every growInterval up to the cap.
     /// Ported from CompaignGameMode + LevelManager (Docs/DesignReference/04, sections 3 and 9).
-    /// Boss levels come later.
+    /// Boss levels: one boss, no clock, won by killing it (see IsBossLevel).
     /// </summary>
     public class CampaignLevelRunner : MonoBehaviour
     {
@@ -34,10 +35,19 @@ namespace AntiBacteria.Gameplay.Level
 
         public event Action<Phase> PhaseChanged;
 
+        /// <summary>Levels 10, 20 ... 50: one boss, no clock, won by killing it (Docs/DesignReference/03 section 5.2).</summary>
+        public bool IsBossLevel => level != null && level.IsBoss;
+
+        /// <summary>The boss of this level once it has appeared (null before, and on normal levels).</summary>
+        public IBoss Boss { get; private set; }
+
+        private bool bossSpawned;
+
         private float phaseTimer, spawnTimer, growTimer;
 
         private void Awake()
         {
+            EnemyCatalog.Active = catalog;
             if (database != null)
             {
                 LevelData fromDb = database.Get(GameSession.CurrentLevel);
@@ -53,6 +63,7 @@ namespace AntiBacteria.Gameplay.Level
             spawnTimer = level != null ? level.SpawnInterval(GameSession.Difficulty) : 1f;
             SetPhase(Phase.GetReady, getReadySeconds);
             if (PlayerController.Current != null) PlayerController.Current.Died += OnPlayerDied;
+            if (IsBossLevel && GetComponent<SlowMotionAbility>() is SlowMotionAbility slow) slow.Enabled = false; // as in 2013
         }
 
         private void OnDestroy()
@@ -73,6 +84,12 @@ namespace AntiBacteria.Gameplay.Level
 
                 case Phase.Playing:
                     ElapsedSeconds += dt;
+                    if (IsBossLevel)
+                    {
+                        // One spawn after the usual delay; fix: exactly one boss (level 20 could get two Infernos).
+                        if (!bossSpawned) { spawnTimer -= dt; if (spawnTimer <= 0f) SpawnBoss(); }
+                        break;
+                    }
                     TimeLeft = Mathf.Max(0f, TimeLeft - dt);
                     if (level.growIntervalSeconds > 0f)
                     {
@@ -101,22 +118,36 @@ namespace AntiBacteria.Gameplay.Level
             for (int i = 0; i < EnemiesPerWave; i++)
             {
                 int id = level.enemyPool[UnityEngine.Random.Range(0, level.enemyPool.Length)];
-                EnemyDefinition def = catalog.Get(id);
-                if (def == null || def.prefab == null) continue;
                 Vector2 pos = Arena.Current.RandomPointOnBorder(Legacy.Units(spawnInsetPoints) + 0.5f);
-                Enemy e = Instantiate(def.prefab, pos, Quaternion.identity);
-                e.Init(def);
+                EnemyCatalog.Spawn(catalog.Get(id), pos);
             }
+        }
+
+        private void SpawnBoss()
+        {
+            bossSpawned = true;
+            if (catalog == null || Arena.Current == null || level.enemyPool == null || level.enemyPool.Length == 0) return;
+            Vector2 pos = Arena.Current.RandomPointOnBorder(Legacy.Units(spawnInsetPoints) + 0.5f);
+            GameObject go = EnemyCatalog.Spawn(catalog.Get(level.enemyPool[0]), pos);
+            Boss = go != null ? go.GetComponent<IBoss>() : null;
+            if (Boss != null) Boss.Defeated += Win;
+            else Debug.LogWarning("CampaignLevelRunner: boss level without a boss - win by surviving instead.");
         }
 
         private void Win()
         {
+            if (Current != Phase.Playing) return;
             Progress.RecordWin(GameSession.CurrentLevel, GameSession.Difficulty, GameSession.Score); // unlocks the next level
             foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None)) e.Despawn();
+            EnemyBullet.ClearAll();
             SetPhase(Phase.Won, 0f); // GameplayMenuController shows Level Clear
         }
 
-        private void OnPlayerDied() => SetPhase(Phase.Lost, 0f); // GameplayMenuController shows Game Over
+        private void OnPlayerDied()
+        {
+            EnemyBullet.ClearAll();
+            SetPhase(Phase.Lost, 0f); // GameplayMenuController shows Game Over
+        }
 
         private void SetPhase(Phase p, float duration)
         {
