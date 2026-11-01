@@ -118,6 +118,7 @@ namespace AntiBacteria.UI.Menu
             MenuItem item = top.ItemAt(mouse);
             if (item == null || !item.Interactable) return;
             top.Select(item);
+            item.Hover(mouse);
             if (click) item.Click(mouse);
         }
 

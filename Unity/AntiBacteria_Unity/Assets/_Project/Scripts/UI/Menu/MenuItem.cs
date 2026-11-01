@@ -39,6 +39,15 @@ namespace AntiBacteria.UI.Menu
         /// <summary>Mouse click at a screen position inside Hit.</summary>
         public virtual void Click(Vector2 screenPosition) => Submit();
 
+        /// <summary>Mouse moved over this item (grids move their cursor here).</summary>
+        public virtual void Hover(Vector2 screenPosition) { }
+
+        /// <summary>
+        /// Up (-1) / down (+1) inside the item, for items with several rows (the level grid).
+        /// Return false at the edge so the selection moves on to the next item.
+        /// </summary>
+        public virtual bool MoveWithin(int direction) => false;
+
         public abstract void Refresh();
     }
 }

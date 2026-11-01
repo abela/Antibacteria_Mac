@@ -18,10 +18,11 @@ namespace AntiBacteria.UI.Menus
         [Tooltip("The 320x180 area everything is laid out in.")]
         [SerializeField] private RectTransform root;
 
-        private MenuScreen main, modes, options, about;
+        private MenuScreen main, modes, levelSelect, options, about;
 
         public MenuScreen Main => main;
         public MenuScreen Modes => modes;
+        public MenuScreen LevelSelect => levelSelect;
         public MenuScreen Options => options;
         public MenuScreen About => about;
 
@@ -30,10 +31,13 @@ namespace AntiBacteria.UI.Menus
             MenuBackdrop backdrop = MenuBackdrop.Create(skin, root);
             main = BuildMain();
             modes = BuildModes();
+            levelSelect = LevelSelectMenu.Build(skin, root, navigator);
             options = OptionsMenu.Build(skin, root, navigator, false);
             about = BuildAbout();
             main.OnShown = modes.OnShown = about.OnShown = () => backdrop.ShowBacteria(true);
             options.OnShown = () => backdrop.ShowBacteria(false);
+            System.Action levelShown = levelSelect.OnShown;
+            levelSelect.OnShown = () => { backdrop.ShowBacteria(false); levelShown?.Invoke(); };
             navigator.Show(main);
         }
 
@@ -87,7 +91,7 @@ namespace AntiBacteria.UI.Menus
             UIFactory.Image(t, "Rule", skin.pixel, 110f, 40f, 101f, 1f, PaletteRole.Foreground, true);
 
             float y = 56f;
-            s.Add(MenuButton.Create(skin, t, "Campaign", 160f, y, () => Loc.Get(WordIDs.Campaign), () => SceneFlow.LoadLevel(1)));
+            s.Add(MenuButton.Create(skin, t, "Campaign", 160f, y, () => Loc.Get(WordIDs.Campaign), () => navigator.Push(levelSelect)));
             WordIDs[] notYet = { WordIDs.CaptureFlag, WordIDs.Rush, WordIDs.PeaceWalker };
             foreach (WordIDs w in notYet)
             {

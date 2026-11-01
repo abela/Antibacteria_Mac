@@ -77,6 +77,7 @@ namespace AntiBacteria.UI.Menu
         public void Move(int direction)
         {
             if (Items.Count == 0) return;
+            if (SelectedItem != null && SelectedItem.MoveWithin(direction)) return;
             int i = selected;
             for (int k = 0; k < Items.Count; k++)
             {

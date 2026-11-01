@@ -111,6 +111,7 @@ namespace AntiBacteria.Gameplay.Level
 
         private void Win()
         {
+            Progress.RecordWin(GameSession.CurrentLevel, GameSession.Difficulty, GameSession.Score); // unlocks the next level
             foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None)) e.Despawn();
             SetPhase(Phase.Won, 0f); // GameplayMenuController shows Level Clear
         }

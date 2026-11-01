@@ -24,10 +24,7 @@ namespace AntiBacteria.UI.Menus
             s.Add(MenuOption.Choice(skin, t, "Language", y, () => Loc.Get(WordIDs.Language),
                 () => Loc.Get(WordIDs.LanguageValue), Loc.Step));
             y += 16f;
-            s.Add(MenuOption.Choice(skin, t, "Difficulty", y, () => Loc.Get(WordIDs.Difficulty),
-                () => Loc.Get(DifficultyWord(GameSettings.Difficulty)),
-                d => GameSettings.SetDifficulty((Difficulty)(((int)GameSettings.Difficulty + d + 3) % 3))));
-            y += 16f;
+            // Difficulty is chosen per play on the level select screen.
             s.Add(MenuOption.Toggle(skin, t, "AutoShoot", y, () => Loc.Get(WordIDs.AutoShoot),
                 () => GameSettings.AutoShoot, GameSettings.SetAutoShoot));
             y += 16f;
