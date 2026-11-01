@@ -1,0 +1,65 @@
+﻿// Copyright (c) 2014 Augie R. Maddox, Guavaman Enterprises. All rights reserved.
+
+#if UNITY_6000 || UNITY_6000_0_OR_NEWER || UNITY_7000 || UNITY_7000_0_OR_NEWER || UNITY_8000 || UNITY_8000_0_OR_NEWER || UNITY_9000 || UNITY_9000_0_OR_NEWER
+#define UNITY_6000_PLUS
+#endif
+
+namespace Rewired.Demos {
+
+    using UnityEngine;
+    using Rewired;
+
+    [AddComponentMenu("")]
+    [RequireComponent(typeof(CharacterController))]
+    public class CustomControllerDemo_Player : MonoBehaviour {
+
+        public int playerId;
+        public float speed = 1;
+        public float bulletSpeed = 20;
+        public GameObject bulletPrefab;
+
+        private Player _player; // the Rewired player
+        private CharacterController cc;
+
+        private Player player {
+            get {
+                // Get the Rewired Player object for this player. Refresh it as needed so it will get the new reference after a script recompile in the editor.
+                if(_player == null) _player = ReInput.players.GetPlayer(playerId);
+                return _player;
+            }
+        }
+
+        void Awake() {
+            cc = GetComponent<CharacterController>();
+        }
+
+        void Update() {
+            if(!ReInput.isReady) return; // Exit if Rewired isn't ready. This would only happen during a script recompile in the editor.
+
+            Vector2 moveVector = new Vector2(
+                player.GetAxis("Move Horizontal"),
+                player.GetAxis("Move Vertical")
+            );
+
+            cc.Move(moveVector * speed * Time.deltaTime);
+
+            if(player.GetButtonDown("Fire")) {
+                Vector3 offset = Vector3.Scale(new Vector3(1, 0, 0), transform.right);
+                GameObject bullet = (GameObject)Instantiate(bulletPrefab, transform.position + offset, Quaternion.identity);
+                Vector3 velocity = new Vector3(bulletSpeed * transform.right.x, 0, 0);
+#if UNITY_6000_PLUS
+                bullet.GetComponent<Rigidbody>().linearVelocity = velocity;
+#else
+                bullet.GetComponent<Rigidbody>().velocity = velocity;
+#endif
+            }
+
+            if(player.GetButtonDown("Change Color")) {
+                Renderer renderer = GetComponent<Renderer>();
+                Material mat = renderer.material;
+                mat.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+                renderer.material = mat;
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 0e9735219bcda214ebf6db57b98e6355
+timeCreated: 1579801495
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Scripts/SupportedLanguages.cs
+  uploadId: 549431

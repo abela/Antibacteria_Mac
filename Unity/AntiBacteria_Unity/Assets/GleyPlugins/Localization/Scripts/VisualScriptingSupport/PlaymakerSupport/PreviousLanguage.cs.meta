@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5b3df142b04557248a7969f687a2950c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Scripts/VisualScriptingSupport/PlaymakerSupport/PreviousLanguage.cs
+  uploadId: 549431

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: a62fc8ffc6f08c54ea58dfe25f3f85f5
+timeCreated: 1580459218
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Scripts/SimpleJSON.cs
+  uploadId: 549431

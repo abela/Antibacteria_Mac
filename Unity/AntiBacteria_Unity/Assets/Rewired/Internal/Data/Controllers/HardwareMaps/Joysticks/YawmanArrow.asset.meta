@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: ebd805d8d820986439aecf22bd2e94bf
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 21676
+  packageName: Rewired
+  packageVersion: 1.1.65.5
+  assetPath: Assets/Rewired/Internal/Data/Controllers/HardwareMaps/Joysticks/YawmanArrow.asset
+  uploadId: 1023140

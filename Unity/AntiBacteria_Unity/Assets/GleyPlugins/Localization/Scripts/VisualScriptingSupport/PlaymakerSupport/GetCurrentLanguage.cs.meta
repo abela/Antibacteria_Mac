@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8de999ccbd9c1144f9189027a619d1d0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Scripts/VisualScriptingSupport/PlaymakerSupport/GetCurrentLanguage.cs
+  uploadId: 549431

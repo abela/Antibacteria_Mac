@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 4f20cfaac157d144680c39e3252b7919
+timeCreated: 1580461130
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Scripts/Editor/LanguageCode.cs
+  uploadId: 549431

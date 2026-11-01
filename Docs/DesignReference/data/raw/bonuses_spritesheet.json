@@ -1,0 +1,18 @@
+{
+  "frames": {
+    "WX_circle_white.png": {
+      "frame": "{{2,2},{100,100}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{0,0},{100,100}}",
+      "sourceSize": "{100,100}"
+    }
+  },
+  "metadata": {
+    "format": 2,
+    "realTextureFileName": "bonuses_spritesheet.png",
+    "size": "{128,128}",
+    "smartupdate": "$TexturePacker:SmartUpdate:08f27f6d1ebeb63676d1dd393e77465d$",
+    "textureFileName": "bonuses_spritesheet.png"
+  }
+}

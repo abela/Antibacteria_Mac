@@ -1,0 +1,759 @@
+[
+  {
+    "boss": 1,
+    "level": 1,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_1.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 1,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      0
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 2,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_2.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 2,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      0,
+      1,
+      1
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 3,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_3.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 3,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      0,
+      1,
+      1
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 4,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_4.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 4,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 5,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_5.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 5,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 6,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_6.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 6,
+    "time": 80,
+    "enemiescreatetime": 2.2,
+    "enemies": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 7,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_7.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 7,
+    "time": 80,
+    "enemiescreatetime": 2.2,
+    "enemies": [
+      0,
+      1,
+      2,
+      2
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 8,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_8.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 8,
+    "time": 80,
+    "enemiescreatetime": 2.1,
+    "enemies": [
+      0,
+      1,
+      2,
+      2
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 9,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_9.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 9,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  {
+    "boss": 1,
+    "level": 10,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_1/level_10.plist",
+    "enemiesgrowinterval": 1,
+    "maximumenemies": 1,
+    "number": 10,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      22
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 11,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_11.plist",
+    "enemiesgrowinterval": 8,
+    "maximumenemies": 4,
+    "number": 11,
+    "time": 80,
+    "enemiescreatetime": 1.9,
+    "enemies": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 12,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_12.plist",
+    "enemiesgrowinterval": 8,
+    "maximumenemies": 4,
+    "number": 12,
+    "time": 80,
+    "enemiescreatetime": 1.9,
+    "enemies": [
+      0,
+      1,
+      2,
+      5
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 13,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_13.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 13,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      6,
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 14,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_14.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 14,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      6,
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 15,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_15.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 15,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      6,
+      6,
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 16,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_16.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 16,
+    "time": 80,
+    "enemiescreatetime": 1.8,
+    "enemies": [
+      6,
+      6,
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 17,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_17.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 4,
+    "number": 17,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      5,
+      0,
+      1,
+      3
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 18,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_18.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 4,
+    "number": 18,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      5,
+      0,
+      1,
+      3
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 19,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_19.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 4,
+    "number": 19,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      5,
+      0,
+      1,
+      3
+    ]
+  },
+  {
+    "boss": 2,
+    "level": 20,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_2/level_20.plist",
+    "enemiesgrowinterval": 1,
+    "maximumenemies": 2,
+    "number": 20,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      23
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 21,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_21.plist",
+    "enemiesgrowinterval": 30,
+    "maximumenemies": 2,
+    "number": 21,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      11
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 22,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_22.plist",
+    "enemiesgrowinterval": 30,
+    "maximumenemies": 2,
+    "number": 22,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      11
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 23,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_23.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 23,
+    "time": 80,
+    "enemiescreatetime": 2.0,
+    "enemies": [
+      11,
+      11,
+      11,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 24,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_24.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 24,
+    "time": 80,
+    "enemiescreatetime": 2.0,
+    "enemies": [
+      11,
+      11,
+      11,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 25,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_25.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 25,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      9,
+      2,
+      7
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 26,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_26.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 3,
+    "number": 26,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      9,
+      2,
+      7
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 27,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_27.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 8,
+    "number": 27,
+    "time": 80,
+    "enemiescreatetime": 1.4,
+    "enemies": [
+      2
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 28,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_28.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 8,
+    "number": 28,
+    "time": 80,
+    "enemiescreatetime": 1.4,
+    "enemies": [
+      2
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 29,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_29.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 8,
+    "number": 29,
+    "time": 80,
+    "enemiescreatetime": 1.4,
+    "enemies": [
+      2,
+      0
+    ]
+  },
+  {
+    "boss": 3,
+    "level": 30,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_3/level_30.plist",
+    "enemiesgrowinterval": 0,
+    "maximumenemies": 1,
+    "number": 30,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      24
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 31,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_31.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 31,
+    "time": 80,
+    "enemiescreatetime": 5,
+    "enemies": [
+      14
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 32,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_32.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 32,
+    "time": 80,
+    "enemiescreatetime": 5,
+    "enemies": [
+      14
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 33,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_33.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 33,
+    "time": 80,
+    "enemiescreatetime": 4,
+    "enemies": [
+      15
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 34,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_34.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 34,
+    "time": 80,
+    "enemiescreatetime": 4,
+    "enemies": [
+      15
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 35,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_35.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 5,
+    "number": 35,
+    "time": 80,
+    "enemiescreatetime": 3,
+    "enemies": [
+      18,
+      18,
+      15,
+      15
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 36,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_36.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 5,
+    "number": 36,
+    "time": 80,
+    "enemiescreatetime": 3,
+    "enemies": [
+      18,
+      18,
+      15,
+      15
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 37,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_37.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 37,
+    "time": 80,
+    "enemiescreatetime": 4,
+    "enemies": [
+      19
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 38,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_38.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 38,
+    "time": 80,
+    "enemiescreatetime": 4,
+    "enemies": [
+      19
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 39,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_39.plist",
+    "enemiesgrowinterval": 12,
+    "maximumenemies": 2,
+    "number": 39,
+    "time": 80,
+    "enemiescreatetime": 3.9,
+    "enemies": [
+      19
+    ]
+  },
+  {
+    "boss": 4,
+    "level": 40,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_4/level_40.plist",
+    "enemiesgrowinterval": 0,
+    "maximumenemies": 1,
+    "number": 40,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      25
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 41,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_41.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 41,
+    "time": 80,
+    "enemiescreatetime": 1.3,
+    "enemies": [
+      20,
+      3,
+      5
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 42,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_42.plist",
+    "enemiesgrowinterval": 10,
+    "maximumenemies": 4,
+    "number": 42,
+    "time": 80,
+    "enemiescreatetime": 1.3,
+    "enemies": [
+      20,
+      3,
+      5
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 43,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_43.plist",
+    "enemiesgrowinterval": 8,
+    "maximumenemies": 3,
+    "number": 43,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      20,
+      9,
+      15
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 44,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_44.plist",
+    "enemiesgrowinterval": 8,
+    "maximumenemies": 3,
+    "number": 44,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      20,
+      9,
+      15
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 45,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_45.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 4,
+    "number": 45,
+    "time": 80,
+    "enemiescreatetime": 1.5,
+    "enemies": [
+      20,
+      21
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 46,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_46.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 4,
+    "number": 46,
+    "time": 80,
+    "enemiescreatetime": 1.5,
+    "enemies": [
+      20,
+      21
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 47,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_47.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 4,
+    "number": 47,
+    "time": 80,
+    "enemiescreatetime": 1.5,
+    "enemies": [
+      20,
+      20,
+      21,
+      21,
+      6,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 48,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_48.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 4,
+    "number": 48,
+    "time": 80,
+    "enemiescreatetime": 1.5,
+    "enemies": [
+      20,
+      20,
+      21,
+      21,
+      6,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 49,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_49.plist",
+    "enemiesgrowinterval": 5,
+    "maximumenemies": 4,
+    "number": 48,
+    "time": 80,
+    "enemiescreatetime": 1.4,
+    "enemies": [
+      20,
+      20,
+      21,
+      21,
+      6,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "boss": 5,
+    "level": 50,
+    "source": "Mac/Bacteria/Resources/Levels/Boss_5/level_50.plist",
+    "enemiesgrowinterval": 0,
+    "maximumenemies": 1,
+    "number": 50,
+    "time": 80,
+    "enemiescreatetime": 2,
+    "enemies": [
+      26
+    ]
+  }
+]

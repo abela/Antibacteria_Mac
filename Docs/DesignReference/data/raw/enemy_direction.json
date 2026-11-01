@@ -1,0 +1,18 @@
+{
+  "frames": {
+    "enemydirection.png": {
+      "frame": "{{2,2},{128,96}}",
+      "offset": "{0,7}",
+      "rotated": true,
+      "sourceColorRect": "{{0,9},{128,96}}",
+      "sourceSize": "{128,128}"
+    }
+  },
+  "metadata": {
+    "format": 2,
+    "realTextureFileName": "enemy_direction.png",
+    "size": "{128,256}",
+    "smartupdate": "$TexturePacker:SmartUpdate:1345746ddfff03e24d617a420d81db39$",
+    "textureFileName": "enemy_direction.png"
+  }
+}

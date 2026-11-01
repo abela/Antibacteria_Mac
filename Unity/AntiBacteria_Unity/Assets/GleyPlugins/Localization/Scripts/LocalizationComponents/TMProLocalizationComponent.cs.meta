@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 9c6bcf41ef916f54f853db669903abfa
+timeCreated: 1580897181
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Scripts/LocalizationComponents/TMProLocalizationComponent.cs
+  uploadId: 549431

@@ -1,0 +1,58 @@
+{
+  "frames": {
+    "Enemy1.png": {
+      "frame": "{{118,182},{56,64}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{4,0},{56,64}}",
+      "sourceSize": "{64,64}"
+    },
+    "Enemy3.png": {
+      "frame": "{{174,182},{48,48}}",
+      "offset": "{-1,0}",
+      "rotated": false,
+      "sourceColorRect": "{{7,8},{48,48}}",
+      "sourceSize": "{64,64}"
+    },
+    "Shine1.png": {
+      "frame": "{{118,0},{118,118}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{5,5},{118,118}}",
+      "sourceSize": "{128,128}"
+    },
+    "Shine2.png": {
+      "frame": "{{0,118},{118,118}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{5,5},{118,118}}",
+      "sourceSize": "{128,128}"
+    },
+    "Shine3.png": {
+      "frame": "{{0,0},{118,118}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{5,5},{118,118}}",
+      "sourceSize": "{128,128}"
+    },
+    "bullet.png": {
+      "frame": "{{174,230},{28,22}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{0,0},{28,22}}",
+      "sourceSize": "{28,22}"
+    },
+    "character.png": {
+      "frame": "{{118,118},{58,64}}",
+      "offset": "{1,0}",
+      "rotated": false,
+      "sourceColorRect": "{{4,0},{58,64}}",
+      "sourceSize": "{64,64}"
+    }
+  },
+  "metadata": {
+    "format": 2,
+    "size": "{256,256}",
+    "textureFileName": "characters_resources.png"
+  }
+}

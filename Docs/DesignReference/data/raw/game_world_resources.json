@@ -1,0 +1,37 @@
+{
+  "frames": {
+    "bullet.png": {
+      "frame": "{{450,0},{28,22}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{0,0},{28,22}}",
+      "sourceSize": "{28,22}"
+    },
+    "laqa1.png": {
+      "frame": "{{0,566},{292,282}}",
+      "offset": "{0,0}",
+      "rotated": true,
+      "sourceColorRect": "{{0,0},{292,282}}",
+      "sourceSize": "{292,282}"
+    },
+    "laqa2.png": {
+      "frame": "{{0,0},{450,306}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{0,0},{450,306}}",
+      "sourceSize": "{450,306}"
+    },
+    "laqa3.png": {
+      "frame": "{{0,306},{378,260}}",
+      "offset": "{0,0}",
+      "rotated": false,
+      "sourceColorRect": "{{0,0},{378,260}}",
+      "sourceSize": "{378,260}"
+    }
+  },
+  "metadata": {
+    "format": 2,
+    "size": "{512,1024}",
+    "textureFileName": "game_world_resources.png"
+  }
+}

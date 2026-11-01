@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 9d6b4facd3d13e540bb1185e13dd4963
+timeCreated: 1580902334
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 161885
+  packageName: Localization (Multi-Language)
+  packageVersion: 1.2.9
+  assetPath: Assets/GleyPlugins/Localization/Example/SetLanguageExample.cs
+  uploadId: 549431

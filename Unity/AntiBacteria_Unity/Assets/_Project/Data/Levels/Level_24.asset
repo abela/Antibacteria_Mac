@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa7d80b9ce1542668be8f512682901b, type: 3}
+  m_Name: Level_24
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Level.LevelData
+  world: 3
+  levelInWorld: 4
+  number: 24
+  timeSeconds: 80
+  spawnIntervalSeconds: 2
+  maxEnemiesPerWave: 4
+  growIntervalSeconds: 16.666666
+  enemyPool: 0b0000000b0000000b000000000000000000000000000000010000000100000001000000
