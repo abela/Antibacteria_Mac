@@ -59,18 +59,8 @@
 @implementation CCDirector (MacExtension)
 -(CGPoint) convertEventToGL:(NSEvent*)event
 {
-	__block NSPoint point;
-	__block CGPoint p;
-	
-	if ([NSThread isMainThread]) {
-		point = [[self view] convertPoint:[event locationInWindow] fromView:nil];
-		p = NSPointToCGPoint(point);
-	} else {
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			point = [[self view] convertPoint:[event locationInWindow] fromView:nil];
-			p = NSPointToCGPoint(point);
-		});
-	}
+	NSPoint point = [[self view] convertPoint:[event locationInWindow] fromView:nil];
+	CGPoint p = NSPointToCGPoint(point);
 
 	return  [(CCDirectorMac*)self convertToLogicalCoordinates:p];
 }
@@ -249,8 +239,19 @@
 	}
 }
 
+CGFloat CCMacBackingScaleFactor(void)
+{
+	NSView *view = (NSView*) [[CCDirector sharedDirector] view];
+	if( ! view )
+		return 1;
+	NSSize px = [view convertSizeToBacking:NSMakeSize(1, 1)];
+	return ( px.width > 0 ) ? px.width : 1;
+}
+
 -(void) setProjection:(ccDirectorProjection)projection
 {
+	CGFloat backingScale = CCMacBackingScaleFactor();	// Retina: viewport is in pixels, not points
+
 	CGSize size = winSizeInPixels_;
 
 	CGPoint offset = CGPointZero;
@@ -281,7 +282,7 @@
 	switch (projection) {
 		case kCCDirectorProjection2D:
 
-			glViewport(offset.x, offset.y, widthAspect, heightAspect);
+			glViewport(offset.x * backingScale, offset.y * backingScale, widthAspect * backingScale, heightAspect * backingScale);
 			kmGLMatrixMode(KM_GL_PROJECTION);
 			kmGLLoadIdentity();
 
@@ -299,7 +300,7 @@
             //
 			float zeye = [self getZEye];
 
-			glViewport(offset.x, offset.y, widthAspect, heightAspect);
+			glViewport(offset.x * backingScale, offset.y * backingScale, widthAspect * backingScale, heightAspect * backingScale);
 			kmGLMatrixMode(KM_GL_PROJECTION);
 			kmGLLoadIdentity();
             
@@ -418,7 +419,10 @@
 	[pool release];
 		
 #else
-	[self performSelector:@selector(drawScene) onThread:runningThread_ withObject:nil waitUntilDone:YES];
+	CCGLView *glView = (CCGLView*) self.view;
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[glView setNeedsDisplay:YES];
+	});
 #endif
 
     return kCVReturnSuccess;
@@ -567,6 +571,16 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
 // set the event dispatcher
 -(void) setView:(CCGLView *)view
 {
+	// Modern macOS no longer leaves the view's GL context current, and [super setView:]
+	// creates GL objects (stats label texture, GL defaults). Make it current first.
+	if( view ) {
+		NSOpenGLContext *glContext = [view openGLContext];
+		if( glContext )
+			[glContext makeCurrentContext];
+		else
+			CCLOG(@"cocos2d: ERROR: CCGLView has no OpenGL context");
+	}
+
 	[super setView:view];
 
 	[view setEventDelegate:eventDispatcher_];

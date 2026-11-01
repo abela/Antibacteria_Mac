@@ -41,6 +41,9 @@
 
 #import "kazmath/kazmath.h"
 #import "kazmath/GL/matrix.h"
+#ifdef __CC_PLATFORM_MAC
+#import "Platforms/Mac/CCDirectorMac.h"
+#endif
 
 #ifdef __CC_PLATFORM_IOS
 #import "Platforms/iOS/CCDirectorIOS.h"
@@ -186,7 +189,12 @@
 
 	CGSize	size = [director winSizeInPixels];
 	
+#ifdef __CC_PLATFORM_MAC
+	CGFloat backingScale = CCMacBackingScaleFactor();
+	glViewport(0, 0, size.width * backingScale, size.height * backingScale );
+#else
 	glViewport(0, 0, size.width * CC_CONTENT_SCALE_FACTOR(), size.height * CC_CONTENT_SCALE_FACTOR() );
+#endif
 	kmGLMatrixMode(KM_GL_PROJECTION);
 	kmGLLoadIdentity();
 	

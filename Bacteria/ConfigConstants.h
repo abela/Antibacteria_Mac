@@ -92,7 +92,7 @@ typedef enum
     kVitamin,
     //
 }
-ObjectType;
+GameObjectType;
 //
 typedef enum
 {

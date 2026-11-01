@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@protocol GKGameCenterControllerDelegate;
+#import <GameKit/GameKit.h>
 
 @interface GameCenterManager : NSObject <GKGameCenterControllerDelegate>
 

@@ -39,7 +39,7 @@
 	//direction
 	ObjectMovingFlag currentDirection;
 	//object flag
-	ObjectType type;
+	GameObjectType type;
 	//objec event
 	ObjectEvent flag;
 	//animation frame counter
@@ -58,7 +58,7 @@
 
 @property (nonatomic, assign) ObjectEvent flag;
 
-@property (nonatomic, assign) ObjectType type;
+@property (nonatomic, assign) GameObjectType type;
 
 @property (nonatomic, assign) ObjectMovingFlag objectMovingFlag;
 @property (nonatomic, assign) ObjectMovingFlag currentDirection;

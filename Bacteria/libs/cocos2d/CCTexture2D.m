@@ -72,6 +72,7 @@
 #import "Platforms/CCGL.h"
 #import "Platforms/CCNS.h"
 
+#import <OpenGL/OpenGL.h>
 #import "CCTexture2D.h"
 #import "ccConfig.h"
 #import "ccMacros.h"
@@ -137,6 +138,35 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 
 		// Specify OpenGL texture image
 
+		// Modern macOS (OpenGL running on Metal, Apple Silicon) can't sample the legacy
+		// GL_LUMINANCE / GL_ALPHA / GL_LUMINANCE_ALPHA formats: the texture is "unloadable"
+		// and draws as nothing (e.g. all text labels). Store them as RGBA8888 instead;
+		// the sampled values are identical, so shaders and blending are unaffected.
+		if( pixelFormat == kCCTexture2DPixelFormat_AI88 || pixelFormat == kCCTexture2DPixelFormat_A8 || pixelFormat == kCCTexture2DPixelFormat_I8 )
+		{
+			NSUInteger count = width * height;
+			unsigned char *rgba = data ? (unsigned char*) malloc(count * 4) : NULL;
+			if( rgba ) {
+				const unsigned char *src = (const unsigned char*) data;
+				for( NSUInteger i = 0; i < count; i++ ) {
+					unsigned char *d = rgba + i*4;
+					if( pixelFormat == kCCTexture2DPixelFormat_AI88 ) {			// (L,L,L,A)
+						d[0] = d[1] = d[2] = src[i*2];
+						d[3] = src[i*2+1];
+					} else if( pixelFormat == kCCTexture2DPixelFormat_A8 ) {	// (0,0,0,A)
+						d[0] = d[1] = d[2] = 0;
+						d[3] = src[i];
+					} else {													// I8: (L,L,L,1)
+						d[0] = d[1] = d[2] = src[i];
+						d[3] = 255;
+					}
+				}
+			}
+			glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) width, (GLsizei) height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+			free(rgba);
+		}
+		else
 		switch(pixelFormat)
 		{
 			case kCCTexture2DPixelFormat_RGBA8888:
@@ -581,16 +611,31 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
         
         CGRect drawArea = CGRectMake(offset.width, offset.height, boundingRect.size.width, boundingRect.size.height);
 		
-		//Disable antialias
-		[[NSGraphicsContext currentContext] setShouldAntialias:NO];	
-		
-		NSImage *image = [[NSImage alloc] initWithSize:POTSize];
-		[image lockFocus];	
-		
+		// Modern macOS: NSImage lockFocus + initWithFocusedViewRect returns a Retina (2x) bitmap
+		// with a different size/row layout than this code expects, so every label came out empty.
+		// Render into a bitmap whose size and layout are fixed: POTSize pixels, 4 bytes per pixel.
+		NSImage *image = nil;	// kept so the release below stays valid
+		NSInteger pxW = (NSInteger) POTSize.width, pxH = (NSInteger) POTSize.height;
+		NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+																		  pixelsWide:pxW
+																		  pixelsHigh:pxH
+																	   bitsPerSample:8
+																	 samplesPerPixel:4
+																			hasAlpha:YES
+																			isPlanar:NO
+																	  colorSpaceName:NSDeviceRGBColorSpace
+																		 bytesPerRow:pxW * 4
+																		bitsPerPixel:32];
+		memset([bitmap bitmapData], 0, (size_t)(pxW * pxH * 4));
+
+		[NSGraphicsContext saveGraphicsState];
+		NSGraphicsContext *bitmapContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap];
+		[NSGraphicsContext setCurrentContext:bitmapContext];
+
         [stringWithAttributes drawWithRect:NSRectFromCGRect(drawArea) options:NSStringDrawingUsesLineFragmentOrigin];
-		
-		NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect (0.0f, 0.0f, POTSize.width, POTSize.height)];
-		[image unlockFocus];
+
+		[bitmapContext flushGraphics];
+		[NSGraphicsContext restoreGraphicsState];
 
 		unsigned char *data = (unsigned char*) [bitmap bitmapData];  //Use the same buffer to improve the performance.
 

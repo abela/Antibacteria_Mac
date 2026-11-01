@@ -59,23 +59,23 @@
 	[CCMenuItemFont setFontSize:20];
 	[CCMenuItemFont setFontName:@"Helvetica"];
 	//
-	CCMenuItem *start = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+	CCMenuItem *start = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                         getValueWithKey:_START_GAME] target:self selector:@selector(startGame:)];
-    CCMenuItem *settings = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+    CCMenuItem *settings = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                            getValueWithKey:_GAME_OPTIONS] target:self selector:@selector(settings:)];
-    CCMenuItem *leaderBoards = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+    CCMenuItem *leaderBoards = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                                getValueWithKey:_LEADERBOARDS]
                                                        target:self selector:@selector(leaderBoards:)];
-    CCMenuItem *store = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+    CCMenuItem *store = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                         getValueWithKey:_VITAMIN_STORE]
                                                 target:self selector:@selector(store:)];
-    CCMenuItem *characterUpgrade = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+    CCMenuItem *characterUpgrade = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                                    getValueWithKey:_UPGRADE_CHARACTER]
                                                            target:self selector:@selector(characterUpgrade:)];
-    CCMenuItem *about  = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+    CCMenuItem *about  = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                          getValueWithKey:_ABOUT]
                                                  target:self selector:@selector(about:)];
-    CCMenuItem *quit = [CCMenuItemFont itemWithString:[[LocalizationManager sharedLocalizationManager]
+    CCMenuItem *quit = [CCMenuItemFont itemFromString:[[LocalizationManager sharedLocalizationManager]
                                                        getValueWithKey:_QUIT] target:self selector:@selector(quit:)];
 	//
 	menu = [CCMenu menuWithItems:start,characterUpgrade,store,settings,leaderBoards,about,quit,nil];

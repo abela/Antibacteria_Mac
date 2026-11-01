@@ -52,6 +52,10 @@ enum  {
 /** Base class of Mac directors
  @since v0.99.5
  */
+/** Pixels per point of the GL view's drawing surface (2 on Retina displays, 1 otherwise).
+ Game coordinates stay in points; only glViewport needs pixels. */
+CGFloat CCMacBackingScaleFactor(void);
+
 @interface CCDirectorMac : CCDirector
 {
 	BOOL			isFullScreen_;

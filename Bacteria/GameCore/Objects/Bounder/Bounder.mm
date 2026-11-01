@@ -10,7 +10,7 @@
 
 @implementation Bounder
 //
--(id)initAtPosition:(CGPoint)position andWithDimension:(CGPoint)dimension withBounderType:(ObjectType)objectType
+-(id)initAtPosition:(CGPoint)position andWithDimension:(CGPoint)dimension withBounderType:(GameObjectType)objectType
 {
 	type = objectType;
 	//

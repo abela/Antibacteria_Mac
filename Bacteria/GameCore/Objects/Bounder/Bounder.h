@@ -13,6 +13,6 @@
     
 }
 
--(id)initAtPosition:(CGPoint)position andWithDimension:(CGPoint)dimension withBounderType:(ObjectType)objectType;
+-(id)initAtPosition:(CGPoint)position andWithDimension:(CGPoint)dimension withBounderType:(GameObjectType)objectType;
 -(void) resetBounder;
 @end

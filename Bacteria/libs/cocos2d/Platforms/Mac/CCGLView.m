@@ -119,6 +119,41 @@
 	return 24;
 }
 
+// Modern macOS: the GL context must be (re)attached to the view's drawable once the view
+// is in a window, otherwise every draw fails with GL_INVALID_FRAMEBUFFER_OPERATION (0x0506)
+- (void) viewDidMoveToWindow
+{
+	[super viewDidMoveToWindow];
+
+	if( [self window] ) {
+		[self setWantsBestResolutionOpenGLSurface:YES];	// sharp on Retina; viewport is scaled to match
+		NSOpenGLContext *glContext = [self openGLContext];
+		if( ! [self layer] )		// layer-backed views get their drawable from NSOpenGLLayer
+			[glContext setView:self];
+		[glContext makeCurrentContext];
+		[glContext update];
+	}
+}
+
+// Modern macOS windows are layer-backed: NSOpenGLView content is only shown when it is
+// drawn inside drawRect:. The director's display link now just requests a redraw.
+- (void) drawRect:(NSRect)dirtyRect
+{
+	CCDirector *director = [CCDirector sharedDirector];
+	if( [director view] != self )
+		return;
+
+
+	[director drawScene];
+}
+
+// Window moved between a Retina and a non-Retina display: recompute the viewport
+- (void) viewDidChangeBackingProperties
+{
+	[super viewDidChangeBackingProperties];
+	[self reshape];
+}
+
 - (void) reshape
 {
 	// We draw on a secondary thread through the display link
@@ -129,12 +164,13 @@
 
 	NSRect rect = [self bounds];
 
+	[[self openGLContext] update];
+
 	CCDirector *director = [CCDirector sharedDirector];
 	[director reshapeProjection: NSSizeToCGSize(rect.size) ];
 
-	// avoid flicker
-	[director drawScene];
-//	[self setNeedsDisplay:YES];
+	// avoid flicker (draw happens in drawRect: on modern macOS)
+	[self setNeedsDisplay:YES];
 	
 	[self unlockOpenGLContext];
 }
