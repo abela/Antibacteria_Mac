@@ -43,6 +43,8 @@ namespace AntiBacteria.Gameplay.Level
         public bool LostByTimeOut { get; private set; }
         /// <summary>An endless run ended with a new best score for its mode and difficulty.</summary>
         public bool NewModeBest { get; private set; }
+        /// <summary>A roguelike run ended further than ever on this difficulty.</summary>
+        public bool NewRoomBest { get; private set; }
         /// <summary>Seconds of play so far (shown on the result screens).</summary>
         public float ElapsedSeconds { get; private set; }
         public int EnemiesPerWave { get; private set; } = 1;
@@ -50,7 +52,7 @@ namespace AntiBacteria.Gameplay.Level
         public event Action<Phase> PhaseChanged;
 
         /// <summary>Levels 10, 20 ... 50: one boss, no clock, won by killing it (Docs/DesignReference/03 section 5.2).</summary>
-        public bool IsBossLevel => !IsEndless && level != null && level.IsBoss;
+        public bool IsBossLevel => (Mode == null || Mode.UsesLevelData) && level != null && level.IsBoss;
 
         /// <summary>The boss of this level once it has appeared (null before, and on normal levels).</summary>
         public IBoss Boss { get; private set; }
@@ -63,7 +65,7 @@ namespace AntiBacteria.Gameplay.Level
         {
             EnemyCatalog.Active = catalog;
             Mode = EndlessMode.For(GameSession.Mode);
-            if (IsEndless) return; // no level data: the mode spawns everything
+            if (IsEndless && !Mode.UsesLevelData) return; // no level data: the mode spawns everything
             if (database != null)
             {
                 LevelData fromDb = database.Get(GameSession.CurrentLevel);
@@ -74,8 +76,14 @@ namespace AntiBacteria.Gameplay.Level
 
         private void Start()
         {
-            GameSession.ResetRun();
-            Progress.CountPlay(); // first-time hints fade out after a few plays
+            // Roguelike rooms after the first keep the run's score, kills and vitamins.
+            bool nextRoom = RoguelikeRun.Active && RoguelikeRun.ContinuingRoom;
+            RoguelikeRun.ContinuingRoom = false;
+            if (!nextRoom)
+            {
+                GameSession.ResetRun();
+                Progress.CountPlay(); // first-time hints fade out after a few plays
+            }
             TimeLeft = IsEndless ? (Mode.ShowsTimer ? ModeSettings.Current.secondsPerFlag : 0f) : level != null ? level.timeSeconds : 0f;
             spawnTimer = level != null ? level.SpawnInterval(GameSession.Difficulty) : 1f;
             SetPhase(Phase.GetReady, getReadySeconds);
@@ -86,11 +94,13 @@ namespace AntiBacteria.Gameplay.Level
                 PlayerController.Current.Died += OnPlayerDied;
                 // 2013: more bullets per volley as the campaign goes on (1 / 2 / 3 / 4 from levels 1 / 11 / 21 / 31).
                 // Endless modes start at 1 and gain one every few objectives (EndlessMode).
-                PlayerController.Current.VolleySize = IsEndless ? 1 : WeaponSettings.Current.VolleyForLevel(GameSession.CurrentLevel);
+                PlayerController.Current.VolleySize = IsEndless && !Mode.UsesLevelData ? 1
+                    : WeaponSettings.Current.VolleyForLevel(GameSession.CurrentLevel); // Extra Bullet adds parallel lines, not volley
+                if (RoguelikeRun.Active && RoguelikeRun.CarriedLives > 0) PlayerController.Current.SetLives(RoguelikeRun.CarriedLives);
                 PlayerController.Current.CanShoot = !IsEndless || Mode.PlayerCanShoot;
             }
             if (IsBossLevel && GetComponent<SlowMotionAbility>() is SlowMotionAbility slow) slow.Enabled = false; // as in 2013
-            if (!IsBossLevel && !IsEndless && GetComponent<BonusSpawner>() == null) gameObject.AddComponent<BonusSpawner>(); // none on boss levels
+            if (!IsBossLevel && (!IsEndless || Mode.UsesLevelData) && GetComponent<BonusSpawner>() == null) gameObject.AddComponent<BonusSpawner>(); // none on boss levels
         }
 
         private void OnDestroy()
@@ -170,6 +180,28 @@ namespace AntiBacteria.Gameplay.Level
             SetPhase(Phase.Lost, 0f);
         }
 
+        /// <summary>Roguelike boss rooms: the room decides when.</summary>
+        public void SpawnBossNow() { if (!bossSpawned) SpawnBoss(); }
+
+        /// <summary>Roguelike: through the gate to the next room (the scene reloads, the run carries on).</summary>
+        public void NextRoom()
+        {
+            if (Current != Phase.Playing) return;
+            PlayerController p = PlayerController.Current;
+            RoguelikeRun.NextRoom(p != null ? p.Lives : -1, ElapsedSeconds);
+            Progress.SaveIfDirty();
+            SceneFlow.ContinueRun();
+        }
+
+        /// <summary>Roguelike: the last room's boss is down. The run is won (no campaign progress is touched).</summary>
+        public void CompleteRun()
+        {
+            if (Current != Phase.Playing) return;
+            foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None)) e.Despawn();
+            EnemyBullet.ClearAll();
+            SetPhase(Phase.Won, 0f);
+        }
+
         private void SpawnBoss()
         {
             bossSpawned = true;
@@ -178,7 +210,7 @@ namespace AntiBacteria.Gameplay.Level
             Vector2 pos = Arena.Current.RandomPointOnBorder(Legacy.Units(spawnInsetPoints) + 0.5f);
             GameObject go = EnemyCatalog.Spawn(catalog.Get(level.enemyPool[0]), pos);
             Boss = go != null ? go.GetComponent<IBoss>() : null;
-            if (Boss != null) Boss.Defeated += Win;
+            if (Boss != null && !IsEndless) Boss.Defeated += Win; // roguelike rooms watch their boss themselves
             else Debug.LogWarning("CampaignLevelRunner: boss level without a boss - win by surviving instead.");
         }
 
@@ -211,6 +243,7 @@ namespace AntiBacteria.Gameplay.Level
                     Mode.End();
                     NewModeBest = Progress.RecordModeScore(GameSession.Mode, GameSession.Difficulty, GameSession.Score);
                     AchievementTracker.RunEnded(GameSession.Mode, GameSession.Score, Mode.Completed);
+                    if (RoguelikeRun.Active) NewRoomBest = Progress.RecordRoguelikeRoom(GameSession.Difficulty, RoguelikeRun.Room);
                 }
                 BonusPickup.ClearAll();
                 PlayerController.Current?.Buffs?.ClearAll();

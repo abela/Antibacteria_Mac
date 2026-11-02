@@ -114,7 +114,7 @@ namespace AntiBacteria.UI.Menus
 
             float y = 56f;
             s.Add(MenuButton.Create(skin, t, "Campaign", 160f, y, () => Loc.Get(WordIDs.Campaign), () => navigator.Push(levelSelect)));
-            GameMode[] endless = { GameMode.CaptureFlag, GameMode.Rush, GameMode.PeaceWalker };
+            GameMode[] endless = { GameMode.Roguelike, GameMode.CaptureFlag, GameMode.Rush, GameMode.PeaceWalker };
             foreach (GameMode m in endless)
             {
                 y += 16f;
@@ -127,7 +127,7 @@ namespace AntiBacteria.UI.Menus
                     navigator.Push(difficulty);
                 }));
             }
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 132f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 140f, () => Loc.Get(WordIDs.Back), navigator.Back));
             return s;
         }
 

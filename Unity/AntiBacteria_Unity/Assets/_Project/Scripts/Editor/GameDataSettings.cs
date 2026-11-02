@@ -46,6 +46,19 @@ namespace AntiBacteria.EditorTools
         }
 
         /// <summary>Palette material, the pickup frame and each type's icon (Art/Sprites/Bonus).</summary>
+        public static RoguelikeSettings RoguelikeCfg() =>
+            GetOrCreate<RoguelikeSettings>(Resources + "/RoguelikeSettings.asset", RoguelikeSettings.Use, null);
+
+        [SettingsProvider]
+        public static SettingsProvider RoguelikePage() => Page(
+            "Project/AntiBacteria/Roguelike", "Roguelike",
+            "The 50-room run: enemies per room, XP needed per level, XP orbs, perk strengths and the exit gate. " +
+            "Rooms reuse the campaign levels (enemies, pace, bosses). Changes apply at once.",
+            RoguelikeCfg, new HashSet<string> { "roguelike", "room", "perk", "xp", "orb", "level up", "gate", "run" });
+
+        [MenuItem("AntiBacteria/Settings/Roguelike...")]
+        private static void OpenRoguelike() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Roguelike");
+
         public static DifficultySettings DifficultyCfg() =>
             GetOrCreate<DifficultySettings>(Resources + "/DifficultySettings.asset", DifficultySettings.Use, null);
 

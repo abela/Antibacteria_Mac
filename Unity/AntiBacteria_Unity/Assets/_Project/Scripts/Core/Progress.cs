@@ -30,13 +30,14 @@ namespace AntiBacteria.Core
             public int plays; // levels / runs started, ever (first-time hints)
         }
 
-        private const int EndlessModeCount = 3;
+        private const int EndlessModeCount = 4; // Capture the Flag, Rush, Peace Walker, Roguelike
 
         [Serializable]
         private class ModesData
         {
             // index = ((int)GameMode - 1) * 3 + difficulty
             public int[] best = new int[EndlessModeCount * DifficultyCount];
+            public int[] roguelikeRoom = new int[DifficultyCount]; // furthest room reached per difficulty
         }
 
         [Serializable]
@@ -235,6 +236,17 @@ namespace AntiBacteria.Core
             return (int)Math.Min(total, int.MaxValue);
         }
 
+        public static int RoguelikeBestRoom(Difficulty d) => Data.modes.roguelikeRoom[(int)d];
+
+        /// <summary>A roguelike run ended in this room. True (and saved) when it is the furthest yet.</summary>
+        public static bool RecordRoguelikeRoom(Difficulty d, int room)
+        {
+            if (room <= Data.modes.roguelikeRoom[(int)d]) return false;
+            Data.modes.roguelikeRoom[(int)d] = room;
+            Save();
+            return true;
+        }
+
         private static int ModeIndex(GameMode mode, Difficulty d) => ((int)mode - 1) * DifficultyCount + (int)d;
 
         public static void Load()
@@ -264,6 +276,8 @@ namespace AntiBacteria.Core
             if (data.modes == null) data.modes = new ModesData(); // version 2 saves had no mode scores
             if (data.modes.best == null) data.modes.best = new int[EndlessModeCount * DifficultyCount];
             Array.Resize(ref data.modes.best, EndlessModeCount * DifficultyCount);
+            if (data.modes.roguelikeRoom == null) data.modes.roguelikeRoom = new int[DifficultyCount];
+            Array.Resize(ref data.modes.roguelikeRoom, DifficultyCount);
             data.version = Version;
         }
 

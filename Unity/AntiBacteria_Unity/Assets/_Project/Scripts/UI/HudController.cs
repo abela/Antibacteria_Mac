@@ -35,7 +35,8 @@ namespace AntiBacteria.UI
         {
             BuildBuffSlots();
             RefreshSession();
-            if (levelText != null && runner != null && runner.IsEndless) levelText.SetText(Loc.Get((WordIDs)System.Enum.Parse(typeof(WordIDs), GameSession.Mode.ToString())));
+            if (levelText != null && RoguelikeRun.Active) levelText.SetText(Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room);
+            else if (levelText != null && runner != null && runner.IsEndless) levelText.SetText(Loc.Get((WordIDs)System.Enum.Parse(typeof(WordIDs), GameSession.Mode.ToString())));
             else if (levelText != null && runner != null && runner.Level != null) levelText.SetText(runner.Level.Label);
             if (runner != null && !runner.IsBossLevel && !runner.ShowsTimer && transform.Find("Timer") is Transform clock)
                 clock.gameObject.SetActive(false); // Capture the Flag and Rush: no clock
@@ -62,6 +63,22 @@ namespace AntiBacteria.UI
             }
             if (timerText != null && runner != null) timerText.SetText(Mathf.CeilToInt(runner.TimeLeft).ToString());
             UpdateBuffSlots();
+        }
+
+        /// <summary>More hearts when the maximum grows (roguelike Vitality perk), same spacing as the scene's.</summary>
+        private void GrowHearts(int count)
+        {
+            if (hearts.Length >= count || hearts.Length < 2 || hearts[0] == null || hearts[1] == null) return;
+            float step = hearts[1].rectTransform.anchoredPosition.x - hearts[0].rectTransform.anchoredPosition.x;
+            var list = new System.Collections.Generic.List<Image>(hearts);
+            while (list.Count < count)
+            {
+                Image last = list[list.Count - 1];
+                Image h = Instantiate(last, last.transform.parent);
+                h.rectTransform.anchoredPosition = last.rectTransform.anchoredPosition + new Vector2(step, 0f);
+                list.Add(h);
+            }
+            hearts = list.ToArray();
         }
 
         private void BuildBuffSlots()
@@ -113,7 +130,7 @@ namespace AntiBacteria.UI
                     bool warn = left < s.warnSeconds;
                     buffIcons[n].enabled = !warn || Mathf.FloorToInt(left / BuffBlinkPeriod) % 2 == 0;
                     buffBars[n].enabled = true;
-                    float w = Mathf.Max(1f, Mathf.Ceil(BuffIconPixels * left / s.durationSeconds));
+                    float w = Mathf.Max(1f, Mathf.Ceil(BuffIconPixels * Mathf.Clamp01(left / (s.durationSeconds * RunModifiers.BonusDurationMultiplier))));
                     buffBars[n].rectTransform.sizeDelta = new Vector2(w, 1f);
                     n++;
                 }
@@ -124,6 +141,7 @@ namespace AntiBacteria.UI
         private void RefreshLives()
         {
             if (player == null) return;
+            GrowHearts(player.MaxLives);
             for (int i = 0; i < hearts.Length; i++)
             {
                 if (hearts[i] == null) continue;

@@ -1,0 +1,302 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c956aacc28c65423691a339f77011dfa, type: 3}
+  m_Name: RoguelikeSettings
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Core.RoguelikeSettings
+  enemiesBase: 10
+  enemiesPerRoom: 0.8
+  bossRoomHeal: 1
+  bossDelaySeconds: 1.5
+  xpBase: 8
+  xpStep: 4
+  orbsPerKill: 1
+  orbsPerBoss: 15
+  orbMagnetPixels: 48
+  orbSpeedPixels: 260
+  perkChoices: 3
+  orbRadius: 3
+  bossOrbRadius: 4
+  orbPulseSeconds: 0.8
+  orbBurstSparks: 6
+  orbTrail: 1
+  commonWeight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 1
+      value: 75
+      inSlope: -1.1111112
+      outSlope: -1.1111112
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 10
+      value: 65
+      inSlope: -1.1111112
+      outSlope: -1.3
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 20
+      value: 52
+      inSlope: -1.3
+      outSlope: -1.2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 40
+      inSlope: -1.2
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 40
+      value: 30
+      inSlope: -1
+      outSlope: -0.8
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 50
+      value: 22
+      inSlope: -0.8
+      outSlope: -0.8
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  rareWeight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 1
+      value: 22
+      inSlope: 0.5555556
+      outSlope: 0.5555556
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 10
+      value: 27
+      inSlope: 0.5555556
+      outSlope: 0.5
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 20
+      value: 32
+      inSlope: 0.5
+      outSlope: 0.3
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 35
+      inSlope: 0.3
+      outSlope: 0.1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 40
+      value: 36
+      inSlope: 0.1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 50
+      value: 36
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  epicWeight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 1
+      value: 3
+      inSlope: 0.44444445
+      outSlope: 0.44444445
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 10
+      value: 7
+      inSlope: 0.44444445
+      outSlope: 0.5
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 20
+      value: 12
+      inSlope: 0.5
+      outSlope: 0.6
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 18
+      inSlope: 0.6
+      outSlope: 0.5
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 40
+      value: 23
+      inSlope: 0.5
+      outSlope: 0.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 50
+      value: 27
+      inSlope: 0.4
+      outSlope: 0.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  legendaryWeight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.11111111
+      outSlope: 0.11111111
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 10
+      value: 1
+      inSlope: 0.11111111
+      outSlope: 0.3
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 20
+      value: 4
+      inSlope: 0.3
+      outSlope: 0.3
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 7
+      inSlope: 0.3
+      outSlope: 0.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 40
+      value: 11
+      inSlope: 0.4
+      outSlope: 0.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 50
+      value: 15
+      inSlope: 0.4
+      outSlope: 0.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  difficultyLuckRooms: 00000000050000000a000000
+  luckyRooms: 5
+  rapidFirePercent: 15
+  quickFeetPercent: 12
+  magnetPercent: 50
+  wisdomPercent: 25
+  goldenTouchPercent: 50
+  bonusLoverPercent: 40
+  timeBenderPercent: 50
+  lineSpacingPixels: 4
+  criticalChancePercent: 10
+  bigShotScale: 2
+  frostChancePercent: 15
+  frostSlow: 0.5
+  frostSeconds: 1.5
+  chainZapPixels: 48
+  orbiterRadiusPixels: 18
+  orbiterDegreesPerSecond: 240
+  orbiterHitCooldown: 0.4
+  vampireKills: 40
+  lastStandFireMultiplier: 2
+  overdriveEvery: 10
+  overdriveDamage: 3
+  overdriveScale: 3
+  buddyFireInterval: 0.6
+  buddyRangePixels: 120
+  buddyDistancePixels: 14
+  buddyFollow: 6
+  buddyTriggerPercent: 20
+  buddyPunchPercent: 25
+  fetchPixels: 64
+  gateWidthPixels: 32

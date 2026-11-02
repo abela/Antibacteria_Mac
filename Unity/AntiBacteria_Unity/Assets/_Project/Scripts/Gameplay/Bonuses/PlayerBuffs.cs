@@ -62,7 +62,7 @@ namespace AntiBacteria.Gameplay.Bonuses
             {
                 weapon = shot.Value;
                 weaponBonus = type;
-                left[(int)Slot.Weapon] = s.durationSeconds; // a new weapon replaces the old one, full time
+                left[(int)Slot.Weapon] = s.durationSeconds * RunModifiers.BonusDurationMultiplier; // a new weapon replaces the old one, full time
             }
             else
             {
@@ -70,8 +70,8 @@ namespace AntiBacteria.Gameplay.Bonuses
                 {
                     case BonusType.Life: GetComponent<PlayerController>()?.Heal(1); break;
                     case BonusType.Boom: Boom(s); break;
-                    case BonusType.Immortality: left[(int)Slot.Immortality] = s.durationSeconds; break;
-                    case BonusType.DoubleSpeed: left[(int)Slot.Speed] = s.durationSeconds; break;
+                    case BonusType.Immortality: left[(int)Slot.Immortality] = s.durationSeconds * RunModifiers.BonusDurationMultiplier; break;
+                    case BonusType.DoubleSpeed: left[(int)Slot.Speed] = s.durationSeconds * RunModifiers.BonusDurationMultiplier; break;
                 }
             }
             Picked?.Invoke(type);

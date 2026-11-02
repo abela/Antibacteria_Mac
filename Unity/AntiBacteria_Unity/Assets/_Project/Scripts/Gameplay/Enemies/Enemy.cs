@@ -190,7 +190,8 @@ namespace AntiBacteria.Gameplay.Enemies
         {
             if (Definition == null || Definition.movement == EnemyMovement.Controlled) return;
             if (Current != State.Alive) { rb.linearVelocity = Vector2.zero; return; }
-            rb.linearVelocity = DesiredVelocity(Time.fixedDeltaTime) + knockback;
+            float slow = Time.time < slowUntil ? slowFactor : 1f; // Frost Shots perk
+            rb.linearVelocity = DesiredVelocity(Time.fixedDeltaTime) * slow + knockback;
             knockback *= Mathf.Exp(-Effects.ShotFeel.Current.knockbackDecay * Time.fixedDeltaTime);
         }
 
@@ -203,6 +204,17 @@ namespace AntiBacteria.Gameplay.Enemies
         public void Stop() => rb.linearVelocity = Vector2.zero;
 
         private Vector2 knockback;
+        private float slowUntil, slowFactor = 1f;
+
+        /// <summary>Move at 'factor' speed for a while (roguelike Frost Shots). Bosses ignore it.</summary>
+        public void Slow(float factor, float seconds)
+        {
+            if (Definition == null || Current == State.Dead || Definition.isBoss) return;
+            slowFactor = Mathf.Clamp(factor, 0.05f, 1f);
+            slowUntil = Mathf.Max(slowUntil, Time.time + seconds);
+        }
+
+        public bool IsSlowed => Time.time < slowUntil;
 
         /// <summary>
         /// Shot feedback: a push (units/s) that fades out (Effects.ShotFeel). Bosses, stationary enemies and

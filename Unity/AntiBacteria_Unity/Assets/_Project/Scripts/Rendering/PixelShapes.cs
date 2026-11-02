@@ -147,6 +147,39 @@ namespace AntiBacteria.Rendering
                 return Draw(px);
             });
 
+        /// <summary>A sprite from text rows, top row first: '#' foreground, 'R' accent, anything else clear.</summary>
+        public static Sprite FromRows(string key, string[] rows) =>
+            Get("rows_" + key, () =>
+            {
+                int h = rows.Length, w = 0;
+                foreach (string r in rows) w = Mathf.Max(w, r.Length);
+                var px = new Color32[w, h];
+                for (int y = 0; y < h; y++)
+                    for (int x = 0; x < rows[y].Length; x++)
+                    {
+                        char c = rows[y][x];
+                        if (c == '#') px[x, h - 1 - y] = White;
+                        else if (c == 'R') px[x, h - 1 - y] = Red;
+                    }
+                return Draw(px);
+            });
+
+        /// <summary>A diamond outline (2r+1 wide), with an accent centre if asked (roguelike XP orbs).</summary>
+        public static Sprite Diamond(int r, bool accentCore) =>
+            Get($"diamond{r}_{accentCore}", () =>
+            {
+                int n = 2 * r + 1;
+                var px = new Color32[n, n];
+                for (int x = 0; x < n; x++)
+                    for (int y = 0; y < n; y++)
+                    {
+                        int d = Mathf.Abs(x - r) + Mathf.Abs(y - r);
+                        if (d == r) px[x, y] = White;
+                        else if (d < r && accentCore) px[x, y] = Red;
+                    }
+                return Draw(px);
+            });
+
         // ------------------------------------------------------------------ helpers
 
         private static Sprite Get(string key, Func<Sprite> make)

@@ -64,6 +64,9 @@ namespace AntiBacteria.Gameplay.Pickups
             if (GetComponent<CircleCollider2D>() is CircleCollider2D c) c.radius = pickupRadiusPixels / Legacy.PixelsPerUnit;
         }
 
+        /// <summary>Fly to the player from anywhere (roguelike room cleared).</summary>
+        public void Attract() => homing = true;
+
         /// <summary>Fly out from where the enemy died to this vitamin's spot (RewardSpawner).</summary>
         public void SpillFrom(Vector2 from)
         {
@@ -106,7 +109,7 @@ namespace AntiBacteria.Gameplay.Pickups
             PlayerController p = PlayerController.Current;
             if (p == null || !p.IsAlive) { rb.linearVelocity = Vector2.zero; return; }
             Vector2 d = (Vector2)p.transform.position - rb.position;
-            if (!homing && d.magnitude <= Legacy.Units(magnetDistancePoints)) homing = true;
+            if (!homing && d.magnitude <= Legacy.Units(magnetDistancePoints) * RunModifiers.MagnetMultiplier) homing = true;
             rb.linearVelocity = homing ? d.normalized * Legacy.Units(homingSpeedPoints) : Vector2.zero;
         }
 

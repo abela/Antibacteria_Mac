@@ -4,6 +4,7 @@ using AntiBacteria.Core;
 using System.Collections.Generic;
 using AntiBacteria.Gameplay.Bonuses;
 using AntiBacteria.Gameplay.Effects;
+using AntiBacteria.Gameplay.Roguelike;
 using AntiBacteria.Gameplay.Weapons;
 using AntiBacteria.Input;
 using AntiBacteria.Rendering;
@@ -49,7 +50,7 @@ namespace AntiBacteria.Gameplay.Player
         public static PlayerController Current { get; private set; }
 
         public int Lives { get; private set; }
-        public int MaxLives => maxLives;
+        public int MaxLives => maxLives + RunModifiers.ExtraMaxLives; // roguelike Vitality perk
         public bool IsAlive => Lives > 0;
         public bool IsShooting { get; private set; }
 
@@ -86,13 +87,17 @@ namespace AntiBacteria.Gameplay.Player
         private float recoilLeft;
         private float spinAngle; // Tornado: keeps turning across activations, as in 2013
         private readonly List<float> volleyAngles = new List<float>(40);
+        private int volleysFired; // Overdrive perk counts volleys
+
+        /// <summary>The bullet prefab (the Germ Buddy fires the same bullets through FireShot).</summary>
+        public PlayerShot ShotPrefab => shotPrefab;
 
         private void Awake()
         {
             Current = this;
             rb = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
-            Lives = maxLives;
+            Lives = MaxLives;
             Buffs = GetComponent<PlayerBuffs>();
             if (Buffs == null) Buffs = gameObject.AddComponent<PlayerBuffs>();
             shots = new ObjectPool<PlayerShot>(
@@ -129,7 +134,7 @@ namespace AntiBacteria.Gameplay.Player
             if (!IsAlive) return;
             // The bought Double Speed and the bonus don't stack (2013: the bonus did nothing with the upgrade on).
             float upgrade = Progress.DoubleSpeedOn ? ShopSettings.Current.doubleSpeedMultiplier : 1f;
-            float speed = Legacy.Units(maxSpeedPoints) * Mathf.Max(upgrade, Buffs != null ? Buffs.SpeedMultiplier : 1f);
+            float speed = Legacy.Units(maxSpeedPoints) * Mathf.Max(upgrade, Buffs != null ? Buffs.SpeedMultiplier : 1f) * RunModifiers.SpeedMultiplier;
             Vector2 target = ControlsEnabled ? GameInput.Move * speed : Vector2.zero;
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, target, 1f - Mathf.Exp(-responsiveness * Time.fixedDeltaTime));
         }
@@ -183,7 +188,7 @@ namespace AntiBacteria.Gameplay.Player
             while (fireCooldown <= 0f)
             {
                 Fire(pattern);
-                fireCooldown += pattern.intervalSeconds;
+                fireCooldown += pattern.intervalSeconds * RunModifiers.FireIntervalMultiplier; // Rapid Fire perk
             }
         }
 
@@ -200,14 +205,36 @@ namespace AntiBacteria.Gameplay.Player
             Vector2 side = pattern.feelSpread
                 ? new Vector2(-AimDirection.y, AimDirection.x) * (leftBarrel ? 1f : -1f) * f.barrelOffsetPixels / Legacy.PixelsPerUnit
                 : Vector2.zero;
+            ShotMods mods = ShotMods.Player();
             foreach (float angle in volleyAngles)
             {
                 float a = (angle + (pattern.feelSpread ? UnityEngine.Random.Range(-f.spreadDegrees, f.spreadDegrees) : 0f)) * Mathf.Deg2Rad;
                 var dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
                 Vector2 origin = pos + dir * Legacy.Units(shotSpawnOffsetPoints) + side;
                 float jitter = pattern.feelSpread ? UnityEngine.Random.Range(-f.speedJitter, f.speedJitter) : 0f;
-                PlayerShot shot = shots.Get();
-                shot.Launch(origin, dir, Legacy.Units(shotSpeedPoints) * (1f + jitter), shotLifetime, s => shots.Release(s));
+                // Extra Bullet perk: parallel lines side by side (aimed patterns only).
+                int lines = pattern.feelSpread ? 1 + RunModifiers.ExtraLines : 1;
+                Vector2 across = new Vector2(-dir.y, dir.x) * RoguelikeSettings.Current.lineSpacingPixels / Legacy.PixelsPerUnit;
+                for (int k = 0; k < lines; k++)
+                {
+                    Vector2 o = origin + across * (k - (lines - 1) / 2f);
+                    PlayerShot shot = shots.Get();
+                    shot.Launch(o, dir, Legacy.Units(shotSpeedPoints) * (1f + jitter), shotLifetime, s => shots.Release(s), mods);
+                }
+            }
+            volleysFired++;
+            RoguelikeSettings rs = RoguelikeSettings.Current;
+            if (RunModifiers.Overdrive && pattern.muzzle && rs.overdriveEvery > 0 && volleysFired % rs.overdriveEvery == 0)
+            {
+                // Overdrive perk: a huge piercing blast down the aim.
+                ShotMods big = mods;
+                big.damage = mods.damage * Mathf.Max(1, rs.overdriveDamage);
+                big.pierce = 99;
+                big.bounces = 0;
+                big.scale = Mathf.Max(1, rs.overdriveScale);
+                FireShot(pos + AimDirection * Legacy.Units(shotSpawnOffsetPoints), AimDirection, big, 0.8f);
+                Sound.Play(Sfx.ShootHeavy, 1f, 0.8f);
+                CameraFollow.Shake(2f, 0.12f);
             }
             Sound.Play(pattern.layout == ShotPattern.Layout.Ring ? Sfx.ShootHeavy : Sfx.Shoot);
             if (!pattern.muzzle) return;
@@ -224,14 +251,44 @@ namespace AntiBacteria.Gameplay.Player
             if (f.fireShakePixels > 0f) CameraFollow.Shake(f.fireShakePixels, 0.06f);
         }
 
+        /// <summary>One bullet from this player's pool (the Germ Buddy's shots, the Overdrive blast).</summary>
+        public void FireShot(Vector2 origin, Vector2 direction, ShotMods mods, float speedScale = 1f)
+        {
+            if (shotPrefab == null) return;
+            PlayerShot shot = shots.Get();
+            shot.Launch(origin, direction.normalized, Legacy.Units(shotSpeedPoints) * speedScale, shotLifetime, s => shots.Release(s), mods);
+        }
+
         /// <summary>Lose one life unless still blinking from the last hit.</summary>
         public void Hit()
         {
             if (!IsAlive || Time.time < invulnerableUntil) return;
             if (Buffs != null && Buffs.IsImmortal) return;
             if (Progress.ImmortalityOn) return; // bought Immortality: never lose a life (2013 upgrade)
+            if (RoguelikeRun.Active && RoguelikeRun.ShieldsLeft > 0)
+            {
+                // Shield perk: this hit is blocked (once per room per rank).
+                RoguelikeRun.ShieldsLeft--;
+                Sound.Play(Sfx.ShieldHit);
+                Fx.Sparks(transform.position, Vector2.zero, 0f, 16, 0.2f);
+                invulnerableUntil = Time.time + invulnerableSeconds;
+                GetComponent<SpriteFlash>()?.Flash();
+                return;
+            }
+            if (RoguelikeRun.Active && RunModifiers.Bodyguard && RoguelikeRun.BodyguardLeft > 0)
+            {
+                // Bodyguard perk: the Germ Buddy jumps in and takes this hit (once per room).
+                RoguelikeRun.BodyguardLeft--;
+                GermBuddy.Guard(transform.position);
+                Sound.Play(Sfx.ShieldHit);
+                invulnerableUntil = Time.time + invulnerableSeconds;
+                GetComponent<SpriteFlash>()?.Flash();
+                return;
+            }
             Lives--;
+            if (Lives <= 0 && RunModifiers.CanRevive) { RoguelikeRun.ReviveUsed = true; Lives = 1; } // Second Wind perk
             LivesChanged?.Invoke();
+            if (RunModifiers.NovaOnHit && Buffs != null) Buffs.Apply(BonusType.Boom); // Nova perk
             if (Lives <= 0) { Sound.Play(Sfx.PlayerDie); Die(); return; }
             Sound.Play(Sfx.PlayerHurt);
             invulnerableUntil = Time.time + invulnerableSeconds;
@@ -242,7 +299,14 @@ namespace AntiBacteria.Gameplay.Player
         public void Heal(int lives)
         {
             if (!IsAlive) return;
-            Lives = Mathf.Min(maxLives, Lives + lives);
+            Lives = Mathf.Min(MaxLives, Lives + lives);
+            LivesChanged?.Invoke();
+        }
+
+        /// <summary>Roguelike: start a room with the lives carried from the last one.</summary>
+        public void SetLives(int lives)
+        {
+            Lives = Mathf.Clamp(lives, 1, MaxLives);
             LivesChanged?.Invoke();
         }
 

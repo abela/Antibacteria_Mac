@@ -22,6 +22,8 @@ namespace AntiBacteria.Gameplay.Modes
         /// <summary>The HUD clock is shown (Peace Walker's countdown).</summary>
         public virtual bool ShowsTimer => false;
         public virtual bool PlayerCanShoot => true;
+        /// <summary>Played on a campaign level's data (the roguelike's rooms), not on the mode's own spawns.</summary>
+        public virtual bool UsesLevelData => false;
         /// <summary>Flags taken or zones filled this run (achievements).</summary>
         public int Completed { get; protected set; }
 
@@ -32,6 +34,7 @@ namespace AntiBacteria.Gameplay.Modes
                 case GameMode.CaptureFlag: return new CaptureFlagMode();
                 case GameMode.Rush: return new RushMode();
                 case GameMode.PeaceWalker: return new PeaceWalkerMode();
+                case GameMode.Roguelike: return new Roguelike.RoguelikeRoom();
                 default: return null;
             }
         }

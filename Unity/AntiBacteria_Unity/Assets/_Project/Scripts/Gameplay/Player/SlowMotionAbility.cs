@@ -39,7 +39,7 @@ namespace AntiBacteria.Gameplay.Player
             }
             else if (Meter01 < 1f)
             {
-                Meter01 = Mathf.Min(1f, Meter01 + dt / rechargeSeconds);
+                Meter01 = Mathf.Min(1f, Meter01 + dt / rechargeSeconds * RunModifiers.SlowmoRechargeMultiplier); // Time Bender perk
             }
             else if (Enabled && GameInput.SlowMotionPressed && player != null && player.IsAlive)
             {

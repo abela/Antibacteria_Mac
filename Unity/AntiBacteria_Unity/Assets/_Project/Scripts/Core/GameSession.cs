@@ -6,7 +6,7 @@ namespace AntiBacteria.Core
     public enum Difficulty { Normal = 0, Hard = 1, Impossible = 2 }
 
     /// <summary>What the Gameplay scene runs: a campaign level or one of the three endless modes.</summary>
-    public enum GameMode { Campaign = 0, CaptureFlag = 1, Rush = 2, PeaceWalker = 3 }
+    public enum GameMode { Campaign = 0, CaptureFlag = 1, Rush = 2, PeaceWalker = 3, Roguelike = 4 }
 
     /// <summary>The current level attempt: which level, and what was earned in it. Persistence comes with the save system.</summary>
     public static class GameSession

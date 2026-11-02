@@ -24,7 +24,7 @@ namespace AntiBacteria.Gameplay
         {
             if (vitaminPrefab == null) return;
             // More vitamins on harder difficulties; a fractional part becomes one more vitamin by chance.
-            float want = count * DifficultySettings.Current.Vitamins(GameSession.Difficulty);
+            float want = count * DifficultySettings.Current.Vitamins(GameSession.Difficulty) * RunModifiers.VitaminMultiplier;
             count = Mathf.FloorToInt(want) + (Random.value < want - Mathf.Floor(want) ? 1 : 0);
             float s = Legacy.Units(scatterPoints);
             for (int i = 0; i < count; i++)

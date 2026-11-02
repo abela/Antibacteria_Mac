@@ -1,4 +1,5 @@
 using System.Collections;
+using AntiBacteria.Audio;
 using AntiBacteria.Core;
 using AntiBacteria.Gameplay.Bonuses;
 using AntiBacteria.Gameplay.Level;
@@ -36,6 +37,9 @@ namespace AntiBacteria.UI.Menus
         private float toastLeft;
         private PlayerBuffs watchedBuffs;
         private const float ToastSeconds = 1.6f;
+        private MenuScreen levelUp;
+        private PerkCards perkCards;
+        private MenuButton rerollButton;
         private readonly System.Collections.Generic.Dictionary<BonusPickup, LiveText> bonusLabels =
             new System.Collections.Generic.Dictionary<BonusPickup, LiveText>();
         private readonly System.Collections.Generic.List<BonusPickup> goneLabels = new System.Collections.Generic.List<BonusPickup>();
@@ -55,6 +59,11 @@ namespace AntiBacteria.UI.Menus
             BuildBanner();
             BuildBossBar();
             BuildToast();
+            if (RoguelikeRun.Active)
+            {
+                RoguelikeHud.Create(skin, root);
+                levelUp = BuildLevelUp();
+            }
             PromptBar.Create(skin, root, navigator); // [A] Select  [B] Back on pause, options and result screens
             if (runner != null) runner.PhaseChanged += OnPhaseChanged;
             AntiBacteria.Platform.PlatformServices.OverlayChanged += OnOverlayChanged;
@@ -72,6 +81,7 @@ namespace AntiBacteria.UI.Menus
             UpdateBannerAndBossBar();
             UpdateToast();
             UpdateBonusLabels();
+            if (levelUp != null) CheckLevelUp();
 
             // JustResumed: the Esc that closed the pause menu must not reopen it in the same frame.
             if (navigator.IsOpen || PauseController.IsPaused || PauseController.Locked || PauseController.JustResumed) return;
@@ -148,6 +158,76 @@ namespace AntiBacteria.UI.Menus
             }
         }
 
+        // ------------------------------------------------------------------ roguelike level up
+
+        /// <summary>"LEVEL UP!", the run's new level and three perk cards; the game is paused until one is taken.</summary>
+        private MenuScreen BuildLevelUp()
+        {
+            MenuScreen s = MenuScreen.Create(root, "LevelUp");
+            Transform t = s.transform;
+            s.CanGoBack = false;
+            s.ResetSelectionOnShow = true;
+            UIFactory.Panel(skin, t, 4f, 4f, 315f, 175f);
+            LiveText.Create(skin, t, "Title", 160f, 10f, () => Loc.Get(WordIDs.LevelUp).ToUpperInvariant(), scale: 2,
+                role: PaletteRole.Accent, maxWidth: 300f);
+            LiveText.Create(skin, t, "Subtitle", 160f, 33f, () => Loc.Get(WordIDs.Lv) + " " + RoguelikeRun.Level + "   " + Loc.Get(WordIDs.ChoosePerk), dim: true);
+            perkCards = s.Add(PerkCards.Create(skin, t, 50f, RoguelikeSettings.Current.perkChoices, TakePerk));
+            // Reroll perk: new cards for this level up (shown once the perk is owned).
+            rerollButton = s.Add(MenuButton.Create(skin, t, "Reroll", 160f, 162f,
+                () => Loc.Get(WordIDs.Reroll).Replace("{0}", RoguelikeRun.RerollsLeft.ToString()), Reroll));
+            return s;
+        }
+
+        /// <summary>A level up is waiting and nothing else is on screen: pause and offer perks.</summary>
+        private void CheckLevelUp()
+        {
+            if (RoguelikeRun.PendingLevelUps <= 0 || navigator.IsOpen || PauseController.IsPaused) return;
+            if (runner == null || runner.Current != CampaignLevelRunner.Phase.Playing) return;
+            var offer = RoguelikeRun.Offer(RoguelikeSettings.Current.perkChoices);
+            if (offer.Count == 0) { RoguelikeRun.ConsumeLevelUp(); return; } // every perk maxed
+            PauseController.Pause();
+            Sound.Play(Sfx.BonusAppear);
+            RoguelikeRun.ResetRerolls();
+            perkCards.Show(offer);
+            UpdateReroll();
+            navigator.Show(levelUp);
+        }
+
+        private void TakePerk(PerkId perk)
+        {
+            RoguelikeRun.Take(perk);
+            Sound.Play(Sfx.BonusPickup);
+            var offer = RoguelikeRun.PendingLevelUps > 0 ? RoguelikeRun.Offer(RoguelikeSettings.Current.perkChoices) : null;
+            if (offer != null && offer.Count > 0)
+            {
+                RoguelikeRun.ResetRerolls();
+                perkCards.Show(offer); // another level up is waiting
+                UpdateReroll();
+                levelUp.RefreshAll();
+                return;
+            }
+            navigator.Clear();
+            PauseController.Resume();
+        }
+
+        private void Reroll()
+        {
+            if (!RoguelikeRun.UseReroll()) return;
+            var offer = RoguelikeRun.Offer(RoguelikeSettings.Current.perkChoices);
+            if (offer.Count > 0) perkCards.Show(offer);
+            Sound.Play(Sfx.BonusAppear, 0.8f, 1.2f);
+            UpdateReroll();
+            levelUp.RefreshAll();
+        }
+
+        private void UpdateReroll()
+        {
+            if (rerollButton == null) return;
+            rerollButton.gameObject.SetActive(RoguelikeRun.Rank(PerkId.Reroll) > 0);
+            rerollButton.Interactable = RoguelikeRun.RerollsLeft > 0;
+            rerollButton.Refresh();
+        }
+
         private void BuildToast()
         {
             toast = LiveText.Create(skin, root, "BonusToast", 160f, 26f, ToastText, role: PaletteRole.Accent);
@@ -187,7 +267,9 @@ namespace AntiBacteria.UI.Menus
         private void BuildBanner()
         {
             banner = LiveText.Create(skin, root, "Banner", 160f, 70f,
-                () => Loc.Get(runner != null && runner.IsBossLevel ? WordIDs.GetReadyForBoss : WordIDs.GetReady).ToUpperInvariant(),
+                () => RoguelikeRun.Active
+                    ? (Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room + (runner != null && runner.IsBossLevel ? "  " + Loc.Get(WordIDs.Boss) : "")).ToUpperInvariant()
+                    : Loc.Get(runner != null && runner.IsBossLevel ? WordIDs.GetReadyForBoss : WordIDs.GetReady).ToUpperInvariant(),
                 scale: 2, role: PaletteRole.Accent, maxWidth: 300f);
             banner.gameObject.SetActive(false);
         }
@@ -302,12 +384,14 @@ namespace AntiBacteria.UI.Menus
             StatRow.Create(skin, t, "Score", x0, x1, y, () => Loc.Get(WordIDs.Score), () => GameSession.Score.ToString());
             StatRow.Create(skin, t, "Kills", x0, x1, y + step, () => Loc.Get(WordIDs.Kills), () => GameSession.Kills.ToString());
             StatRow.Create(skin, t, "Vitamins", x0, x1, y + 2f * step, () => Loc.Get(WordIDs.Vitamins), () => GameSession.Vitamins.ToString());
-            StatRow.Create(skin, t, "Time", x0, x1, y + 3f * step, () => Loc.Get(WordIDs.Time), () => FormatTime(runner != null ? runner.ElapsedSeconds : 0f));
+            StatRow.Create(skin, t, "Time", x0, x1, y + 3f * step, () => Loc.Get(WordIDs.Time), () => FormatTime((runner != null ? runner.ElapsedSeconds : 0f) + (RoguelikeRun.Active ? RoguelikeRun.SecondsBeforeThisRoom : 0f)));
         }
 
         private bool IsLastLevel => database != null ? database.IsLast(GameSession.CurrentLevel) : GameSession.CurrentLevel >= SceneFlow.LevelCount;
 
-        private string LevelName() => runner != null && runner.IsEndless
+        private string LevelName() => RoguelikeRun.Active
+            ? Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room + "  " + Loc.Get(WordIDs.Best) + " " + Progress.RoguelikeBestRoom(GameSession.Difficulty)
+            : runner != null && runner.IsEndless
             ? ModeName(GameSession.Mode) + "  " + Loc.Get(WordIDs.Best) + " " + Progress.ModeBest(GameSession.Mode, GameSession.Difficulty)
             : Loc.Get(WordIDs.Level) + " " + (runner != null && runner.Level != null ? runner.Level.Label : GameSession.CurrentLevel.ToString());
 

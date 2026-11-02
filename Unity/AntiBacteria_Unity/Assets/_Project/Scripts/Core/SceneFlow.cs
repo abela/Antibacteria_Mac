@@ -27,8 +27,12 @@ namespace AntiBacteria.Core
             if (mode == GameMode.Campaign) { LoadLevel(GameSession.CurrentLevel); return; }
             GameSession.Mode = mode;
             GameSession.Difficulty = GameSettings.Difficulty;
+            if (mode == GameMode.Roguelike) RoguelikeRun.Begin(); // from the menu or Retry: a fresh run, room 1
             Load(GameplayScene);
         }
+
+        /// <summary>Roguelike: load the next room of the run in progress (RoguelikeRun.NextRoom was called).</summary>
+        public static void ContinueRun() => Load(GameplayScene);
 
         /// <summary>Plays the same level, or the same endless mode, again.</summary>
         public static void RestartLevel()

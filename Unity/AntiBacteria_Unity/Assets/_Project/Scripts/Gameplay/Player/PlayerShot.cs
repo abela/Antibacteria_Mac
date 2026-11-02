@@ -16,6 +16,9 @@ namespace AntiBacteria.Gameplay.Player
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerShot : MonoBehaviour
     {
+        private int piercesLeft; // roguelike Piercing perk: enemies this shot can still pass through
+        private ShotMods mods = ShotMods.Plain;
+        private int bouncesLeft; // Ricochet perk
         private Rigidbody2D rb;
         private float lifeLeft, age;
         private Action<PlayerShot> release;
@@ -44,8 +47,14 @@ namespace AntiBacteria.Gameplay.Player
             trail.sortingOrder = body.sortingOrder - 1;
         }
 
-        public void Launch(Vector2 position, Vector2 direction, float speed, float lifetime, Action<PlayerShot> releaser)
+        public void Launch(Vector2 position, Vector2 direction, float speed, float lifetime, Action<PlayerShot> releaser) =>
+            Launch(position, direction, speed, lifetime, releaser, ShotMods.Player());
+
+        /// <summary>Fire with roguelike modifiers (damage, pierce, bounces, crits, frost, size).</summary>
+        public void Launch(Vector2 position, Vector2 direction, float speed, float lifetime, Action<PlayerShot> releaser, ShotMods m)
         {
+            mods = m;
+            transform.localScale = new Vector3(Mathf.Max(1, m.scale), Mathf.Max(1, m.scale), 1f);
             transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg));
             rb.position = position;
             rb.linearVelocity = direction * speed;
@@ -53,6 +62,8 @@ namespace AntiBacteria.Gameplay.Player
             age = 0f;
             release = releaser;
             live = true;
+            piercesLeft = m.pierce; // roguelike Piercing perk
+            bouncesLeft = m.bounces;
             UpdateLook();
         }
 
@@ -92,12 +103,28 @@ namespace AntiBacteria.Gameplay.Player
                 Enemy enemy = other.GetComponentInParent<Enemy>();
                 if (enemy == null || !enemy.BlocksShots) return; // fading in / broken Chorux core: pass through
                 bool hurts = enemy.CanBeHit;
-                enemy.TakeHit(); // does nothing to shields, chain bodies and Tentacles, but the shot is spent
+                // Heavy Shots / Buddy Punch (fractions roll), Critical Hit doubles.
+                float raw = mods.damage;
+                int damage = Mathf.Max(1, Mathf.FloorToInt(raw));
+                float frac = raw - Mathf.Floor(raw);
+                if (frac > 0f && UnityEngine.Random.value < frac) damage++;
+                bool crit = hurts && mods.critChance > 0f && UnityEngine.Random.value < mods.critChance;
+                if (crit) damage *= 2;
+                if (hurts && damage > 1) enemy.TakeHits(damage);
+                else enemy.TakeHit(); // does nothing to shields, chain bodies and Tentacles, but the shot is spent
+                if (crit) { Fx.Sparks(at, dir, 120f, 10, 1f, 0.5f); Sound.Play(Sfx.EnemyHit, 1f, 1.5f); }
+                if (hurts && mods.frostChance > 0f && UnityEngine.Random.value < mods.frostChance && enemy != null)
+                {
+                    RoguelikeSettings rs = RoguelikeSettings.Current;
+                    enemy.Slow(rs.frostSlow, rs.frostSeconds);
+                    Fx.Sparks(at, Vector2.zero, 0f, 6, 0f);
+                }
                 if (hurts) enemy.Knockback(dir * f.knockbackPixelsPerSecond / Legacy.PixelsPerUnit);
                 Fx.Flash(f.hitFrames, at, 0f, 30f);
                 Sound.Play(hurts ? Sfx.EnemyHit : Sfx.ShieldHit);
                 // Sprays back toward the shooter; shields (no damage) spark white only.
                 Fx.Sparks(at, -dir, 70f, f.enemyHitSparks, hurts ? 0.5f : 0f);
+                if (hurts && piercesLeft > 0) { piercesLeft--; return; } // flies on through
                 Release();
             }
             else if (layer == GameLayers.Get(GameLayers.Wall))
@@ -108,6 +135,17 @@ namespace AntiBacteria.Gameplay.Player
                 // Bounce-ish: off the wall, between the reflection and straight out.
                 Vector2 bounce = (Vector2.Reflect(dir, normal) + normal).normalized;
                 Fx.Sparks(onWall + normal * 0.5f / Legacy.PixelsPerUnit, bounce, 60f, f.wallHitSparks, 0.3f, 0.15f);
+                if (bouncesLeft > 0 && normal != Vector2.zero)
+                {
+                    // Ricochet perk: mirror off the wall and fly on.
+                    bouncesLeft--;
+                    Vector2 v = Vector2.Reflect(rb.linearVelocity, normal);
+                    if (Vector2.Dot(v, normal) <= 0f) v = normal * v.magnitude;
+                    rb.linearVelocity = v;
+                    rb.position = onWall + normal * (2f / Legacy.PixelsPerUnit);
+                    transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg);
+                    return;
+                }
                 Release();
             }
             else if (layer == GameLayers.Get(GameLayers.EnemyShot))
@@ -143,5 +181,26 @@ namespace AntiBacteria.Gameplay.Player
             rb.linearVelocity = Vector2.zero;
             release?.Invoke(this);
         }
+    }
+
+    /// <summary>What a single bullet carries from the roguelike perks. Plain outside the roguelike.</summary>
+    public struct ShotMods
+    {
+        public float damage;
+        public int pierce, bounces, scale;
+        public float critChance, frostChance;
+
+        public static ShotMods Plain => new ShotMods { damage = 1f, scale = 1 };
+
+        /// <summary>The player's own bullets with the run's perks.</summary>
+        public static ShotMods Player() => new ShotMods
+        {
+            damage = RunModifiers.ShotDamage,
+            pierce = RunModifiers.Pierce,
+            bounces = RunModifiers.Bounces,
+            scale = RunModifiers.ShotScale,
+            critChance = RunModifiers.CritChance,
+            frostChance = RunModifiers.FrostChance,
+        };
     }
 }
