@@ -1,3 +1,4 @@
+using AntiBacteria.Audio;
 using System.Collections.Generic;
 using AntiBacteria.Core;
 using UnityEngine;
@@ -31,6 +32,7 @@ namespace AntiBacteria.Gameplay.Enemies
             b.rb.position = position;
             b.rb.linearVelocity = direction.normalized * speed;
             Live.Add(b);
+            Sound.Play(Sfx.EnemyShoot); // rate-limited, so a ring of 20 is one sound
             return b;
         }
 

@@ -190,7 +190,8 @@ namespace AntiBacteria.Gameplay.Enemies
         {
             if (Definition == null || Definition.movement == EnemyMovement.Controlled) return;
             if (Current != State.Alive) { rb.linearVelocity = Vector2.zero; return; }
-            rb.linearVelocity = DesiredVelocity(Time.fixedDeltaTime);
+            rb.linearVelocity = DesiredVelocity(Time.fixedDeltaTime) + knockback;
+            knockback *= Mathf.Exp(-Effects.ShotFeel.Current.knockbackDecay * Time.fixedDeltaTime);
         }
 
         /// <summary>Move to a point by the next physics step (used by chains; keeps interpolation smooth).</summary>
@@ -200,6 +201,20 @@ namespace AntiBacteria.Gameplay.Enemies
         }
 
         public void Stop() => rb.linearVelocity = Vector2.zero;
+
+        private Vector2 knockback;
+
+        /// <summary>
+        /// Shot feedback: a push (units/s) that fades out (Effects.ShotFeel). Bosses, stationary enemies and
+        /// chain parts don't budge.
+        /// </summary>
+        public void Knockback(Vector2 velocity)
+        {
+            if (Definition == null || Current == State.Dead || Definition.isBoss) return;
+            EnemyMovement m = Definition.movement;
+            if (m == EnemyMovement.Stationary || m == EnemyMovement.Controlled) return;
+            knockback += velocity;
+        }
 
         // ------------------------------------------------------------------ movement
 
@@ -365,6 +380,12 @@ namespace AntiBacteria.Gameplay.Enemies
             UpdateDamageStage();
             Hurt?.Invoke(this);
             if (hitsLeft <= 0) OnLethalHit();
+        }
+
+        /// <summary>Several hits at once (Boom bonus). Stops early when it dies or becomes untouchable.</summary>
+        public void TakeHits(int count)
+        {
+            for (int i = 0; i < count && CanBeHit && hitsLeft > 0; i++) TakeHit();
         }
 
         /// <summary>Bosses erode as they lose hits (replaces BigBoss going white to black and the others fading out).</summary>

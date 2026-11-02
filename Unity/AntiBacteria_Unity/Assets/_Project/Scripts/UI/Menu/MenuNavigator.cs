@@ -1,3 +1,4 @@
+using AntiBacteria.Audio;
 using System.Collections.Generic;
 using AntiBacteria.Core;
 using AntiBacteria.Input;
@@ -69,6 +70,7 @@ namespace AntiBacteria.UI.Menu
         {
             MenuScreen top = Top;
             if (top == null || !top.CanGoBack) return;
+            Sound.Play(Sfx.UiBack);
             if (top.OnBack != null) top.OnBack();
             else if (stack.Count > 1) Pop();
         }
@@ -95,11 +97,17 @@ namespace AntiBacteria.UI.Menu
             Vector2 nav = GameInput.UINavigation;
             int v = nav.y > 0.5f ? 1 : nav.y < -0.5f ? -1 : 0;
             int h = nav.x > 0.5f ? 1 : nav.x < -0.5f ? -1 : 0;
-            if (Repeat(v, ref heldV, ref timerV)) top.Move(-v); // up = previous row
-            if (Repeat(h, ref heldH, ref timerH)) top.SelectedItem?.Step(h);
+            if (Repeat(v, ref heldV, ref timerV))
+            {
+                MenuItem before = top.SelectedItem;
+                top.Move(-v); // up = previous row
+                if (top.SelectedItem != before) Sound.Play(Sfx.UiMove);
+            }
+            if (Repeat(h, ref heldH, ref timerH) && top.SelectedItem != null && top.SelectedItem.Step(h)) Sound.Play(Sfx.UiMove);
 
             if (GameInput.UISubmitPressed)
             {
+                if (top.SelectedItem != null && top.SelectedItem.Interactable) Sound.Play(Sfx.UiConfirm);
                 top.SelectedItem?.Submit();
                 return;
             }
@@ -117,9 +125,10 @@ namespace AntiBacteria.UI.Menu
             if (!moved && !click) return;
             MenuItem item = top.ItemAt(mouse);
             if (item == null || !item.Interactable) return;
+            if (item != top.SelectedItem) Sound.Play(Sfx.UiMove);
             top.Select(item);
             item.Hover(mouse);
-            if (click) item.Click(mouse);
+            if (click) { Sound.Play(Sfx.UiConfirm); item.Click(mouse); }
         }
 
         private static bool Repeat(int dir, ref int held, ref float timer)

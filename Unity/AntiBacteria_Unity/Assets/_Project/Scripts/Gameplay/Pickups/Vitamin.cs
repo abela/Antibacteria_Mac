@@ -1,3 +1,4 @@
+using AntiBacteria.Audio;
 using AntiBacteria.Core;
 using AntiBacteria.Gameplay.Player;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace AntiBacteria.Gameplay.Pickups
         {
             if (other.gameObject.layer != GameLayers.Get(GameLayers.Player)) return;
             GameSession.AddVitamins(value);
+            Sound.Play(Sfx.Vitamin, 1f, 1f + Random.Range(0f, 0.15f));
             Destroy(gameObject);
         }
     }

@@ -1,5 +1,10 @@
+using AntiBacteria.Audio;
 using System;
 using AntiBacteria.Core;
+using System.Collections.Generic;
+using AntiBacteria.Gameplay.Bonuses;
+using AntiBacteria.Gameplay.Effects;
+using AntiBacteria.Gameplay.Weapons;
 using AntiBacteria.Input;
 using AntiBacteria.Rendering;
 using UnityEngine;
@@ -20,9 +25,10 @@ namespace AntiBacteria.Gameplay.Player
         [Tooltip("How fast velocity reaches the target. 6 matches the original damping (90 % in ~0.37 s).")]
         [SerializeField] private float responsiveness = 6f;
 
-        [Header("Shooting (original: 0.1 s interval, 1280 pt/s, spawned 40 pt ahead)")]
+        [Header("Shooting (original: 1280 pt/s, spawned 40 pt ahead; rates and patterns: WeaponSettings)")]
         [SerializeField] private PlayerShot shotPrefab;
-        [SerializeField] private float fireInterval = 0.1f;
+        [Tooltip("The player's own shot when no weapon bonus is active (the upgrade shop changes it).")]
+        [SerializeField] private ShotKind baseShot = ShotKind.Normal;
         [SerializeField] private float shotSpeedPoints = 1280f;
         [SerializeField] private float shotSpawnOffsetPoints = 40f;
         [SerializeField] private float shotLifetime = 3f;
@@ -46,10 +52,25 @@ namespace AntiBacteria.Gameplay.Player
         public int MaxLives => maxLives;
         public bool IsAlive => Lives > 0;
         public bool IsShooting { get; private set; }
+
+        /// <summary>Timed bonuses (and later perks) on this player.</summary>
+        public PlayerBuffs Buffs { get; private set; }
+
+        /// <summary>The player's own shot type (upgrade shop).</summary>
+        public ShotKind BaseShot { get => baseShot; set => baseShot = value; }
+
+        /// <summary>The shot being fired now: a weapon bonus if one is active, otherwise the base shot.</summary>
+        public ShotKind CurrentShot => Buffs != null && Buffs.Weapon.HasValue ? Buffs.Weapon.Value : baseShot;
+
+        /// <summary>Bullets per volley for Normal / Water (campaign: grows with the level number).</summary>
+        public int VolleySize { get; set; } = 1;
         public Vector2 AimDirection { get; private set; } = Vector2.up;
 
         /// <summary>Off during the level-over interlude (2013 bug: the player could keep acting after "You Won").</summary>
         public bool ControlsEnabled { get; set; } = true;
+
+        /// <summary>Off in Peace Walker, where the player can only dodge.</summary>
+        public bool CanShoot { get; set; } = true;
 
         public event Action LivesChanged;
         public event Action Died;
@@ -61,6 +82,10 @@ namespace AntiBacteria.Gameplay.Player
         private float fireCooldown;
         private float invulnerableUntil = -1f;
         private bool fireBlockedUntilRelease;
+        private bool leftBarrel;
+        private float recoilLeft;
+        private float spinAngle; // Tornado: keeps turning across activations, as in 2013
+        private readonly List<float> volleyAngles = new List<float>(40);
 
         private void Awake()
         {
@@ -68,15 +93,21 @@ namespace AntiBacteria.Gameplay.Player
             rb = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             Lives = maxLives;
+            Buffs = GetComponent<PlayerBuffs>();
+            if (Buffs == null) Buffs = gameObject.AddComponent<PlayerBuffs>();
             shots = new ObjectPool<PlayerShot>(
                 () => { PlayerShot s = Instantiate(shotPrefab); s.gameObject.SetActive(false); return s; },
                 s => s.gameObject.SetActive(true),
                 s => s.gameObject.SetActive(false),
                 s => { if (s != null) Destroy(s.gameObject); },
-                false, 32, 512);
+                false, 64, 2048); // Circle and Tornado put a lot of bullets in the air
         }
 
-        private void Start() => cam = Camera.main;
+        private void Start()
+        {
+            cam = Camera.main;
+            baseShot = Progress.SelectedShot; // upgrade shop
+        }
 
         private void OnDestroy()
         {
@@ -96,7 +127,10 @@ namespace AntiBacteria.Gameplay.Player
         private void FixedUpdate()
         {
             if (!IsAlive) return;
-            Vector2 target = ControlsEnabled ? GameInput.Move * Legacy.Units(maxSpeedPoints) : Vector2.zero;
+            // The bought Double Speed and the bonus don't stack (2013: the bonus did nothing with the upgrade on).
+            float upgrade = Progress.DoubleSpeedOn ? ShopSettings.Current.doubleSpeedMultiplier : 1f;
+            float speed = Legacy.Units(maxSpeedPoints) * Mathf.Max(upgrade, Buffs != null ? Buffs.SpeedMultiplier : 1f);
+            Vector2 target = ControlsEnabled ? GameInput.Move * speed : Vector2.zero;
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, target, 1f - Mathf.Exp(-responsiveness * Time.fixedDeltaTime));
         }
 
@@ -114,9 +148,15 @@ namespace AntiBacteria.Gameplay.Player
                 if (d.sqrMagnitude > 0.0001f) AimDirection = d.normalized;
             }
 
+            // Recoil: the sprites (never the body) kick back for a moment after each shot.
+            recoilLeft -= Time.deltaTime;
+            Vector2 recoil = recoilLeft > 0f ? -AimDirection * ShotFeel.Current.recoilPixels : Vector2.zero;
+            if (bodyRenderer != null)
+                bodyRenderer.transform.localPosition =
+                    new Vector3(Mathf.Round(recoil.x), Mathf.Round(recoil.y), 0f) / Legacy.PixelsPerUnit;
             if (nucleusRenderer != null)
             {
-                Vector2 o = AimDirection * nucleusOffsetPixels;
+                Vector2 o = AimDirection * nucleusOffsetPixels + recoil;
                 nucleusRenderer.transform.localPosition =
                     new Vector3(Mathf.Round(o.x), Mathf.Round(o.y), 0f) / Legacy.PixelsPerUnit;
             }
@@ -124,6 +164,7 @@ namespace AntiBacteria.Gameplay.Player
 
         private void UpdateFire()
         {
+            if (!CanShoot) { IsShooting = false; return; }
             bool stickHeld = GameInput.UsingGamepad && GameInput.AimStick.magnitude > GameInput.AimDeadZone;
             // The click / key that closed the pause menu is still held: don't let it fire until released.
             if (PauseController.JustResumed) fireBlockedUntilRelease = true;
@@ -137,38 +178,86 @@ namespace AntiBacteria.Gameplay.Player
                 if (fireCooldown < 0f) fireCooldown = 0f;
                 return;
             }
+            ShotPattern pattern = WeaponSettings.Current.Get(CurrentShot);
+            if (pattern == null) return;
             while (fireCooldown <= 0f)
             {
-                Fire();
-                fireCooldown += fireInterval;
+                Fire(pattern);
+                fireCooldown += pattern.intervalSeconds;
             }
         }
 
-        private void Fire()
+        private void Fire(ShotPattern pattern)
         {
             if (shotPrefab == null) return;
-            Vector2 origin = (Vector2)transform.position + AimDirection * Legacy.Units(shotSpawnOffsetPoints);
-            PlayerShot shot = shots.Get();
-            shot.Launch(origin, AimDirection, Legacy.Units(shotSpeedPoints), shotLifetime, s => shots.Release(s));
+            ShotFeel f = ShotFeel.Current;
+            Vector2 pos = transform.position;
+            float aimAngle = Mathf.Atan2(AimDirection.y, AimDirection.x) * Mathf.Rad2Deg;
+            pattern.Angles(aimAngle, VolleySize, ref spinAngle, volleyAngles);
+
+            // Not a laser: a little spread and speed variation, alternating left / right barrel (aimed patterns only).
+            leftBarrel = !leftBarrel;
+            Vector2 side = pattern.feelSpread
+                ? new Vector2(-AimDirection.y, AimDirection.x) * (leftBarrel ? 1f : -1f) * f.barrelOffsetPixels / Legacy.PixelsPerUnit
+                : Vector2.zero;
+            foreach (float angle in volleyAngles)
+            {
+                float a = (angle + (pattern.feelSpread ? UnityEngine.Random.Range(-f.spreadDegrees, f.spreadDegrees) : 0f)) * Mathf.Deg2Rad;
+                var dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                Vector2 origin = pos + dir * Legacy.Units(shotSpawnOffsetPoints) + side;
+                float jitter = pattern.feelSpread ? UnityEngine.Random.Range(-f.speedJitter, f.speedJitter) : 0f;
+                PlayerShot shot = shots.Get();
+                shot.Launch(origin, dir, Legacy.Units(shotSpeedPoints) * (1f + jitter), shotLifetime, s => shots.Release(s));
+            }
+            Sound.Play(pattern.layout == ShotPattern.Layout.Ring ? Sfx.ShootHeavy : Sfx.Shoot);
+            if (!pattern.muzzle) return;
+
+            if (f.muzzleFlash && f.muzzleFrames.Length > 0)
+            {
+                float half = f.muzzleFrames[0] != null ? f.muzzleFrames[0].rect.width / 2f : 3f;
+                Vector2 at = pos + AimDirection * (f.muzzleDistancePixels + half) / Legacy.PixelsPerUnit;
+                Fx.Flash(f.muzzleFrames, at, aimAngle, f.muzzleFlashFps, transform);
+            }
+            recoilLeft = f.recoilSeconds;
+            // Fast weapons kick less per volley, so a hose rumbles instead of shoving the camera to its limit.
+            CameraFollow.Kick(-AimDirection * f.cameraKickPixels * Mathf.Min(1f, pattern.intervalSeconds / 0.1f));
+            if (f.fireShakePixels > 0f) CameraFollow.Shake(f.fireShakePixels, 0.06f);
         }
 
         /// <summary>Lose one life unless still blinking from the last hit.</summary>
         public void Hit()
         {
             if (!IsAlive || Time.time < invulnerableUntil) return;
+            if (Buffs != null && Buffs.IsImmortal) return;
+            if (Progress.ImmortalityOn) return; // bought Immortality: never lose a life (2013 upgrade)
             Lives--;
             LivesChanged?.Invoke();
-            if (Lives <= 0) { Die(); return; }
+            if (Lives <= 0) { Sound.Play(Sfx.PlayerDie); Die(); return; }
+            Sound.Play(Sfx.PlayerHurt);
             invulnerableUntil = Time.time + invulnerableSeconds;
             GetComponent<SpriteFlash>()?.Flash();
+        }
+
+        /// <summary>+1 life, never above the maximum (Life bonus).</summary>
+        public void Heal(int lives)
+        {
+            if (!IsAlive) return;
+            Lives = Mathf.Min(maxLives, Lives + lives);
+            LivesChanged?.Invoke();
         }
 
         private void UpdateBlink()
         {
             bool blinking = Time.time < invulnerableUntil;
             bool visible = !blinking || Mathf.FloorToInt((invulnerableUntil - Time.time) / blinkInterval) % 2 == 0;
-            if (bodyRenderer != null) bodyRenderer.enabled = visible;
-            if (nucleusRenderer != null) nucleusRenderer.enabled = visible;
+            // Immortality bonus: see-through (2013: opacity 50 of 255).
+            float alpha = Buffs != null && Buffs.IsImmortal ? BonusSettings.Current.immortalAlpha : 1f;
+            foreach (SpriteRenderer r in new[] { bodyRenderer, nucleusRenderer })
+            {
+                if (r == null) continue;
+                r.enabled = visible;
+                if (!Mathf.Approximately(r.color.a, alpha)) { Color c = r.color; c.a = alpha; r.color = c; }
+            }
         }
 
         private void Die()

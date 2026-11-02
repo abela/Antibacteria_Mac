@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcfab300cbe4b4f61908bcf29acd007d, type: 3}
+  m_Name: WeaponSettings
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Weapons.WeaponSettings
+  patterns:
+  - kind: 0
+    nameId: 16
+    intervalSeconds: 0.1
+    layout: 0
+    volleyStepDegrees: 4
+    fixedAngles: []
+    ringCount: 36
+    spinOffsets:
+    - -10
+    - 0
+    - 10
+    spinStepDegrees: 30
+    feelSpread: 1
+    muzzle: 1
+  - kind: 1
+    nameId: 17
+    intervalSeconds: 0.03
+    layout: 0
+    volleyStepDegrees: 4
+    fixedAngles: []
+    ringCount: 36
+    spinOffsets:
+    - -10
+    - 0
+    - 10
+    spinStepDegrees: 30
+    feelSpread: 1
+    muzzle: 1
+  - kind: 2
+    nameId: 18
+    intervalSeconds: 0.1
+    layout: 1
+    volleyStepDegrees: 4
+    fixedAngles:
+    - -5
+    - 5
+    - 85
+    - 95
+    - 175
+    - 185
+    - 265
+    - 275
+    ringCount: 36
+    spinOffsets:
+    - -10
+    - 0
+    - 10
+    spinStepDegrees: 30
+    feelSpread: 0
+    muzzle: 1
+  - kind: 3
+    nameId: 19
+    intervalSeconds: 0.2
+    layout: 2
+    volleyStepDegrees: 4
+    fixedAngles: []
+    ringCount: 36
+    spinOffsets:
+    - -10
+    - 0
+    - 10
+    spinStepDegrees: 30
+    feelSpread: 0
+    muzzle: 0
+  - kind: 4
+    nameId: 20
+    intervalSeconds: 0.03
+    layout: 3
+    volleyStepDegrees: 4
+    fixedAngles: []
+    ringCount: 36
+    spinOffsets:
+    - -10
+    - 0
+    - 10
+    spinStepDegrees: 30
+    feelSpread: 0
+    muzzle: 0
+  volleyFromLevel: 010000000b000000150000001f000000
+  maxVolley: 4

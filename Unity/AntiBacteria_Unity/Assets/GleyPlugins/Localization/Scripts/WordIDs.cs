@@ -75,4 +75,8 @@ Windowed = 66,
 YouHave = 15,
 YouWon = 42,
 YourTimeIs = 45,
+Equipped = 75,
+Owned = 76,
+On = 77,
+Off = 78,
 }

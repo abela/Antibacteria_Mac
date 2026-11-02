@@ -18,13 +18,14 @@ namespace AntiBacteria.UI.Menus
         [Tooltip("The 320x180 area everything is laid out in.")]
         [SerializeField] private RectTransform root;
 
-        private MenuScreen main, modes, levelSelect, options, about;
+        private MenuScreen main, modes, levelSelect, options, about, upgrade;
 
         public MenuScreen Main => main;
         public MenuScreen Modes => modes;
         public MenuScreen LevelSelect => levelSelect;
         public MenuScreen Options => options;
         public MenuScreen About => about;
+        public MenuScreen Upgrade => upgrade;
 
         private void Start()
         {
@@ -34,6 +35,8 @@ namespace AntiBacteria.UI.Menus
             levelSelect = LevelSelectMenu.Build(skin, root, navigator);
             options = OptionsMenu.Build(skin, root, navigator, false);
             about = BuildAbout();
+            upgrade = UpgradeMenu.Build(skin, root, navigator);
+            upgrade.OnShown = () => backdrop.ShowBacteria(false); // the rows use the full width
             main.OnShown = modes.OnShown = about.OnShown = () => backdrop.ShowBacteria(true);
             options.OnShown = () => backdrop.ShowBacteria(false);
             System.Action levelShown = levelSelect.OnShown;
@@ -50,8 +53,7 @@ namespace AntiBacteria.UI.Menus
             float y = 66f;
             s.Add(MenuButton.Create(skin, s.transform, "StartGame", 160f, y, () => Loc.Get(WordIDs.StartGame), () => navigator.Push(modes)));
             y += 16f;
-            MenuButton upgrade = s.Add(MenuButton.Create(skin, s.transform, "Upgrade", 160f, y, () => Loc.Get(WordIDs.UpgradeCharacter), null));
-            upgrade.Interactable = false; // shop not ported yet
+            s.Add(MenuButton.Create(skin, s.transform, "Upgrade", 160f, y, () => Loc.Get(WordIDs.UpgradeCharacter), () => navigator.Push(upgrade)));
             y += 16f;
             s.Add(MenuButton.Create(skin, s.transform, "Options", 160f, y, () => Loc.Get(WordIDs.GameOptions), () => navigator.Push(options)));
             y += 16f;
@@ -75,11 +77,13 @@ namespace AntiBacteria.UI.Menus
             // Measured when the screen opens (TextMeshPro reports 0 width while hidden).
             RefreshHook.Add(anti.gameObject, () =>
             {
-                float wa = UIFactory.Width(anti, "ANTI");
-                float total = UIFactory.Width(rest, "ANTIBACTERIA");
+                // Where BACTERIA starts inside the whole word, from the font's own layout: measuring "ANTI" alone
+                // rounded its width up and put BACTERIA one game pixel too far right.
+                float total = rest.GetPreferredValues("ANTIBACTERIA").x;
+                float split = Mathf.Round(total - rest.GetPreferredValues("BACTERIA").x);
                 float x0 = Mathf.Round(160f - total / 2f);
                 anti.rectTransform.anchoredPosition = new Vector2(x0, -y);
-                rest.rectTransform.anchoredPosition = new Vector2(x0 + wa, -y);
+                rest.rectTransform.anchoredPosition = new Vector2(x0 + split, -y);
             });
         }
 
@@ -92,14 +96,17 @@ namespace AntiBacteria.UI.Menus
 
             float y = 56f;
             s.Add(MenuButton.Create(skin, t, "Campaign", 160f, y, () => Loc.Get(WordIDs.Campaign), () => navigator.Push(levelSelect)));
-            WordIDs[] notYet = { WordIDs.CaptureFlag, WordIDs.Rush, WordIDs.PeaceWalker };
-            foreach (WordIDs w in notYet)
+            GameMode[] endless = { GameMode.CaptureFlag, GameMode.Rush, GameMode.PeaceWalker };
+            foreach (GameMode m in endless)
             {
                 y += 16f;
-                WordIDs id = w;
-                s.Add(MenuButton.Create(skin, t, w.ToString(), 160f, y, () => Loc.Get(id), null)).Interactable = false;
+                GameMode mode = m;
+                WordIDs id = (WordIDs)System.Enum.Parse(typeof(WordIDs), m.ToString());
+                s.Add(MenuButton.Create(skin, t, m.ToString(), 160f, y, () => Loc.Get(id), () => SceneFlow.LoadMode(mode)));
             }
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 132f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            // The endless modes are played at the difficulty set here (the campaign sets it in level select).
+            s.Add(DifficultyRow.Create(skin, t, 124f, null, null));
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 144f, () => Loc.Get(WordIDs.Back), navigator.Back));
             return s;
         }
 

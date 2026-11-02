@@ -22,7 +22,11 @@ namespace AntiBacteria.EditorTools
             bool ppcWas = ppc != null && ppc.enabled;
             if (ppc != null) ppc.enabled = false;
             float oldSize = cam.orthographicSize;
-            cam.orthographicSize = AntiBacteria.Core.PixelScreen.ViewHeight / 2f / 16f;
+            // What the player actually sees: the whole-number zoom for this screen can show MORE than the
+            // configured view (a 416-wide view on a 1920-wide screen zooms 4x and shows 480 px).
+            int zoom = AntiBacteria.Core.PixelScreen.ScaleFor(cam.pixelWidth, cam.pixelHeight);
+            int vw = Mathf.Max(1, cam.pixelWidth / zoom), vh = Mathf.Max(1, cam.pixelHeight / zoom);
+            cam.orthographicSize = vh / 2f / 16f;
 
             var restore = new List<System.Action>();
             foreach (Canvas c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
@@ -55,7 +59,6 @@ namespace AntiBacteria.EditorTools
                 });
             }
 
-            int vw = AntiBacteria.Core.PixelScreen.ViewWidth, vh = AntiBacteria.Core.PixelScreen.ViewHeight;
             var rt = new RenderTexture(vw, vh, 24) { filterMode = FilterMode.Point };
             cam.targetTexture = rt;
             Canvas.ForceUpdateCanvases();

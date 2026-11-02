@@ -28,12 +28,13 @@ namespace AntiBacteria.EditorTools
             ("Steam Deck 1280 x 800", 1280, 800),
         };
 
+        // Views that divide 1920x1080 (the most common Steam screen) exactly. Others round down to the next
+        // whole zoom there and show more than asked (416 or 448 wide both end up showing 480 x 270).
         private static readonly (string label, int w)[] Presets =
         {
-            ("320 x 180  (the original, closest)", 320),
-            ("384 x 216", 384),
-            ("416 x 234", 416),
-            ("448 x 252  (widest that stays inside the arena)", 448),
+            ("320 x 180   (6x at 1080p, the original, closest)", 320),
+            ("384 x 216   (5x at 1080p)", 384),
+            ("480 x 270   (4x at 1080p, wider than the arena)", 480),
         };
 
         public static ViewSettings GetOrCreate()
@@ -86,20 +87,26 @@ namespace AntiBacteria.EditorTools
 
             Vector2 arena = ArenaPixels();
             const float wallShown = 16f; // CameraFollow shows 8 px of wall on each side
-            if (s.ViewWidth > arena.x + wallShown || s.ViewHeight > arena.y + wallShown)
-                EditorGUILayout.HelpBox(
-                    $"The view is bigger than the arena ({arena.x:0} x {arena.y:0} px): the camera will show the empty space past the walls.",
-                    MessageType.Warning);
+            bool Overflows(int vw, int vh) => vw > arena.x + wallShown || vh > arena.y + wallShown;
 
             EditorGUILayout.Space(8);
             EditorGUILayout.LabelField("What players see", EditorStyles.boldLabel);
+            var overflowing = new List<string>();
             foreach ((string name, int sw, int sh) in Screens)
             {
                 int k = PixelScreen.ScaleFor(sw, sh);
                 int vw = Mathf.RoundToInt(sw / (float)k), vh = Mathf.RoundToInt(sh / (float)k);
                 bool exact = vw == s.ViewWidth && vh == s.ViewHeight;
-                EditorGUILayout.LabelField(name, $"{k}x pixels, shows {vw} x {vh}" + (exact ? "" : "  (a bit more than the view)"));
+                bool over = Overflows(vw, vh);
+                if (over) overflowing.Add(name);
+                EditorGUILayout.LabelField(name, $"{k}x pixels, shows {vw} x {vh}" +
+                    (exact ? "" : "  (more than the view)") + (over ? "  - past the walls!" : ""));
             }
+            if (overflowing.Count > 0)
+                EditorGUILayout.HelpBox(
+                    $"On {string.Join(", ", overflowing)} the camera shows more than the arena ({arena.x:0} x {arena.y:0} px), " +
+                    "so players see the empty space past the walls. Screens zoom by whole numbers, so a view that doesn't " +
+                    "divide the screen exactly shows extra. Use a preset, or make the arena bigger.", MessageType.Warning);
 
             EditorGUILayout.Space(4);
             EditorGUILayout.HelpBox("Saved in " + AssetPath + " (shipped with the game).", MessageType.None);

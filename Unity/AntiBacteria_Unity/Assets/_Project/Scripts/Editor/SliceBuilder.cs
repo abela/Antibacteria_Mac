@@ -156,7 +156,7 @@ namespace AntiBacteria.EditorTools
             var go = new GameObject("PlayerShot") { layer = GameLayers.Get(GameLayers.PlayerShot) };
             var rb = go.AddComponent<Rigidbody2D>();
             rb.gravityScale = 0f; rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; rb.interpolation = RigidbodyInterpolation2D.Interpolate;
-            var col = go.AddComponent<CircleCollider2D>(); col.isTrigger = true; col.radius = Px(1.5f);
+            var col = go.AddComponent<CircleCollider2D>(); col.isTrigger = true; col.radius = Px(2.25f); // 8x3 pill (1.5x the original)
             MakeSprite(go.transform, "Sprite", S("player_shot"), mat, 9);
             go.AddComponent<PlayerShot>();
             return go;

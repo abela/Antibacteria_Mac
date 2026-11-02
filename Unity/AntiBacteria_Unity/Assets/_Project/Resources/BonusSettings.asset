@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d2cc4785d4649a681b2d464ccca647, type: 3}
+  m_Name: BonusSettings
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Bonuses.BonusSettings
+  spawnIntervalSeconds: 20
+  spawnDistanceMinPoints: 700
+  spawnDistanceMaxPoints: 710
+  minDistanceFromPlayerPoints: 300
+  edgeMarginPoints: 30
+  wanderSpeedPoints: 128
+  lifetimeSeconds: 11
+  blinkLastSeconds: 3
+  cycleTypes: 1
+  cycleSeconds: 1.6
+  durationSeconds: 12
+  warnSeconds: 2
+  speedMultiplier: 2
+  immortalAlpha: 0.5
+  boomRadiusPoints: 700
+  boomHits: 20
+  boomShakePixels: 5
+  boomShakeSeconds: 0.45
+  boomSparks: 90
+  bonuses:
+  - type: 0
+    nameId: 17
+    icon: {fileID: 21300000, guid: 96ed0d4e5633849c086392a2d589a194, type: 3}
+    weight: 1
+  - type: 1
+    nameId: 19
+    icon: {fileID: 21300000, guid: 921993e760732441e84b6a1beaeca68a, type: 3}
+    weight: 1
+  - type: 2
+    nameId: 18
+    icon: {fileID: 21300000, guid: 76bfa9680e9f049a9805ada3742c4f44, type: 3}
+    weight: 1
+  - type: 3
+    nameId: 20
+    icon: {fileID: 21300000, guid: e63085839a94b4b4c88dae6fffdca8d7, type: 3}
+    weight: 1
+  - type: 4
+    nameId: 52
+    icon: {fileID: 21300000, guid: 284ed668c63ff4ffbb2441d43842a577, type: 3}
+    weight: 1
+  - type: 5
+    nameId: 47
+    icon: {fileID: 21300000, guid: 499c360893d6d402a94c6b9f7976e942, type: 3}
+    weight: 1
+  - type: 6
+    nameId: 22
+    icon: {fileID: 21300000, guid: 01b482d021d3742338908f3064114025, type: 3}
+    weight: 1
+  - type: 7
+    nameId: 21
+    icon: {fileID: 21300000, guid: e55503fcf05ce4675ba2f3bfc527b218, type: 3}
+    weight: 1
+  material: {fileID: 2100000, guid: b70fd501603da4abfb6e2451e2183b95, type: 2}
+  frame: {fileID: 21300000, guid: f894ff73adef74904a7e4842eb31c4b9, type: 3}
+  pixel: {fileID: 21300000, guid: cba2c3379ccee40c09b23c9a391242cb, type: 3}

@@ -1,5 +1,6 @@
 using System.Collections;
 using AntiBacteria.Core;
+using AntiBacteria.Gameplay.Bonuses;
 using AntiBacteria.Gameplay.Level;
 using AntiBacteria.Gameplay.Player;
 using AntiBacteria.Input;
@@ -30,6 +31,11 @@ namespace AntiBacteria.UI.Menus
         private UnityEngine.UI.Image bossFill;
         private PaletteGraphic bossFillTint;
         private const float BossBarInner = 97f;
+        private LiveText toast;
+        private BonusType toastType;
+        private float toastLeft;
+        private PlayerBuffs watchedBuffs;
+        private const float ToastSeconds = 1.6f;
 
         public MenuScreen PauseScreen => pause;
         public MenuScreen GameOverScreen => gameOver;
@@ -45,17 +51,22 @@ namespace AntiBacteria.UI.Menus
             levelWon = BuildLevelWon();
             BuildBanner();
             BuildBossBar();
+            BuildToast();
             if (runner != null) runner.PhaseChanged += OnPhaseChanged;
+            AntiBacteria.Platform.PlatformServices.OverlayChanged += OnOverlayChanged;
         }
 
         private void OnDestroy()
         {
             if (runner != null) runner.PhaseChanged -= OnPhaseChanged;
+            AntiBacteria.Platform.PlatformServices.OverlayChanged -= OnOverlayChanged;
+            if (watchedBuffs != null) watchedBuffs.Picked -= OnBonusPicked;
         }
 
         private void Update()
         {
             UpdateBannerAndBossBar();
+            UpdateToast();
 
             // JustResumed: the Esc that closed the pause menu must not reopen it in the same frame.
             if (navigator.IsOpen || PauseController.IsPaused || PauseController.Locked || PauseController.JustResumed) return;
@@ -67,6 +78,12 @@ namespace AntiBacteria.UI.Menus
             if (runner != null && (runner.Current == CampaignLevelRunner.Phase.Won || runner.Current == CampaignLevelRunner.Phase.Lost)) return;
             PauseController.Pause();
             navigator.Show(pause);
+        }
+
+        /// <summary>The Steam overlay opened over a running level: pause it (the player resumes from the menu).</summary>
+        private void OnOverlayChanged(bool open)
+        {
+            if (open && !navigator.IsOpen && !PauseController.IsPaused && !PauseController.Locked) OpenPause();
         }
 
         public void Resume()
@@ -86,6 +103,42 @@ namespace AntiBacteria.UI.Menus
             yield return new WaitForSecondsRealtime(resultDelaySeconds);
             if (PauseController.IsPaused) PauseController.Resume();
             navigator.Show(screen);
+        }
+
+        // ------------------------------------------------------------------ bonus pickup message
+
+        /// <summary>The bonus name under the timer for a moment after a pickup (2013: updateBonusOnLevelOverLayer).</summary>
+        private void BuildToast()
+        {
+            toast = LiveText.Create(skin, root, "BonusToast", 160f, 26f, ToastText, role: PaletteRole.Accent);
+            toast.gameObject.SetActive(false);
+        }
+
+        private string ToastText()
+        {
+            BonusInfo info = BonusSettings.Current.Info(toastType);
+            return info != null ? Loc.Get(info.nameId).ToUpperInvariant() : "";
+        }
+
+        private void OnBonusPicked(BonusType type)
+        {
+            toastType = type;
+            toastLeft = ToastSeconds;
+            toast.gameObject.SetActive(true);
+            toast.Refresh();
+        }
+
+        private void UpdateToast()
+        {
+            if (watchedBuffs == null && PlayerController.Current != null && PlayerController.Current.Buffs != null)
+            {
+                watchedBuffs = PlayerController.Current.Buffs;
+                watchedBuffs.Picked += OnBonusPicked;
+            }
+            if (toastLeft <= 0f) return;
+            if (!PauseController.IsPaused) toastLeft -= Time.unscaledDeltaTime;
+            bool show = toastLeft > 0f && !navigator.IsOpen;
+            if (toast.gameObject.activeSelf != show) toast.gameObject.SetActive(show);
         }
 
         // ------------------------------------------------------------------ banner & boss bar
@@ -159,7 +212,7 @@ namespace AntiBacteria.UI.Menus
             s.CanGoBack = false;
             s.ResetSelectionOnShow = true;
             UIFactory.Panel(skin, t, 68f, 14f, 252f, 168f);
-            LiveText.Create(skin, t, "Title", 160f, 22f, () => Loc.Get(WordIDs.GameOver).ToUpperInvariant(), scale: 2,
+            LiveText.Create(skin, t, "Title", 160f, 22f, () => Loc.Get(runner != null && runner.LostByTimeOut ? WordIDs.TimeOff : WordIDs.GameOver).ToUpperInvariant(), scale: 2,
                 role: PaletteRole.Accent, maxWidth: 176f);
             LiveText.Create(skin, t, "Level", 160f, 50f, LevelName);
             AddStats(t, 84f, 236f, 70f, 14f);
@@ -214,8 +267,11 @@ namespace AntiBacteria.UI.Menus
 
         private bool IsLastLevel => database != null ? database.IsLast(GameSession.CurrentLevel) : GameSession.CurrentLevel >= SceneFlow.LevelCount;
 
-        private string LevelName() =>
-            Loc.Get(WordIDs.Level) + " " + (runner != null && runner.Level != null ? runner.Level.Label : GameSession.CurrentLevel.ToString());
+        private string LevelName() => runner != null && runner.IsEndless
+            ? ModeName(GameSession.Mode) + "  " + Loc.Get(WordIDs.Best) + " " + Progress.ModeBest(GameSession.Mode, GameSession.Difficulty)
+            : Loc.Get(WordIDs.Level) + " " + (runner != null && runner.Level != null ? runner.Level.Label : GameSession.CurrentLevel.ToString());
+
+        public static string ModeName(GameMode mode) => Loc.Get((WordIDs)System.Enum.Parse(typeof(WordIDs), mode.ToString()));
 
         public static string FormatTime(float seconds)
         {

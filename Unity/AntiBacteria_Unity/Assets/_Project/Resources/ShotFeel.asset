@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47458fbd1bab04328898654e82db9166, type: 3}
+  m_Name: ShotFeel
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Gameplay.Effects.ShotFeel
+  spreadDegrees: 4
+  speedJitter: 0.06
+  barrelOffsetPixels: 1.5
+  muzzleFlash: 1
+  muzzleDistancePixels: 11
+  muzzleFlashFps: 30
+  recoilPixels: 1
+  recoilSeconds: 0.05
+  cameraKickPixels: 1.5
+  cameraKickReturn: 25
+  fireShakePixels: 0
+  birthSeconds: 0.04
+  trail: 1
+  trailAlpha: 0.45
+  knockbackPixelsPerSecond: 30
+  knockbackDecay: 15
+  enemyHitSparks: 4
+  wallHitSparks: 7
+  bulletCancelSparks: 4
+  killSparks: 10
+  killShakePixels: 1.5
+  killShakeSeconds: 0.12
+  bossKillSparks: 48
+  bossKillShakePixels: 4
+  bossKillShakeSeconds: 0.5
+  sparkSpeedMin: 60
+  sparkSpeedMax: 170
+  sparkDrag: 8
+  sparkLifeMin: 0.15
+  sparkLifeMax: 0.35
+  sparkBlinkFrom: 0.35
+  screenShakeScale: 1
+  material: {fileID: 2100000, guid: b70fd501603da4abfb6e2451e2183b95, type: 2}
+  shotBirth: {fileID: 21300000, guid: b04efff33a0da4c389be8d020e7b9e85, type: 3}
+  shotTrail: {fileID: 21300000, guid: 82639ca7c1b9149b7ba1f406bf6f0d6f, type: 3}
+  muzzleFrames:
+  - {fileID: 21300000, guid: 4963e1a2dd8524495ba66d60434c0d90, type: 3}
+  - {fileID: 21300000, guid: f004de6523d564b7ba1697b8072dc173, type: 3}
+  hitFrames:
+  - {fileID: 21300000, guid: d96a3ed4f6a0148a29fb1f8184397b41, type: 3}
+  - {fileID: 21300000, guid: eeb35d2e1822b4a84b1ef7d00393082a, type: 3}
+  wallFrames:
+  - {fileID: 21300000, guid: c519771e9c33a4ca08a367d63495240e, type: 3}
+  - {fileID: 21300000, guid: 1b57e75a38138449ba514797372527a5, type: 3}
+  - {fileID: 21300000, guid: 4b138ef35f9ea48cca55669cb18e9435, type: 3}
+  sparkForeground: {fileID: 21300000, guid: a22935483e47b45038980fad21930475, type: 3}
+  sparkAccent: {fileID: 21300000, guid: e905c1618c11e43929c073657137a327, type: 3}
+  sparkBig: {fileID: 21300000, guid: 65f5ca2b7a0f84e38962f17ab74e5d3e, type: 3}

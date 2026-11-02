@@ -1,3 +1,4 @@
+using AntiBacteria.Audio;
 using System;
 using AntiBacteria.Core;
 using AntiBacteria.Input;
@@ -53,6 +54,7 @@ namespace AntiBacteria.Gameplay.Player
             Time.timeScale = active ? slowTimeScale : 1f;
             Time.fixedDeltaTime = BaseFixedDelta * Time.timeScale; // keep physics smooth in slow motion
             ActiveChanged?.Invoke(active);
+            Sound.Play(active ? Sfx.SlowmoOn : Sfx.SlowmoOff);
         }
 
         /// <summary>Ends slow motion now and blocks re-activation (level over).</summary>

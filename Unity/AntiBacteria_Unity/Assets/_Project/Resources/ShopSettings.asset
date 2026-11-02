@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8664a2862444f1798ae128fca8869f, type: 3}
+  m_Name: ShopSettings
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Core.ShopSettings
+  entries:
+  - item: 0
+    nameId: 17
+    price: 20000
+  - item: 1
+    nameId: 18
+    price: 20000
+  - item: 2
+    nameId: 19
+    price: 20000
+  - item: 3
+    nameId: 20
+    price: 20000
+  - item: 4
+    nameId: 21
+    price: 40000
+  - item: 5
+    nameId: 22
+    price: 1000000
+  doubleSpeedMultiplier: 2

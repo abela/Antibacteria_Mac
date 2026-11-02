@@ -1,3 +1,4 @@
+using AntiBacteria.Audio;
 using System.Collections;
 using System.Collections.Generic;
 using AntiBacteria.Core;
@@ -246,6 +247,7 @@ namespace AntiBacteria.Gameplay.Enemies.Bosses
         private IEnumerator PhaseShift()
         {
             Invulnerable = true; // the boss bar shows the shield
+            Sound.Play(Sfx.BossShield);
             yield return Telegraph(1.0f, true);
             int n = ShiftRing[D];
             float a = Random.Range(0f, 360f);

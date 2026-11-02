@@ -4,6 +4,9 @@ namespace AntiBacteria.Core
 {
     public enum Difficulty { Normal = 0, Hard = 1, Impossible = 2 }
 
+    /// <summary>What the Gameplay scene runs: a campaign level or one of the three endless modes.</summary>
+    public enum GameMode { Campaign = 0, CaptureFlag = 1, Rush = 2, PeaceWalker = 3 }
+
     /// <summary>The current level attempt: which level, and what was earned in it. Persistence comes with the save system.</summary>
     public static class GameSession
     {
@@ -14,6 +17,8 @@ namespace AntiBacteria.Core
         public static int Vitamins { get; private set; }
         public static int Kills { get; private set; }
         public static Difficulty Difficulty { get; set; } = Difficulty.Normal;
+        public static GameMode Mode { get; set; } = GameMode.Campaign;
+        public static bool IsEndless => Mode != GameMode.Campaign;
 
         public static event Action Changed;
 
@@ -27,7 +32,8 @@ namespace AntiBacteria.Core
 
         public static void AddScore(int points)
         {
-            Score += points;
+            // Endless modes pay x1 / x2 / x3 by difficulty (2013 multiplier; the campaign keeps its own per-level scores).
+            Score += IsEndless ? points * ((int)Difficulty + 1) : points;
             Changed?.Invoke();
         }
 
@@ -41,6 +47,7 @@ namespace AntiBacteria.Core
         public static void AddVitamins(int amount)
         {
             Vitamins += amount;
+            Progress.AddVitamins(amount); // the wallet the upgrade shop spends
             Changed?.Invoke();
         }
     }
