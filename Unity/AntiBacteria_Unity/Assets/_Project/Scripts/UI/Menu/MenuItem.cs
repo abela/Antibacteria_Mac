@@ -33,6 +33,9 @@ namespace AntiBacteria.UI.Menu
         /// <summary>Confirm (Enter / Space / A).</summary>
         public virtual void Submit() { }
 
+        /// <summary>Left / right changes this item's value (options, difficulty): the prompt bar shows "Change".</summary>
+        public virtual bool ChangesValue => false;
+
         /// <summary>Left / right. Returns true if the item used it.</summary>
         public virtual bool Step(int direction) => false;
 

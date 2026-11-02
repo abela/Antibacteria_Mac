@@ -13,6 +13,8 @@ namespace AntiBacteria.UI.Menu
     /// </summary>
     public class DifficultyRow : MenuItem
     {
+        public override bool ChangesValue => true;
+
         private static readonly float[] Centres = { 96f, 160f, 224f };
         private const float ArrowGap = 4f;
 

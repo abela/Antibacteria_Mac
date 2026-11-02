@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace AntiBacteria.Core
 {
@@ -32,8 +33,8 @@ namespace AntiBacteria.Core
 
         public static void AddScore(int points)
         {
-            // Endless modes pay x1 / x2 / x3 by difficulty (2013 multiplier; the campaign keeps its own per-level scores).
-            Score += IsEndless ? points * ((int)Difficulty + 1) : points;
+            // Harder difficulties pay more, in the campaign and the endless modes (DifficultySettings; 2013 modes: x1/x2/x3).
+            Score += Mathf.RoundToInt(points * DifficultySettings.Current.Score(Difficulty));
             Changed?.Invoke();
         }
 

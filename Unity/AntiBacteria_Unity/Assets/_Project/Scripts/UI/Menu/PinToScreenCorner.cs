@@ -46,7 +46,9 @@ namespace AntiBacteria.UI.Menu
             // The parent is centred on the canvas: step out of it by half the difference, in whole pixels.
             Vector2 outside = new Vector2(Mathf.Floor((c.x - p.x) * 0.5f), Mathf.Floor((c.y - p.y) * 0.5f));
             Vector2 sign = new Vector2(corner.x < 0.5f ? -1f : 1f, corner.y < 0.5f ? -1f : 1f);
-            rt.anchoredPosition = new Vector2(sign.x * (outside.x - margin.x), sign.y * (outside.y - margin.y));
+            // A 0.5 coordinate means centred on that axis (the bottom-centre prompt bar).
+            rt.anchoredPosition = new Vector2(Mathf.Approximately(corner.x, 0.5f) ? margin.x : sign.x * (outside.x - margin.x),
+                                              Mathf.Approximately(corner.y, 0.5f) ? margin.y : sign.y * (outside.y - margin.y));
         }
     }
 }

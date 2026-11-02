@@ -23,6 +23,9 @@ namespace AntiBacteria.Gameplay
         public void DropVitamins(Vector2 at, int count)
         {
             if (vitaminPrefab == null) return;
+            // More vitamins on harder difficulties; a fractional part becomes one more vitamin by chance.
+            float want = count * DifficultySettings.Current.Vitamins(GameSession.Difficulty);
+            count = Mathf.FloorToInt(want) + (Random.value < want - Mathf.Floor(want) ? 1 : 0);
             float s = Legacy.Units(scatterPoints);
             for (int i = 0; i < count; i++)
             {

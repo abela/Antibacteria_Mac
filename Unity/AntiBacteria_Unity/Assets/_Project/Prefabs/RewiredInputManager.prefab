@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5411117864609299663}
   - component: {fileID: 5358143309618780526}
+  - component: {fileID: 4428806698852018892}
   m_Layer: 0
   m_Name: RewiredInputManager
   m_TagString: Untagged
@@ -1055,3 +1056,22 @@ MonoBehaviour:
     controllerMapLayoutManagerSetIdCounter: 0
     controllerMapEnablerSetIdCounter: 0
   _controllerDataFiles: {fileID: 11400000, guid: d21d2b20df8369642b76aafbb2576ba7, type: 2}
+--- !u!114 &4428806698852018892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4987830391543202882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 307e2fe016d34e8438488ad3bf56abd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rewired.Data.UserDataStore_PlayerPrefs
+  isEnabled: 1
+  loadDataOnStart: 1
+  loadJoystickAssignments: 1
+  loadKeyboardAssignments: 1
+  loadMouseAssignments: 1
+  _actionMappingSaveMode: 0
+  playerPrefsKeyPrefix: RewiredSaveData

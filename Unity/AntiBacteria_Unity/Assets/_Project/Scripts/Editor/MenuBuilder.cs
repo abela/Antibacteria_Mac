@@ -104,6 +104,7 @@ namespace AntiBacteria.EditorTools
                 .Where(s => s != null).ToArray();
             skin.crawlerHead = S("Sprites/snake_head");
             skin.crawlerSegment = S("Sprites/snake_segment_r2");
+            skin.bossMark = S("Sprites/Bosses/eye_boss");
             EditorUtility.SetDirty(skin);
             if (skin.font == null) log.AppendLine("WARNING: font asset missing - run AntiBacteria > UI > Build Pixel Font Asset first.");
             log.AppendLine("UI skin: " + SkinPath);

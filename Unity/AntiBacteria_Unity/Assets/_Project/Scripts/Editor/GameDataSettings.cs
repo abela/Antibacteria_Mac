@@ -5,6 +5,7 @@ using AntiBacteria.Gameplay.Bonuses;
 using AntiBacteria.Gameplay.Modes;
 using AntiBacteria.Gameplay.Ambience;
 using AntiBacteria.Platform;
+using AntiBacteria.Input;
 using AntiBacteria.Gameplay.Weapons;
 using UnityEditor;
 using UnityEngine;
@@ -45,6 +46,46 @@ namespace AntiBacteria.EditorTools
         }
 
         /// <summary>Palette material, the pickup frame and each type's icon (Art/Sprites/Bonus).</summary>
+        public static DifficultySettings DifficultyCfg() =>
+            GetOrCreate<DifficultySettings>(Resources + "/DifficultySettings.asset", DifficultySettings.Use, null);
+
+        [SettingsProvider]
+        public static SettingsProvider DifficultyPage() => Page(
+            "Project/AntiBacteria/Difficulty", "Difficulty",
+            "What Hard and Impossible pay back: score and vitamin multipliers (campaign and endless modes). They are shown " +
+            "to the player when choosing a difficulty. Changes apply at once.",
+            DifficultyCfg, new HashSet<string> { "difficulty", "hard", "impossible", "multiplier", "reward", "score", "vitamin" });
+
+        [MenuItem("AntiBacteria/Settings/Difficulty...")]
+        private static void OpenDifficulty() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Difficulty");
+
+        public static PromptSettings Prompts() =>
+            GetOrCreate<PromptSettings>(Resources + "/PromptSettings.asset", PromptSettings.Use, p => p.xboxA == null, FillPromptArt);
+
+        public static void FillPromptArt(PromptSettings s)
+        {
+            Undo.RecordObject(s, "Link Prompt Glyphs");
+            Sprite G(string n) => LoadSprite("Glyphs/glyph_" + n);
+            s.xboxA = G("xbox_a"); s.xboxB = G("xbox_b");
+            s.psCross = G("ps_cross"); s.psCircle = G("ps_circle");
+            s.switchA = G("switch_a"); s.switchB = G("switch_b");
+            s.padLeftRight = G("dpad_lr");
+            s.keyEnter = G("key_enter"); s.keyEsc = G("key_esc"); s.keyLeftRight = G("key_lr");
+            EditorUtility.SetDirty(s);
+            AssetDatabase.SaveAssetIfDirty(s);
+        }
+
+        [SettingsProvider]
+        public static SettingsProvider PromptsPage() => Page(
+            "Project/AntiBacteria/Controller Prompts", "Controller Prompts",
+            "The button prompts along the bottom of every menu: Xbox, PlayStation, Switch or keyboard glyphs, picked from " +
+            "the device used last. Preview shows one family's glyphs in the editor. Changes apply at once, also while playing.",
+            Prompts, new HashSet<string> { "prompt", "glyph", "gamepad", "controller", "xbox", "playstation", "switch", "button" },
+            s => { if (GUILayout.Button("Re-link glyph sprites")) FillPromptArt(s); });
+
+        [MenuItem("AntiBacteria/Settings/Controller Prompts...")]
+        private static void OpenPrompts() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Controller Prompts");
+
         public static PlatformSettings PlatformCfg() =>
             GetOrCreate<PlatformSettings>(Resources + "/PlatformSettings.asset", PlatformSettings.Use, null);
 

@@ -26,5 +26,7 @@ namespace AntiBacteria.UI.Menu
         [Tooltip("The worm that now and then crawls across the main menu.")]
         public Sprite crawlerHead;
         public Sprite crawlerSegment;
+        [Tooltip("Drawn in the boss node of each world on the level select map.")]
+        public Sprite bossMark;
     }
 }

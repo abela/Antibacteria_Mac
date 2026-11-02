@@ -13,6 +13,8 @@ namespace AntiBacteria.UI.Menu
     /// </summary>
     public class MenuOption : MenuItem
     {
+        public override bool ChangesValue => true;
+
         public enum Kind { Choice, Toggle, Bar }
 
         public const float LabelX = 48f;

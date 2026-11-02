@@ -55,6 +55,7 @@ namespace AntiBacteria.UI.Menus
             BuildBanner();
             BuildBossBar();
             BuildToast();
+            PromptBar.Create(skin, root, navigator); // [A] Select  [B] Back on pause, options and result screens
             if (runner != null) runner.PhaseChanged += OnPhaseChanged;
             AntiBacteria.Platform.PlatformServices.OverlayChanged += OnOverlayChanged;
         }

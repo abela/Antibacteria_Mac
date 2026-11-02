@@ -76,8 +76,17 @@ namespace AntiBacteria.Input
             }
         }
 
-        public static bool UISubmitPressed => Player != null && Player.GetButtonDown(InputActions.UISubmit);
-        public static bool UICancelPressed => Player != null && Player.GetButtonDown(InputActions.UICancel);
+        /// <summary>
+        /// Confirm / Back. On a Nintendo controller they swap (ControllerPrompts.NintendoLayout): A, the right button,
+        /// confirms and B, the bottom one, goes back, as Switch players expect.
+        /// </summary>
+        public static bool UISubmitPressed =>
+            Player != null && Player.GetButtonDown(ControllerPrompts.NintendoLayout ? InputActions.UICancel : InputActions.UISubmit);
+        public static bool UICancelPressed =>
+            Player != null && Player.GetButtonDown(ControllerPrompts.NintendoLayout ? InputActions.UISubmit : InputActions.UICancel);
+
+        /// <summary>The device used last (keyboard, mouse or a joystick), for the button prompts.</summary>
+        public static Controller LastActiveController => Player?.controllers.GetLastActiveController();
 
         public static bool MouseLeftPressed =>
             ReInput.isReady && ReInput.controllers.Mouse != null && ReInput.controllers.Mouse.GetButtonDown(0);

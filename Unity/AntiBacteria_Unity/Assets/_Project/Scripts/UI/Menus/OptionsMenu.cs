@@ -45,6 +45,8 @@ namespace AntiBacteria.UI.Menus
             s.Add(MenuOption.Bar(skin, t, "Music", y, () => Loc.Get(WordIDs.GameMusic),
                 () => GameSettings.MusicVolume, GameSettings.SetMusicVolume));
 
+            MenuScreen controls = ControlsMenu.Build(skin, parent, nav, opaque);
+            s.Add(MenuButton.Create(skin, t, "Controls", 160f, 132f, () => Loc.Get(WordIDs.Controls), () => nav.Push(controls)));
             s.Add(MenuButton.Create(skin, t, "Back", 160f, 152f, () => Loc.Get(WordIDs.Back), nav.Back));
             return s;
         }

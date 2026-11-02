@@ -1,61 +1,46 @@
 import os,sys
-root=sys.argv[1]
+S=sys.argv[1]
 def patch(rel, pairs):
-    p=os.path.join(root,rel); s=open(p,encoding='utf-8').read()
+    p=os.path.join(S,rel); s=open(p,encoding='utf-8').read()
     for a,b in pairs:
         n=s.count(a); assert n==1,(rel,n,a[:70]); s=s.replace(a,b)
     open(p,'w',encoding='utf-8').write(s); print('ok',rel)
-
-patch('UI/Menu/UISkin.cs',[
-("        public Sprite[] backdropSprites = new Sprite[0];\n",
- "        public Sprite[] backdropSprites = new Sprite[0];\n        [Tooltip(\"The worm that now and then crawls across the main menu.\")]\n        public Sprite crawlerHead;\n        public Sprite crawlerSegment;\n"),
+patch('Core/Worlds.cs',[
+("        /// <summary>Levels of the world cleared on the given difficulty.</summary>\n",
+ "        /// <summary>Levels of the world cleared on any difficulty.</summary>\n"
+ "        public static int ClearedOnAny(int world)\n        {\n            int n = 0;\n"
+ "            for (int i = 0; i < LevelsPerWorld; i++) if (Progress.IsClearedOnAny(FirstLevel(world) + i)) n++;\n"
+ "            return n;\n        }\n\n"
+ "        /// <summary>Levels of the world cleared on the given difficulty.</summary>\n"),
 ])
-patch('Editor/MenuBuilder.cs',[
-("""            skin.backdropSprites = new[] { S("Sprites/enemy_spiky"), S("Sprites/enemy_big"), S("Sprites/snake_head"), S("Sprites/vitamin") }
-                .Where(s => s != null).ToArray();
-""","""            skin.backdropSprites = new[]
-                {
-                    S("Sprites/enemy_spiky"), S("Sprites/enemy_big"), S("Sprites/enemy_zigzag"), S("Sprites/vitamin"),
-                    S("Sprites/enemy_spiral"), S("Sprites/enemy_gnida"), S("Sprites/enemy_loctopus"), S("Sprites/enemy_zamri"),
-                    S("Sprites/enemy_adrenalium"), S("Sprites/enemy_chorux"), S("Sprites/enemy_defender"), S("Sprites/enemy_tentacle"),
-                    S("Sprites/enemy_sunux"), S("Sprites/vitamin"),
-                }
-                .Where(s => s != null).ToArray();
-            skin.crawlerHead = S("Sprites/snake_head");
-            skin.crawlerSegment = S("Sprites/snake_segment_r2");
-"""),
+patch('UI/Menu/WorldMap.cs',[
+("    /// States: locked (dim), open (outline), cleared on the chosen difficulty (filled).\n",
+ "    /// States: locked (dim), open (outline), cleared on any difficulty (filled).\n"),
+("            Difficulty d = GameSettings.Difficulty;\n            int first = Worlds.FirstLevel(world);\n",
+ "            int first = Worlds.FirstLevel(world);\n"),
+("                bool cleared = open && Progress.IsCleared(level, d);\n",
+ "                bool cleared = open && Progress.IsClearedOnAny(level); // difficulty is picked after the level\n"),
 ])
-patch('Gameplay/Arena.cs',[
-("            Current = this;\n            BuildWalls();\n",
- "            Current = this;\n            BuildWalls();\n            if (GetComponent<Ambience.ArenaAmbience>() == null) gameObject.AddComponent<Ambience.ArenaAmbience>(); // background life\n"),
-])
-patch('Editor/GameDataSettings.cs',[
-("using AntiBacteria.Gameplay.Modes;\n", "using AntiBacteria.Gameplay.Modes;\nusing AntiBacteria.Gameplay.Ambience;\n"),
-("        public static ModeSettings Modes() =>",
- """        public static AmbienceSettings AmbienceCfg() =>
-            GetOrCreate<AmbienceSettings>(Resources + "/AmbienceSettings.asset", AmbienceSettings.Use, a => a.material == null, FillAmbienceArt);
-
-        public static void FillAmbienceArt(AmbienceSettings s)
-        {
-            Undo.RecordObject(s, "Link Ambience Art");
-            s.material = AssetDatabase.LoadAssetAtPath<Material>(Art + "/PaletteSprite.mat");
-            EditorUtility.SetDirty(s);
-            AssetDatabase.SaveAssetIfDirty(s);
-            // The cilia read the floor's pixels to find the inner edge of the walls.
-            var floor = AssetImporter.GetAtPath(Art + "/Sprites/arena_floor.png") as TextureImporter;
-            if (floor != null && !floor.isReadable) { floor.isReadable = true; floor.SaveAndReimport(); }
-        }
-
-        [SettingsProvider]
-        public static SettingsProvider AmbiencePage() => Page(
-            "Project/AntiBacteria/Ambience", "Ambience",
-            "Background life: drifting specks, microbes, pulse rings and wall cilia in the arena, and the main menu backdrop. " +
-            "Pure decoration. Arena changes apply when a level starts.",
-            AmbienceCfg, new HashSet<string> { "ambience", "background", "specks", "dust", "microbes", "cilia", "menu", "backdrop", "life" },
-            s => { if (GUILayout.Button("Re-link material / make the floor readable")) FillAmbienceArt(s); });
-
-        [MenuItem("AntiBacteria/Settings/Ambience...")]
-        private static void OpenAmbience() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Ambience");
-
-        public static ModeSettings Modes() =>"""),
+patch('UI/Menus/MainMenuController.cs',[
+("        private GameMode pendingMode = GameMode.CaptureFlag; // the endless mode whose difficulty is being chosen\n",
+ "        // What the difficulty screen will start: an endless mode, or (Campaign) the level picked on the map.\n"
+ "        private GameMode pendingMode = GameMode.CaptureFlag;\n        private int pendingLevel = 1;\n"),
+("            levelSelect = LevelSelectMenu.Build(skin, root, navigator);\n",
+ "            levelSelect = LevelSelectMenu.Build(skin, root, navigator, level =>\n"
+ "            {\n                pendingMode = GameMode.Campaign;\n                pendingLevel = level;\n                navigator.Push(difficulty);\n            });\n"),
+("            LiveText.Create(skin, t, \"Title\", 160f, 22f, () => GameplayMenuController.ModeName(pendingMode).ToUpperInvariant(), role: PaletteRole.Accent);\n",
+ "            bool campaign() => pendingMode == GameMode.Campaign;\n"
+ "            LiveText.Create(skin, t, \"Title\", 160f, 22f, () => campaign()\n"
+ "                ? LevelSelectMenu.Title(pendingLevel, true)\n"
+ "                : GameplayMenuController.ModeName(pendingMode).ToUpperInvariant(), role: PaletteRole.Accent);\n"),
+("            LiveText.Create(skin, t, \"Subtitle\", 160f, 44f, () => Loc.Get(WordIDs.Difficulty), dim: true);\n",
+ "            // Campaign: the world's name and \"Difficulty\"; endless modes: \"Difficulty\".\n"
+ "            LiveText.Create(skin, t, \"Subtitle\", 160f, 44f, () => campaign()\n"
+ "                ? Worlds.Name(Worlds.Of(pendingLevel)) + \"  \" + Loc.Get(WordIDs.Difficulty)\n"
+ "                : Loc.Get(WordIDs.Difficulty), dim: true);\n"),
+("                    GameSettings.SetDifficulty(d);\n                    SceneFlow.LoadMode(pendingMode);\n",
+ "                    GameSettings.SetDifficulty(d);\n"
+ "                    if (campaign()) SceneFlow.LoadLevel(pendingLevel);\n                    else SceneFlow.LoadMode(pendingMode);\n"),
+("                    int best = Progress.ModeBest(pendingMode, d);\n",
+ "                    int best = campaign() ? Progress.Best(pendingLevel, d) : Progress.ModeBest(pendingMode, d);\n"),
 ])

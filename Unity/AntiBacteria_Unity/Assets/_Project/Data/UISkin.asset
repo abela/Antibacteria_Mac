@@ -39,3 +39,4 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8e4eef50df57843b4bd00e576aedad18, type: 3}
   crawlerHead: {fileID: 21300000, guid: 3eb0c278317b04e069ef87ad094ff733, type: 3}
   crawlerSegment: {fileID: 21300000, guid: ddfada93073254667a904cc688a1a9ac, type: 3}
+  bossMark: {fileID: 21300000, guid: 20ff19c406a67484a8bb24f51c077b81, type: 3}

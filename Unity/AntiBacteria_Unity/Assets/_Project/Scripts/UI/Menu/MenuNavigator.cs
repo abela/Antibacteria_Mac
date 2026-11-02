@@ -24,6 +24,8 @@ namespace AntiBacteria.UI.Menu
 
         public MenuScreen Top => stack.Count > 0 ? stack[stack.Count - 1] : null;
         public bool IsOpen => stack.Count > 0;
+        /// <summary>Screens open, the current one included.</summary>
+        public int Depth => stack.Count;
 
         private void OnEnable()
         {
@@ -92,6 +94,8 @@ namespace AntiBacteria.UI.Menu
         {
             MenuScreen top = Top;
             if (top == null || Time.frameCount == openedFrame) return;
+            // Controls screen listening for a new key: that key is not a menu press (nor the frame after).
+            if (Remapping.IsListening || Time.frameCount <= Remapping.QuietUntilFrame) return;
 
             // Keyboard / gamepad
             Vector2 nav = GameInput.UINavigation;

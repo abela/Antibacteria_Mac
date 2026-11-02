@@ -19,7 +19,9 @@ namespace AntiBacteria.UI.Menus
         [SerializeField] private RectTransform root;
 
         private MenuScreen main, modes, levelSelect, options, about, upgrade, difficulty;
-        private GameMode pendingMode = GameMode.CaptureFlag; // the endless mode whose difficulty is being chosen
+        // What the difficulty screen will start: an endless mode, or (Campaign) the level picked on the map.
+        private GameMode pendingMode = GameMode.CaptureFlag;
+        private int pendingLevel = 1;
 
         public MenuScreen Main => main;
         public MenuScreen Modes => modes;
@@ -34,7 +36,13 @@ namespace AntiBacteria.UI.Menus
             main = BuildMain();
             modes = BuildModes();
             difficulty = BuildDifficulty();
-            levelSelect = LevelSelectMenu.Build(skin, root, navigator);
+            PromptBar.Create(skin, root, navigator); // [A] Select  [B] Back, on every screen
+            levelSelect = LevelSelectMenu.Build(skin, root, navigator, level =>
+            {
+                pendingMode = GameMode.Campaign;
+                pendingLevel = level;
+                navigator.Push(difficulty);
+            });
             options = OptionsMenu.Build(skin, root, navigator, false);
             about = BuildAbout();
             upgrade = UpgradeMenu.Build(skin, root, navigator);
@@ -129,9 +137,15 @@ namespace AntiBacteria.UI.Menus
             MenuScreen s = MenuScreen.Create(root, "Difficulty");
             Transform t = s.transform;
             s.ResetSelectionOnShow = true;
-            LiveText.Create(skin, t, "Title", 160f, 22f, () => GameplayMenuController.ModeName(pendingMode).ToUpperInvariant(), role: PaletteRole.Accent);
+            bool campaign() => pendingMode == GameMode.Campaign;
+            LiveText.Create(skin, t, "Title", 160f, 22f, () => campaign()
+                ? LevelSelectMenu.Title(pendingLevel, true)
+                : GameplayMenuController.ModeName(pendingMode).ToUpperInvariant(), role: PaletteRole.Accent);
             UIFactory.Image(t, "Rule", skin.pixel, 110f, 40f, 101f, 1f, PaletteRole.Foreground, true);
-            LiveText.Create(skin, t, "Subtitle", 160f, 44f, () => Loc.Get(WordIDs.Difficulty), dim: true);
+            // Campaign: the world's name and "Difficulty"; endless modes: "Difficulty".
+            LiveText.Create(skin, t, "Subtitle", 160f, 44f, () => campaign()
+                ? Worlds.Name(Worlds.Of(pendingLevel)) + "  " + Loc.Get(WordIDs.Difficulty)
+                : Loc.Get(WordIDs.Difficulty), dim: true);
             WordIDs[] names = { WordIDs.Normal, WordIDs.Hard, WordIDs.Impossible };
             for (int i = 0; i < names.Length; i++)
             {
@@ -141,15 +155,27 @@ namespace AntiBacteria.UI.Menus
                 s.Add(MenuButton.Create(skin, t, w.ToString(), 160f, y, () => Loc.Get(w), () =>
                 {
                     GameSettings.SetDifficulty(d);
-                    SceneFlow.LoadMode(pendingMode);
+                    if (campaign()) SceneFlow.LoadLevel(pendingLevel);
+                    else SceneFlow.LoadMode(pendingMode);
                 }));
                 LiveText.Create(skin, t, "Best" + i, 214f, y, () =>
                 {
-                    int best = Progress.ModeBest(pendingMode, d);
+                    int best = campaign() ? Progress.Best(pendingLevel, d) : Progress.ModeBest(pendingMode, d);
                     return best > 0 ? Loc.Get(WordIDs.Best) + " " + best : "";
                 }, HorizontalAlignmentOptions.Left, dim: true);
             }
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 132f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            // What the highlighted difficulty means and what it pays: the reason to pick a harder one.
+            System.Func<Difficulty?> highlighted = () =>
+            {
+                int i = s.SelectedItem != null ? s.Items.IndexOf(s.SelectedItem) : -1;
+                return i >= 0 && i < 3 ? (Difficulty)i : (Difficulty?)null;
+            };
+            LiveText desc = LiveText.Create(skin, t, "Description", 160f, 118f,
+                () => highlighted() is Difficulty d ? DifficultySettings.Description(d) : "", dim: true);
+            LiveText rewards = LiveText.Create(skin, t, "Rewards", 160f, 130f,
+                () => highlighted() is Difficulty d ? DifficultySettings.Rewards(d) : "", role: PaletteRole.Accent);
+            SelectionWatcher.Watch(s, () => { desc.Refresh(); rewards.Refresh(); });
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 150f, () => Loc.Get(WordIDs.Back), navigator.Back));
             return s;
         }
 
