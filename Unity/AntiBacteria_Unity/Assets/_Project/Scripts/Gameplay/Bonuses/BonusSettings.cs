@@ -49,6 +49,19 @@ namespace AntiBacteria.Gameplay.Bonuses
         public bool cycleTypes = true;
         [Min(0.2f)] public float cycleSeconds = 1.6f;
 
+        [Header("Highlight (so a bonus never reads as an enemy)")]
+        [Tooltip("Accent corner brackets around the bonus, breathing in and out.")]
+        public bool brackets = true;
+        [Min(0.1f)] public float bracketPulseSeconds = 0.6f;
+        [Tooltip("A square burst, sparks and a chime when a bonus appears.")]
+        public bool spawnFlash = true;
+        [Tooltip("A \"BONUS\" label over the pickup during the player's first N plays (levels or runs started). 0 = never.")]
+        [Min(0)] public int labelForFirstPlays = 5;
+        [Tooltip("A blinking arrow at the screen edge points to a bonus that is off screen.")]
+        public bool offscreenArrow = true;
+        [Tooltip("Arrow distance from the screen edge, in pixels.")]
+        public float arrowMarginPixels = 10f;
+
         [Header("Effects")]
         [Tooltip("Weapon, Immortality and Double Speed last this long. 2013: 800 frames (13.3 s at 60 fps). " +
                  "Picking the same kind again restarts the full time (bug 18).")]

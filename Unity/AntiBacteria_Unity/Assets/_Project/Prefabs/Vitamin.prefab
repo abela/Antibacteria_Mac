@@ -97,7 +97,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.1875
+  m_Radius: 0.3125
 --- !u!114 &7410099300482566002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,6 +113,14 @@ MonoBehaviour:
   value: 1
   magnetDistancePoints: 500
   homingSpeedPoints: 1280
+  frames:
+  - {fileID: 21300000, guid: 07ca8dc47c0684fc8881ff2c21da7adb, type: 3}
+  - {fileID: 21300000, guid: 2b2b088896b9e48bb81e86998444eb78, type: 3}
+  pickupRadiusPixels: 5
+  glintEverySeconds: 1.1
+  ringEverySeconds: 1.3
+  ringAlpha: 0.7
+  spillSeconds: 0.28
 --- !u!1 &8310805153421080882
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,7 +202,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 6
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 8e4eef50df57843b4bd00e576aedad18, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 07ca8dc47c0684fc8881ff2c21da7adb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

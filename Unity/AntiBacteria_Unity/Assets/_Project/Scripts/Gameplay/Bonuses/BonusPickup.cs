@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AntiBacteria.Core;
 using AntiBacteria.Gameplay.Effects;
 using AntiBacteria.Gameplay.Player;
+using AntiBacteria.Rendering;
 using UnityEngine;
 
 namespace AntiBacteria.Gameplay.Bonuses
@@ -23,12 +24,17 @@ namespace AntiBacteria.Gameplay.Bonuses
         public BonusType Type { get; private set; }
 
         private Rigidbody2D rb;
-        private SpriteRenderer frame, icon;
+        private SpriteRenderer frame, icon, burst, arrow;
+        private readonly SpriteRenderer[] corners = new SpriteRenderer[4];
         private Vector2 target;
         private float age, cycleTimer;
         private bool taken, cycles = true;
 
         public static int LiveCount => Live.Count;
+        /// <summary>Every bonus in the arena (the HUD labels them for new players).</summary>
+        public static IReadOnlyList<BonusPickup> All => Live;
+        /// <summary>False while it blinks off near the end of its life.</summary>
+        public bool Visible => frame != null && frame.enabled;
 
         /// <param name="cycle">Campaign drops change type every few seconds; endless modes drop a fixed type.</param>
         public static BonusPickup Spawn(BonusType type, Vector2 position, bool cycle = true)
@@ -49,6 +55,7 @@ namespace AntiBacteria.Gameplay.Bonuses
             p.icon = MakeRenderer(go.transform, "Icon", null, s.material, SortingOrder + 1);
             p.SetType(type);
             p.PickTarget();
+            p.BuildHighlight(s);
             return p;
         }
 
@@ -62,6 +69,83 @@ namespace AntiBacteria.Gameplay.Bonuses
             sr.sharedMaterial = mat;
             sr.sortingOrder = order;
             return sr;
+        }
+
+        /// <summary>Corner brackets, the arrival burst and the off-screen arrow (BonusSettings, "Highlight").</summary>
+        private void BuildHighlight(BonusSettings s)
+        {
+            if (s.brackets)
+                for (int i = 0; i < 4; i++)
+                {
+                    corners[i] = MakeRenderer(transform, "Corner", PixelShapes.Bracket(3, true), s.material, SortingOrder + 2);
+                    corners[i].transform.localRotation = Quaternion.Euler(0f, 0f, -90f * i); // TL, TR, BR, BL
+                }
+            if (s.spawnFlash)
+            {
+                burst = MakeRenderer(transform, "Burst", PixelShapes.SquareRing(7, 2), s.material, SortingOrder + 2);
+                Fx.Sparks(transform.position, Vector2.zero, 0f, 14, 0.6f);
+                Sound.Play(Sfx.BonusAppear);
+            }
+            if (s.offscreenArrow)
+            {
+                var go = new GameObject("BonusArrow");
+                go.transform.SetParent(transform, false);
+                arrow = go.AddComponent<SpriteRenderer>();
+                arrow.sharedMaterial = s.material;
+                arrow.sortingOrder = 40; // over the action, under the HUD canvas
+                arrow.enabled = false;
+            }
+        }
+
+        private void UpdateHighlight(BonusSettings s, bool visible)
+        {
+            const float Px = 1f / Legacy.PixelsPerUnit;
+            // Brackets breathe between 1 and 3 px outside the 13 px frame.
+            int gap = 1 + Mathf.RoundToInt((Mathf.Sin(age * Mathf.PI * 2f / s.bracketPulseSeconds) * 0.5f + 0.5f) * 2f);
+            float d = (7 + gap) * Px;
+            Vector2[] at = { new Vector2(-d, d), new Vector2(d, d), new Vector2(d, -d), new Vector2(-d, -d) };
+            for (int i = 0; i < 4; i++)
+                if (corners[i] != null)
+                {
+                    corners[i].transform.localPosition = at[i];
+                    corners[i].enabled = visible;
+                }
+            if (burst != null)
+            {
+                const float BurstSeconds = 0.45f;
+                if (age >= BurstSeconds) { Destroy(burst.gameObject); burst = null; }
+                else
+                {
+                    float k = age / BurstSeconds;
+                    burst.sprite = PixelShapes.SquareRing(7 + Mathf.RoundToInt(k * 14f), 2);
+                    burst.color = new Color(1f, 1f, 1f, 1f - k);
+                }
+            }
+            if (arrow != null) UpdateArrow(s);
+        }
+
+        /// <summary>When the bonus is off screen, a blinking accent arrow at the screen edge points at it.</summary>
+        private void UpdateArrow(BonusSettings s)
+        {
+            Camera cam = Camera.main;
+            if (cam == null || !cam.orthographic) { arrow.enabled = false; return; }
+            float halfH = cam.orthographicSize, halfW = halfH * cam.aspect;
+            float m = s.arrowMarginPixels / Legacy.PixelsPerUnit;
+            Vector2 c = cam.transform.position;
+            Vector2 d = (Vector2)transform.position - c;
+            bool onScreen = Mathf.Abs(d.x) < halfW - 0.2f && Mathf.Abs(d.y) < halfH - 0.2f;
+            if (onScreen) { arrow.enabled = false; return; }
+            // Where the line from the screen centre to the bonus meets the edge (inset by the margin).
+            float sx = (halfW - m) / Mathf.Max(0.001f, Mathf.Abs(d.x)), sy = (halfH - m) / Mathf.Max(0.001f, Mathf.Abs(d.y));
+            Vector2 p = c + d * Mathf.Min(sx, sy);
+            arrow.transform.position = new Vector3(Mathf.Round(p.x * Legacy.PixelsPerUnit) / Legacy.PixelsPerUnit,
+                                                   Mathf.Round(p.y * Legacy.PixelsPerUnit) / Legacy.PixelsPerUnit, 0f);
+            // 8 directions: straight or diagonal sprite, turned in 90-degree steps (pixels stay on the grid).
+            int oct = Mathf.RoundToInt(Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg / 45f);
+            oct = ((oct % 8) + 8) % 8;
+            arrow.sprite = PixelShapes.Arrow(oct % 2 == 1, true);
+            arrow.transform.rotation = Quaternion.Euler(0f, 0f, (oct / 2) * 90f);
+            arrow.enabled = Mathf.FloorToInt(age / 0.25f) % 2 == 0;
         }
 
         /// <summary>Remove every pickup (level over).</summary>
@@ -109,6 +193,7 @@ namespace AntiBacteria.Gameplay.Bonuses
             float leftSeconds = s.lifetimeSeconds - age;
             bool visible = leftSeconds > s.blinkLastSeconds || Mathf.FloorToInt(leftSeconds / BlinkPeriod) % 2 == 0;
             frame.enabled = icon.enabled = visible;
+            UpdateHighlight(s, visible);
         }
 
         private void FixedUpdate()

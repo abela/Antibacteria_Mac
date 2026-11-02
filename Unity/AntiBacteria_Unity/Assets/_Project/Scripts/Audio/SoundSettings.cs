@@ -10,6 +10,7 @@ namespace AntiBacteria.Audio
         PlayerHurt, PlayerDie, Vitamin, BonusPickup, Boom, SlowmoOn, SlowmoOff,
         GetReady, LevelWin, GameOver, BossAppear, BossShield,
         UiMove, UiConfirm, UiBack, UiError,
+        BonusAppear, // appended: ids are saved as numbers
     }
 
     public enum MusicTrack { None, Menu, Level, Boss }
@@ -104,7 +105,7 @@ namespace AntiBacteria.Audio
             E(Sfx.WallHit, 0.25f, 0.15f, 0.07f), E(Sfx.BulletCancel, 0.4f, 0.1f, 0.04f),
             E(Sfx.EnemyShoot, 0.35f, 0.08f, 0.08f),
             E(Sfx.PlayerHurt, 1f, 0f, 0.2f), E(Sfx.PlayerDie, 1f, 0f, 0.5f),
-            E(Sfx.Vitamin, 0.35f, 0f, 0.035f), E(Sfx.BonusPickup, 0.8f, 0f, 0.1f), E(Sfx.Boom, 1f, 0f, 0.2f),
+            E(Sfx.Vitamin, 0.35f, 0f, 0.035f), E(Sfx.BonusPickup, 0.8f, 0f, 0.1f), E(Sfx.BonusAppear, 0.6f, 0f, 0.3f), E(Sfx.Boom, 1f, 0f, 0.2f),
             E(Sfx.SlowmoOn, 0.7f, 0f, 0.2f), E(Sfx.SlowmoOff, 0.7f, 0f, 0.2f),
             E(Sfx.GetReady, 0.7f, 0f, 0.5f, true), E(Sfx.LevelWin, 0.8f, 0f, 0.5f, true), E(Sfx.GameOver, 0.8f, 0f, 0.5f, true),
             E(Sfx.BossAppear, 0.9f, 0f, 0.5f), E(Sfx.BossShield, 0.8f, 0f, 0.3f),

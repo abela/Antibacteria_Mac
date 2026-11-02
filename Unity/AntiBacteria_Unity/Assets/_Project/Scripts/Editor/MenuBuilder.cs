@@ -94,8 +94,16 @@ namespace AntiBacteria.EditorTools
             skin.paletteMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Art/PaletteSprite.mat");
             skin.heartFull = S("Sprites/hud_heart");
             skin.heartEmpty = S("Sprites/hud_heart_empty");
-            skin.backdropSprites = new[] { S("Sprites/enemy_spiky"), S("Sprites/enemy_big"), S("Sprites/snake_head"), S("Sprites/vitamin") }
+            skin.backdropSprites = new[]
+                {
+                    S("Sprites/enemy_spiky"), S("Sprites/enemy_big"), S("Sprites/enemy_zigzag"), S("Sprites/vitamin"),
+                    S("Sprites/enemy_spiral"), S("Sprites/enemy_gnida"), S("Sprites/enemy_loctopus"), S("Sprites/enemy_zamri"),
+                    S("Sprites/enemy_adrenalium"), S("Sprites/enemy_chorux"), S("Sprites/enemy_defender"), S("Sprites/enemy_tentacle"),
+                    S("Sprites/enemy_sunux"), S("Sprites/vitamin"),
+                }
                 .Where(s => s != null).ToArray();
+            skin.crawlerHead = S("Sprites/snake_head");
+            skin.crawlerSegment = S("Sprites/snake_segment_r2");
             EditorUtility.SetDirty(skin);
             if (skin.font == null) log.AppendLine("WARNING: font asset missing - run AntiBacteria > UI > Build Pixel Font Asset first.");
             log.AppendLine("UI skin: " + SkinPath);

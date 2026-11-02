@@ -79,4 +79,5 @@ Equipped = 75,
 Owned = 76,
 On = 77,
 Off = 78,
+Bonus = 79,
 }

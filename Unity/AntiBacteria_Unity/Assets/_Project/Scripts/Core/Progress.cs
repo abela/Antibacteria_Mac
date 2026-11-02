@@ -27,6 +27,7 @@ namespace AntiBacteria.Core
             public CampaignData campaign = new CampaignData();
             public WalletData wallet = new WalletData();
             public ModesData modes = new ModesData();
+            public int plays; // levels / runs started, ever (first-time hints)
         }
 
         private const int EndlessModeCount = 3;
@@ -200,6 +201,16 @@ namespace AntiBacteria.Core
             if (newBest) Data.campaign.best[i] = score;
             Save();
             return newBest;
+        }
+
+        /// <summary>How many levels or endless runs have been started, ever (retries count).</summary>
+        public static int Plays => Data.plays;
+
+        /// <summary>Called when a level or run starts. Saved with the next save (end of level, scene change, quit).</summary>
+        public static void CountPlay()
+        {
+            Data.plays++;
+            dirty = true;
         }
 
         public static int ModeBest(GameMode mode, Difficulty d) =>

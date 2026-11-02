@@ -198,3 +198,10 @@ MonoBehaviour:
     pitchJitter: 0
     minIntervalSeconds: 0.1
     ui: 1
+  - id: 25
+    clips:
+    - {fileID: 8300000, guid: 80676612faecc48a9810c9828bf0f8be, type: 3}
+    volume: 0.6
+    pitchJitter: 0
+    minIntervalSeconds: 0.3
+    ui: 0

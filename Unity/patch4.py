@@ -6,80 +6,56 @@ def patch(rel, pairs):
         n=s.count(a); assert n==1,(rel,n,a[:70]); s=s.replace(a,b)
     open(p,'w',encoding='utf-8').write(s); print('ok',rel)
 
-patch('Core/Progress.cs',[
-("using AntiBacteria.Gameplay.Weapons;\n", "using AntiBacteria.Gameplay.Weapons;\nusing AntiBacteria.Platform;\n"),
-("            Data.wallet.vitamins = Mathf.Max(0, Data.wallet.vitamins + amount);\n            dirty = true;\n",
- "            Data.wallet.vitamins = Mathf.Max(0, Data.wallet.vitamins + amount);\n            dirty = true;\n            AchievementTracker.WalletChanged(Data.wallet.vitamins);\n"),
-("            Data.wallet.owned[(int)item] = true;\n            Save();\n            return true;\n",
- "            Data.wallet.owned[(int)item] = true;\n            Save();\n            int owned = 0;\n            foreach (bool o in Data.wallet.owned) if (o) owned++;\n            AchievementTracker.UpgradeBought(owned, UpgradeCount);\n            return true;\n"),
-("        private static int ModeIndex(GameMode mode, Difficulty d)",
- "        /// <summary>Sum of the best score of every level on every difficulty (the campaign leaderboard).</summary>\n        public static int CampaignTotal()\n        {\n            long total = 0;\n            foreach (int b in Data.campaign.best) total += b;\n            return (int)Math.Min(total, int.MaxValue);\n        }\n\n        private static int ModeIndex(GameMode mode, Difficulty d)"),
-("                if (File.Exists(FilePath)) data = JsonUtility.FromJson<SaveData>(File.ReadAllText(FilePath));\n",
- "                string json = File.Exists(FilePath) ? File.ReadAllText(FilePath) : null;\n                // Steam Cloud: take the cloud copy when there is no local file or the cloud one is newer.\n                byte[] cloud = PlatformServices.CloudRead(CloudFile, out long cloudTime);\n                if (cloud != null && (json == null || cloudTime > new DateTimeOffset(File.GetLastWriteTimeUtc(FilePath)).ToUnixTimeSeconds()))\n                    json = System.Text.Encoding.UTF8.GetString(cloud);\n                if (json != null) data = JsonUtility.FromJson<SaveData>(json);\n"),
-("                File.Move(tmp, FilePath); // write-then-rename, so a crash never leaves half a file\n",
- "                File.Move(tmp, FilePath); // write-then-rename, so a crash never leaves half a file\n                PlatformServices.CloudWrite(CloudFile, File.ReadAllBytes(FilePath));\n"),
-("        public static string FilePath =>", "        private const string CloudFile = \"save.json\";\n\n        public static string FilePath =>"),
+patch('UI/Menu/UISkin.cs',[
+("        public Sprite[] backdropSprites = new Sprite[0];\n",
+ "        public Sprite[] backdropSprites = new Sprite[0];\n        [Tooltip(\"The worm that now and then crawls across the main menu.\")]\n        public Sprite crawlerHead;\n        public Sprite crawlerSegment;\n"),
 ])
-
-patch('Gameplay/Modes/EndlessModes.cs',[
-("        public virtual bool PlayerCanShoot => true;\n",
- "        public virtual bool PlayerCanShoot => true;\n        /// <summary>Flags taken or zones filled this run (achievements).</summary>\n        public int Completed { get; protected set; }\n"),
-("            GameSession.AddScore(points);\n            HasObjective = false;\n",
- "            GameSession.AddScore(points);\n            HasObjective = false;\n            Completed++;\n"),
-("                runner.TimeLeft = S.secondsPerFlag;\n                flag = null;\n",
- "                runner.TimeLeft = S.secondsPerFlag;\n                flag = null;\n                Completed++;\n"),
+patch('Editor/MenuBuilder.cs',[
+("""            skin.backdropSprites = new[] { S("Sprites/enemy_spiky"), S("Sprites/enemy_big"), S("Sprites/snake_head"), S("Sprites/vitamin") }
+                .Where(s => s != null).ToArray();
+""","""            skin.backdropSprites = new[]
+                {
+                    S("Sprites/enemy_spiky"), S("Sprites/enemy_big"), S("Sprites/enemy_zigzag"), S("Sprites/vitamin"),
+                    S("Sprites/enemy_spiral"), S("Sprites/enemy_gnida"), S("Sprites/enemy_loctopus"), S("Sprites/enemy_zamri"),
+                    S("Sprites/enemy_adrenalium"), S("Sprites/enemy_chorux"), S("Sprites/enemy_defender"), S("Sprites/enemy_tentacle"),
+                    S("Sprites/enemy_sunux"), S("Sprites/vitamin"),
+                }
+                .Where(s => s != null).ToArray();
+            skin.crawlerHead = S("Sprites/snake_head");
+            skin.crawlerSegment = S("Sprites/snake_segment_r2");
+"""),
 ])
-
-patch('Gameplay/Level/CampaignLevelRunner.cs',[
-("            Progress.RecordWin(GameSession.CurrentLevel, GameSession.Difficulty, GameSession.Score); // unlocks the next level\n",
- "            Progress.RecordWin(GameSession.CurrentLevel, GameSession.Difficulty, GameSession.Score); // unlocks the next level\n            AchievementTracker.LevelWon(GameSession.CurrentLevel, GameSession.Difficulty, IsBossLevel);\n"),
-("                    NewModeBest = Progress.RecordModeScore(GameSession.Mode, GameSession.Difficulty, GameSession.Score);\n",
- "                    NewModeBest = Progress.RecordModeScore(GameSession.Mode, GameSession.Difficulty, GameSession.Score);\n                    AchievementTracker.RunEnded(GameSession.Mode, GameSession.Score, Mode.Completed);\n"),
+patch('Gameplay/Arena.cs',[
+("            Current = this;\n            BuildWalls();\n",
+ "            Current = this;\n            BuildWalls();\n            if (GetComponent<Ambience.ArenaAmbience>() == null) gameObject.AddComponent<Ambience.ArenaAmbience>(); // background life\n"),
 ])
-
-patch('UI/Menus/GameplayMenuController.cs',[
-("            if (runner != null) runner.PhaseChanged += OnPhaseChanged;\n        }\n",
- "            if (runner != null) runner.PhaseChanged += OnPhaseChanged;\n            AntiBacteria.Platform.PlatformServices.OverlayChanged += OnOverlayChanged;\n        }\n"),
-("            if (runner != null) runner.PhaseChanged -= OnPhaseChanged;\n            if (watchedBuffs",
- "            if (runner != null) runner.PhaseChanged -= OnPhaseChanged;\n            AntiBacteria.Platform.PlatformServices.OverlayChanged -= OnOverlayChanged;\n            if (watchedBuffs"),
-("        public void Resume()\n        {\n            navigator.Clear();\n",
- "        /// <summary>The Steam overlay opened over a running level: pause it (the player resumes from the menu).</summary>\n        private void OnOverlayChanged(bool open)\n        {\n            if (open && !navigator.IsOpen && !PauseController.IsPaused && !PauseController.Locked) OpenPause();\n        }\n\n        public void Resume()\n        {\n            navigator.Clear();\n"),
-])
-
 patch('Editor/GameDataSettings.cs',[
-("using AntiBacteria.Gameplay.Modes;\n", "using AntiBacteria.Gameplay.Modes;\nusing AntiBacteria.Platform;\n"),
+("using AntiBacteria.Gameplay.Modes;\n", "using AntiBacteria.Gameplay.Modes;\nusing AntiBacteria.Gameplay.Ambience;\n"),
 ("        public static ModeSettings Modes() =>",
- "        public static PlatformSettings PlatformCfg() =>\n            GetOrCreate<PlatformSettings>(Resources + \"/PlatformSettings.asset\", PlatformSettings.Use, null);\n\n        public static ModeSettings Modes() =>"),
-("        [MenuItem(\"AntiBacteria/Settings/Game Modes...\")]\n",
- """        [SettingsProvider]
-        public static SettingsProvider PlatformPage() => Page(
-            "Project/AntiBacteria/Platform (Steam)", "Platform (Steam)",
-            "Steam App ID, Steam Cloud, achievement API names, run-achievement thresholds and leaderboard names. " +
-            "The API names must match Stats & Achievements in the Steamworks partner site.",
-            PlatformCfg, new HashSet<string> { "steam", "achievement", "leaderboard", "cloud", "app id", "platform" },
-            PlatformButtons);
+ """        public static AmbienceSettings AmbienceCfg() =>
+            GetOrCreate<AmbienceSettings>(Resources + "/AmbienceSettings.asset", AmbienceSettings.Use, a => a.material == null, FillAmbienceArt);
 
-        private const string SteamPackage = "com.rlabrecque.steamworks.net";
-        private const string SteamPackageUrl =
-            "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net#2025.164.1";
-
-        private static void PlatformButtons(PlatformSettings s)
+        public static void FillAmbienceArt(AmbienceSettings s)
         {
-            bool installed = UnityEditor.PackageManager.PackageInfo.FindForAssetPath("Packages/" + SteamPackage) != null;
-            EditorGUILayout.HelpBox(installed
-                    ? "Steamworks.NET is installed: Steam is live in Windows, macOS and Linux builds, and in the editor while Steam is running."
-                    : "Steamworks.NET is not installed, so Steam is off and every achievement / leaderboard / cloud call does nothing. " +
-                      "Add it with Package Manager > + > Add package from git URL:\n" + SteamPackageUrl,
-                installed ? MessageType.Info : MessageType.Warning);
-            if (!installed && GUILayout.Button("Copy the package URL")) EditorGUIUtility.systemCopyBuffer = SteamPackageUrl;
-            string file = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, "../steam_appid.txt"));
-            if (GUILayout.Button("Write steam_appid.txt (" + s.steamAppId + ") for testing in the editor"))
-                System.IO.File.WriteAllText(file, s.steamAppId.ToString());
+            Undo.RecordObject(s, "Link Ambience Art");
+            s.material = AssetDatabase.LoadAssetAtPath<Material>(Art + "/PaletteSprite.mat");
+            EditorUtility.SetDirty(s);
+            AssetDatabase.SaveAssetIfDirty(s);
+            // The cilia read the floor's pixels to find the inner edge of the walls.
+            var floor = AssetImporter.GetAtPath(Art + "/Sprites/arena_floor.png") as TextureImporter;
+            if (floor != null && !floor.isReadable) { floor.isReadable = true; floor.SaveAndReimport(); }
         }
 
-        [MenuItem("AntiBacteria/Settings/Platform (Steam)...")]
-        private static void OpenPlatform() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Platform (Steam)");
+        [SettingsProvider]
+        public static SettingsProvider AmbiencePage() => Page(
+            "Project/AntiBacteria/Ambience", "Ambience",
+            "Background life: drifting specks, microbes, pulse rings and wall cilia in the arena, and the main menu backdrop. " +
+            "Pure decoration. Arena changes apply when a level starts.",
+            AmbienceCfg, new HashSet<string> { "ambience", "background", "specks", "dust", "microbes", "cilia", "menu", "backdrop", "life" },
+            s => { if (GUILayout.Button("Re-link material / make the floor readable")) FillAmbienceArt(s); });
 
-        [MenuItem("AntiBacteria/Settings/Game Modes...")]
-"""),
+        [MenuItem("AntiBacteria/Settings/Ambience...")]
+        private static void OpenAmbience() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Ambience");
+
+        public static ModeSettings Modes() =>"""),
 ])

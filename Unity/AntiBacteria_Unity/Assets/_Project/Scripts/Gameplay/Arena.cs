@@ -22,6 +22,7 @@ namespace AntiBacteria.Gameplay
         {
             Current = this;
             BuildWalls();
+            if (GetComponent<Ambience.ArenaAmbience>() == null) gameObject.AddComponent<Ambience.ArenaAmbience>(); // background life
         }
 
         private void OnDestroy()

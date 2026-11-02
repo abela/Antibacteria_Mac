@@ -23,6 +23,7 @@ namespace AntiBacteria.Audio
         private float fade = 1f; // 0..1, A fading out while B fades in after a swap
         private readonly Dictionary<Sfx, float> lastPlayed = new Dictionary<Sfx, float>();
         private float musicLevel = 1f;
+        private AudioListener ears;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Create()
@@ -43,6 +44,9 @@ namespace AntiBacteria.Audio
             for (int i = 0; i < n; i++) voices[i] = NewSource("Sfx" + i, false);
             musicA = NewSource("MusicA", true);
             musicB = NewSource("MusicB", true);
+            // The scenes have no AudioListener (the 2D cameras are built without one), and without a listener
+            // Unity plays nothing at all. Every source here is 2D, so the listener can live on this object.
+            ears = gameObject.AddComponent<AudioListener>();
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -124,6 +128,11 @@ namespace AntiBacteria.Audio
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            // Only one listener may be active: step aside if a scene brings its own.
+            bool other = false;
+            foreach (AudioListener l in FindObjectsByType<AudioListener>(FindObjectsSortMode.None))
+                if (l != ears && l.enabled) other = true;
+            if (ears != null) ears.enabled = !other;
             if (scene.name == SceneFlow.MainMenuScene) PlayMusic(MusicTrack.Menu);
             // Gameplay picks Level or Boss itself (CampaignLevelRunner knows which level it is).
         }

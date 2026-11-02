@@ -122,6 +122,9 @@ SFX = {
     'ui_move': lambda: tone(0.03, 1100, None, 'square', 0.5, 0.22, curve=1.5),
     'ui_confirm': lambda: seq(tone(0.04, 880, None, 'square', 0.5, 0.3, curve=0.8), tone(0.06, 1320, None, 'square', 0.5, 0.3)),
     'ui_back': lambda: seq(tone(0.04, 880, None, 'square', 0.5, 0.3, curve=0.8), tone(0.06, 587, None, 'square', 0.5, 0.3)),
+    # A bonus has appeared: a bright up-and-down sparkle, unlike the pickup arpeggio.
+    'bonus_appear': lambda: mix(seq(*[tone(0.05, f, None, 'triangle', vol=0.4, curve=0.8) for f in (1568, 2093, 2637, 2093, 3136)]),
+                                tone(0.4, 784, 1568, 'square', 0.125, 0.12, curve=1.6)),
     'ui_error': lambda: tone(0.16, 150, 120, 'square', 0.5, 0.4, curve=0.6),
 }
 
@@ -180,15 +183,69 @@ def bassline(roots, bars_per_root, step, vol, octave_jumps=True):
         t += bars_per_root * 4
     return ev
 
+def v_pluck(d, n, vol): return tone(min(d * 2.5, 1.2), hz(n), None, 'triangle', vol=vol, attack=0.006, curve=3.0)
+def v_softpad(d, n, vol):
+    a = tone(d, hz(n), None, 'sine', vol=vol, attack=min(0.6, d * 0.3), curve=0.7)
+    b = tone(d, hz(n) * 1.003, None, 'triangle', vol=vol * 0.35, attack=min(0.6, d * 0.3), curve=0.7)
+    return [x + y for x, y in zip(a, b)]
+def v_subbass(d, n, vol): return tone(d * 0.98, hz(n), None, 'sine', vol=vol, attack=0.02, curve=0.8)
+def v_bell(d, n, vol):
+    a = tone(max(d, 1.6), hz(n), None, 'sine', vol=vol, attack=0.004, curve=2.2)
+    b = tone(max(d, 1.6), hz(n) * 2, None, 'sine', vol=vol * 0.25, attack=0.004, curve=3.5)
+    return [x + y for x, y in zip(a, b)]
+
+def echo(x, delay_s, feedback, wet):
+    """Circular feedback delay, so the loop point stays seamless."""
+    d = int(delay_s * SR); n = len(x); buf = [0.0] * n
+    for _ in range(2):  # second pass lets the tail wrap around the loop point
+        for i in range(n):
+            buf[i] = x[i] + feedback * buf[(i - d) % n]
+    return [a + wet * (b - a) for a, b in zip(x, buf)]
+
+def menu_track():
+    """Menu: calm A minor, 80 bpm, 32 bars (~96 s) so it doesn't repeat every few seconds.
+    Bars 1-8 sparse, 9-16 full arpeggio, 17-24 adds a bell melody, 25-32 thins out and turns back to Am.
+    Soft voices only (sine / triangle), no drums, gentle echo and a low-pass on top: present but not pushy."""
+    bpm, bars = 80, 32
+    beat = 60.0 / bpm
+    prog = ['A3 C4 E4', 'F3 A3 C4', 'C4 E4 G4', 'G3 B3 D4']
+    last = ['A3 C4 E4', 'F3 A3 C4', 'C4 E4 G4', 'E3 G#3 B3']   # E major turnaround into the loop
+    chords = prog * 3 + last
+    roots = ['A2', 'F2', 'C3', 'G2'] * 3 + ['A2', 'F2', 'C3', 'E2']
+
+    pad = [(i * 8, 8, n, 0.05) for i, c in enumerate(chords) for n in c.split()]
+    bass = []
+    for i, r in enumerate(roots):
+        bass += [(i * 8, 3.5, r, 0.20), (i * 8 + 4, 3.5, r, 0.15)]
+    arp_ev = []
+    full = [0, 1, 2, 1, 2, 0, 1, 2]            # eighth notes
+    sparse = [0, None, 2, None, 1, None, None, None]
+    for i, c in enumerate(chords):
+        notes = c.split()
+        bar = i * 2
+        pattern = full if 4 <= bar < 24 else sparse
+        for k in range(16):                    # 2 bars of eighths
+            step = pattern[k % 8]
+            if step is None: continue
+            nm = notes[step]; nm = nm[:-1] + str(int(nm[-1]) + 1)   # an octave up, under the echo
+            vol = 0.07 if k % 2 == 0 else 0.05
+            arp_ev.append((i * 8 + k * 0.5, 0.5, nm, vol))
+    mel = []
+    phrases = {16: [(0, 'E5'), (1.5, 'D5'), (3, 'C5')], 18: [(0, 'A4'), (2, 'C5')],
+               20: [(0, 'G4'), (1.5, 'E4'), (3, 'G4')], 22: [(0, 'D5'), (2, 'B4')],
+               24: [(0, 'E5'), (3, 'C5')], 26: [(0, 'A4')], 28: [(0, 'G4'), (2, 'E4')], 30: [(0, 'B4'), (2, 'G#4')]}
+    for bar, notes in phrases.items():
+        for t, n in notes: mel.append((bar * 4 + t, 1.5, n, 0.09))
+
+    base = render_track(bpm, bars, [(pad, v_softpad), (bass, v_subbass)])
+    arps = echo(render_track(bpm, bars, [(arp_ev, v_pluck)]), beat * 0.75, 0.38, 0.35)
+    bell = echo(render_track(bpm, bars, [(mel, v_bell)]), beat * 1.5, 0.3, 0.3)
+    out = [a + b + c for a, b, c in zip(base, arps, bell)]
+    return [v * 1.3 for v in lowpass(out + out, 3200)[len(out):]]  # filter state carried over the loop point
+
 def music():
     tracks = {}
-    # Menu: slow, a little uneasy - A minor, triangle arpeggios over a soft pulse
-    ch = ['A3 C4 E4', 'F3 A3 C4', 'C4 E4 G4', 'G3 B3 D4'] * 2
-    tracks['menu'] = render_track(84, 16, [
-        (arp(ch, 2, 0.5, [0, 1, 2, 1], 0.16), v_pad),
-        (bassline(['A2', 'F2', 'C3', 'G2'] * 2, 2, 1.0, 0.16, False), v_bass),
-        (drums(16, [0], [], [1, 3], kv=0.25, hv=0.05)[0][0], v_kick),
-    ])
+    tracks['menu'] = menu_track()
     # Level: driving 128 bpm, octave bass, square arpeggio lead, four-on-the-floor
     ch = ['A3 C4 E4 A4', 'F3 A3 C4 F4', 'D3 F3 A3 D4', 'E3 G#3 B3 E4'] * 2
     tracks['level'] = render_track(128, 16, [

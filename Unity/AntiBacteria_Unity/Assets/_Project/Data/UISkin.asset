@@ -25,5 +25,17 @@ MonoBehaviour:
   backdropSprites:
   - {fileID: 21300000, guid: 7847c6603c88e4455ad0bb2207583d0b, type: 3}
   - {fileID: 21300000, guid: 51ac8b73a4e4d404aa041a56e507b342, type: 3}
-  - {fileID: 21300000, guid: 3eb0c278317b04e069ef87ad094ff733, type: 3}
+  - {fileID: 21300000, guid: 7d79c0a50918a4315b1a5b70e0f740d8, type: 3}
   - {fileID: 21300000, guid: 8e4eef50df57843b4bd00e576aedad18, type: 3}
+  - {fileID: 21300000, guid: 23c83f5c54b9c4a9e978eb85859cd4fe, type: 3}
+  - {fileID: 21300000, guid: bf49ac5de5e7f4ad9a702b2292cd6dff, type: 3}
+  - {fileID: 21300000, guid: d67d93490be934cddb9f65b34483baa7, type: 3}
+  - {fileID: 21300000, guid: 2d82d23d9b03945029dd2a4f6e77e9de, type: 3}
+  - {fileID: 21300000, guid: a46f6b34db8904f7b8c7eeb963c689de, type: 3}
+  - {fileID: 21300000, guid: 6e9c231b06f8a4ceb87413905f5dc49e, type: 3}
+  - {fileID: 21300000, guid: 9d54ff4b5c8c844cea25f091fd93ca44, type: 3}
+  - {fileID: 21300000, guid: 4bfc8118d060c4ec684efd9e4b8b3790, type: 3}
+  - {fileID: 21300000, guid: 9030a8ed8ddef40a3a6332f24786a3b2, type: 3}
+  - {fileID: 21300000, guid: 8e4eef50df57843b4bd00e576aedad18, type: 3}
+  crawlerHead: {fileID: 21300000, guid: 3eb0c278317b04e069ef87ad094ff733, type: 3}
+  crawlerSegment: {fileID: 21300000, guid: ddfada93073254667a904cc688a1a9ac, type: 3}

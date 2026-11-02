@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AntiBacteria.Core;
 using AntiBacteria.Gameplay.Bonuses;
 using AntiBacteria.Gameplay.Modes;
+using AntiBacteria.Gameplay.Ambience;
 using AntiBacteria.Platform;
 using AntiBacteria.Gameplay.Weapons;
 using UnityEditor;
@@ -46,6 +47,31 @@ namespace AntiBacteria.EditorTools
         /// <summary>Palette material, the pickup frame and each type's icon (Art/Sprites/Bonus).</summary>
         public static PlatformSettings PlatformCfg() =>
             GetOrCreate<PlatformSettings>(Resources + "/PlatformSettings.asset", PlatformSettings.Use, null);
+
+        public static AmbienceSettings AmbienceCfg() =>
+            GetOrCreate<AmbienceSettings>(Resources + "/AmbienceSettings.asset", AmbienceSettings.Use, a => a.material == null, FillAmbienceArt);
+
+        public static void FillAmbienceArt(AmbienceSettings s)
+        {
+            Undo.RecordObject(s, "Link Ambience Art");
+            s.material = AssetDatabase.LoadAssetAtPath<Material>(Art + "/PaletteSprite.mat");
+            EditorUtility.SetDirty(s);
+            AssetDatabase.SaveAssetIfDirty(s);
+            // The cilia read the floor's pixels to find the inner edge of the walls.
+            var floor = AssetImporter.GetAtPath(Art + "/Sprites/arena_floor.png") as TextureImporter;
+            if (floor != null && !floor.isReadable) { floor.isReadable = true; floor.SaveAndReimport(); }
+        }
+
+        [SettingsProvider]
+        public static SettingsProvider AmbiencePage() => Page(
+            "Project/AntiBacteria/Ambience", "Ambience",
+            "Background life: drifting specks, microbes, pulse rings and wall cilia in the arena, and the main menu backdrop. " +
+            "Pure decoration. Changes apply at once, also while playing (the effects are rebuilt, so things jump to new spots).",
+            AmbienceCfg, new HashSet<string> { "ambience", "background", "specks", "dust", "microbes", "cilia", "menu", "backdrop", "life" },
+            s => { if (GUILayout.Button("Re-link material / make the floor readable")) FillAmbienceArt(s); });
+
+        [MenuItem("AntiBacteria/Settings/Ambience...")]
+        private static void OpenAmbience() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Ambience");
 
         public static ModeSettings Modes() =>
             GetOrCreate<ModeSettings>(Resources + "/ModeSettings.asset", ModeSettings.Use, m => m.flag == null || m.material == null, FillModeArt);

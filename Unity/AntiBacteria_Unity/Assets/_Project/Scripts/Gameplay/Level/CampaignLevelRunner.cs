@@ -75,6 +75,7 @@ namespace AntiBacteria.Gameplay.Level
         private void Start()
         {
             GameSession.ResetRun();
+            Progress.CountPlay(); // first-time hints fade out after a few plays
             TimeLeft = IsEndless ? (Mode.ShowsTimer ? ModeSettings.Current.secondsPerFlag : 0f) : level != null ? level.timeSeconds : 0f;
             spawnTimer = level != null ? level.SpawnInterval(GameSession.Difficulty) : 1f;
             SetPhase(Phase.GetReady, getReadySeconds);

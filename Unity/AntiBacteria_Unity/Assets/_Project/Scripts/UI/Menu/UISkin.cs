@@ -23,5 +23,8 @@ namespace AntiBacteria.UI.Menu
         public Sprite heartFull;
         public Sprite heartEmpty;
         public Sprite[] backdropSprites = new Sprite[0];
+        [Tooltip("The worm that now and then crawls across the main menu.")]
+        public Sprite crawlerHead;
+        public Sprite crawlerSegment;
     }
 }

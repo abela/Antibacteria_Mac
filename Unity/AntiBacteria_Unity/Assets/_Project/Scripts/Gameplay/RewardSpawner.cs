@@ -28,7 +28,8 @@ namespace AntiBacteria.Gameplay
             {
                 Vector2 p = at + new Vector2(Random.Range(-s, s), Random.Range(-s, s));
                 if (Arena.Current != null) p = Arena.Current.Clamp(p, 0.5f);
-                Instantiate(vitaminPrefab, p, Quaternion.identity);
+                GameObject v = Instantiate(vitaminPrefab, p, Quaternion.identity);
+                v.GetComponent<Pickups.Vitamin>()?.SpillFrom(at); // flies out of the kill, then settles
             }
         }
 

@@ -36,6 +36,9 @@ namespace AntiBacteria.UI.Menus
         private float toastLeft;
         private PlayerBuffs watchedBuffs;
         private const float ToastSeconds = 1.6f;
+        private readonly System.Collections.Generic.Dictionary<BonusPickup, LiveText> bonusLabels =
+            new System.Collections.Generic.Dictionary<BonusPickup, LiveText>();
+        private readonly System.Collections.Generic.List<BonusPickup> goneLabels = new System.Collections.Generic.List<BonusPickup>();
 
         public MenuScreen PauseScreen => pause;
         public MenuScreen GameOverScreen => gameOver;
@@ -67,6 +70,7 @@ namespace AntiBacteria.UI.Menus
         {
             UpdateBannerAndBossBar();
             UpdateToast();
+            UpdateBonusLabels();
 
             // JustResumed: the Esc that closed the pause menu must not reopen it in the same frame.
             if (navigator.IsOpen || PauseController.IsPaused || PauseController.Locked || PauseController.JustResumed) return;
@@ -108,6 +112,41 @@ namespace AntiBacteria.UI.Menus
         // ------------------------------------------------------------------ bonus pickup message
 
         /// <summary>The bonus name under the timer for a moment after a pickup (2013: updateBonusOnLevelOverLayer).</summary>
+        /// <summary>
+        /// "BONUS" over each pickup for the player's first few plays (BonusSettings.labelForFirstPlays), so a new
+        /// player learns what the boxed icons are. Drawn on this canvas at the bonus's screen position.
+        /// </summary>
+        private void UpdateBonusLabels()
+        {
+            bool want = Progress.Plays <= BonusSettings.Current.labelForFirstPlays && !navigator.IsOpen;
+            Camera cam = Camera.main;
+            foreach (BonusPickup b in BonusPickup.All)
+            {
+                if (b == null || !want || cam == null) continue;
+                if (!bonusLabels.TryGetValue(b, out LiveText label))
+                {
+                    label = LiveText.Create(skin, root, "BonusLabel", 0f, 0f, () => Loc.Get(WordIDs.Bonus).ToUpperInvariant(), role: PaletteRole.Accent);
+                    bonusLabels[b] = label;
+                }
+                // The text row starts 28 px above the centre, so the letters clear the frame and its corner brackets.
+                Vector3 world = b.transform.position + new Vector3(0f, 28f / Legacy.PixelsPerUnit, 0f);
+                Vector2 screen = cam.WorldToScreenPoint(world);
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(root, screen, null, out Vector2 local);
+                Rect r = root.rect;
+                var rt = (RectTransform)label.transform;
+                rt.anchoredPosition = new Vector2(Mathf.Round(local.x - r.xMin), Mathf.Round(local.y - r.yMax));
+                label.gameObject.SetActive(b.Visible);
+            }
+            goneLabels.Clear();
+            foreach (var pair in bonusLabels)
+                if (pair.Key == null || !want) goneLabels.Add(pair.Key);
+            foreach (BonusPickup b in goneLabels)
+            {
+                if (bonusLabels[b] != null) Destroy(bonusLabels[b].gameObject);
+                bonusLabels.Remove(b);
+            }
+        }
+
         private void BuildToast()
         {
             toast = LiveText.Create(skin, root, "BonusToast", 160f, 26f, ToastText, role: PaletteRole.Accent);

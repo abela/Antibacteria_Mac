@@ -62,8 +62,11 @@ namespace AntiBacteria.UI.Menus
             if (GameSettings.HasDisplayOption) // no Quit on consoles
                 s.Add(MenuButton.Create(skin, s.transform, "Quit", 160f, y, () => Loc.Get(WordIDs.Quit), SceneFlow.Quit));
 
-            LiveText.Create(skin, s.transform, "Version", 4f, 162f, () => "v" + Application.version,
+            LiveText version = LiveText.Create(skin, s.transform, "Version", 4f, 162f, () => "v" + Application.version,
                 HorizontalAlignmentOptions.Left, 1, PaletteRole.Foreground, true);
+            // Bottom-left corner of the whole screen, at any aspect ratio (not of the 320x180 menu frame):
+            // 3 px from both edges. The text's baseline sits 4 px above the bottom of its row, hence the -1.
+            PinToScreenCorner.Pin((RectTransform)version.transform, Vector2.zero, new Vector2(3f, -1f));
             return s;
         }
 
