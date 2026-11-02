@@ -18,7 +18,8 @@ namespace AntiBacteria.UI.Menus
         [Tooltip("The 320x180 area everything is laid out in.")]
         [SerializeField] private RectTransform root;
 
-        private MenuScreen main, modes, levelSelect, options, about, upgrade;
+        private MenuScreen main, modes, levelSelect, options, about, upgrade, difficulty;
+        private GameMode pendingMode = GameMode.CaptureFlag; // the endless mode whose difficulty is being chosen
 
         public MenuScreen Main => main;
         public MenuScreen Modes => modes;
@@ -32,12 +33,18 @@ namespace AntiBacteria.UI.Menus
             MenuBackdrop backdrop = MenuBackdrop.Create(skin, root);
             main = BuildMain();
             modes = BuildModes();
+            difficulty = BuildDifficulty();
             levelSelect = LevelSelectMenu.Build(skin, root, navigator);
             options = OptionsMenu.Build(skin, root, navigator, false);
             about = BuildAbout();
             upgrade = UpgradeMenu.Build(skin, root, navigator);
             upgrade.OnShown = () => backdrop.ShowBacteria(false); // the rows use the full width
             main.OnShown = modes.OnShown = about.OnShown = () => backdrop.ShowBacteria(true);
+            difficulty.OnShown = () =>
+            {
+                backdrop.ShowBacteria(true);
+                difficulty.DefaultIndex = (int)GameSettings.Difficulty; // start on the last one played
+            };
             options.OnShown = () => backdrop.ShowBacteria(false);
             System.Action levelShown = levelSelect.OnShown;
             levelSelect.OnShown = () => { backdrop.ShowBacteria(false); levelShown?.Invoke(); };
@@ -105,11 +112,44 @@ namespace AntiBacteria.UI.Menus
                 y += 16f;
                 GameMode mode = m;
                 WordIDs id = (WordIDs)System.Enum.Parse(typeof(WordIDs), m.ToString());
-                s.Add(MenuButton.Create(skin, t, m.ToString(), 160f, y, () => Loc.Get(id), () => SceneFlow.LoadMode(mode)));
+                // Endless modes: pick the difficulty on the next screen (the campaign picks it in level select).
+                s.Add(MenuButton.Create(skin, t, m.ToString(), 160f, y, () => Loc.Get(id), () =>
+                {
+                    pendingMode = mode;
+                    navigator.Push(difficulty);
+                }));
             }
-            // The endless modes are played at the difficulty set here (the campaign sets it in level select).
-            s.Add(DifficultyRow.Create(skin, t, 124f, null, null));
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 144f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 132f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            return s;
+        }
+
+        /// <summary>After an endless mode: Normal / Hard / Impossible one under the other, each with its best score; picking one starts the run.</summary>
+        private MenuScreen BuildDifficulty()
+        {
+            MenuScreen s = MenuScreen.Create(root, "Difficulty");
+            Transform t = s.transform;
+            s.ResetSelectionOnShow = true;
+            LiveText.Create(skin, t, "Title", 160f, 22f, () => GameplayMenuController.ModeName(pendingMode).ToUpperInvariant(), role: PaletteRole.Accent);
+            UIFactory.Image(t, "Rule", skin.pixel, 110f, 40f, 101f, 1f, PaletteRole.Foreground, true);
+            LiveText.Create(skin, t, "Subtitle", 160f, 44f, () => Loc.Get(WordIDs.Difficulty), dim: true);
+            WordIDs[] names = { WordIDs.Normal, WordIDs.Hard, WordIDs.Impossible };
+            for (int i = 0; i < names.Length; i++)
+            {
+                var d = (Difficulty)i;
+                WordIDs w = names[i];
+                float y = 64f + i * 16f;
+                s.Add(MenuButton.Create(skin, t, w.ToString(), 160f, y, () => Loc.Get(w), () =>
+                {
+                    GameSettings.SetDifficulty(d);
+                    SceneFlow.LoadMode(pendingMode);
+                }));
+                LiveText.Create(skin, t, "Best" + i, 214f, y, () =>
+                {
+                    int best = Progress.ModeBest(pendingMode, d);
+                    return best > 0 ? Loc.Get(WordIDs.Best) + " " + best : "";
+                }, HorizontalAlignmentOptions.Left, dim: true);
+            }
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 132f, () => Loc.Get(WordIDs.Back), navigator.Back));
             return s;
         }
 
