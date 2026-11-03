@@ -264,8 +264,16 @@ namespace AntiBacteria.Gameplay.Player
         }
 
         /// <summary>Lose one life unless still blinking from the last hit.</summary>
+#if UNITY_EDITOR
+        /// <summary>Editor only: hits do nothing (screenshot director).</summary>
+        public static bool EditorInvincible;
+#endif
+
         public void Hit()
         {
+#if UNITY_EDITOR
+            if (EditorInvincible) return;
+#endif
             if (!IsAlive || Time.time < invulnerableUntil) return;
             if (Buffs != null && Buffs.IsImmortal) return;
             if (Progress.ImmortalityOn) return; // bought Immortality: never lose a life (2013 upgrade)

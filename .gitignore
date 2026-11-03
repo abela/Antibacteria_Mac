@@ -19,3 +19,12 @@ DerivedData/
 .idea/
 .vscode/
 *.swp
+
+# Steam store screenshots (large, regenerated from the game; kept locally only)
+/Steam/Screenshots/
+
+# Python bytecode (Steam art scripts)
+__pycache__/
+
+# Files waiting to be deleted by hand
+/Steam/_to_delete/

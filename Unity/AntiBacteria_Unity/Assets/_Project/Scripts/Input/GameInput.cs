@@ -100,9 +100,22 @@ namespace AntiBacteria.Input
         public static bool MouseLeftPressed =>
             ReInput.isReady && ReInput.controllers.Mouse != null && ReInput.controllers.Mouse.GetButtonDown(0);
 
+#if UNITY_EDITOR
+        /// <summary>Editor only: pretend the mouse is here (screen pixels). Used by the screenshot director.</summary>
+        public static Vector2? EditorMouseOverride;
+#endif
+
         /// <summary>Mouse position in screen pixels.</summary>
-        public static Vector2 MouseScreenPosition =>
-            ReInput.isReady && ReInput.controllers.Mouse != null ? ReInput.controllers.Mouse.screenPosition : Vector2.zero;
+        public static Vector2 MouseScreenPosition
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (EditorMouseOverride is Vector2 o) return o;
+#endif
+                return ReInput.isReady && ReInput.controllers.Mouse != null ? ReInput.controllers.Mouse.screenPosition : Vector2.zero;
+            }
+        }
 
         /// <summary>Called when scenes reload so a stale Player reference is never used.</summary>
         public static void Reset() => cachedPlayer = null;

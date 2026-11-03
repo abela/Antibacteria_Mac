@@ -18,15 +18,18 @@ namespace AntiBacteria.UI
         [SerializeField] private Material material;
         [SerializeField] private int spacingPixels = 1;
         [SerializeField] private Align align = Align.Left;
+        [Tooltip("A background-coloured box 1 px around the text, so it reads over the white arena wall.")]
+        [SerializeField] private bool backing = true;
 
         private readonly List<Image> pool = new List<Image>();
+        private Image back;
         private string current;
 
         public void SetText(string text)
         {
             if (text == current) return;
             current = text;
-            int x = 0, used = 0;
+            int x = 0, used = 0, height = 0;
             var placed = new List<KeyValuePair<Image, int>>();
             foreach (char c in text)
             {
@@ -36,6 +39,7 @@ namespace AntiBacteria.UI
                 Sprite s = glyphs[gi];
                 img.sprite = s;
                 img.rectTransform.sizeDelta = new Vector2(s.rect.width, s.rect.height);
+                height = Mathf.Max(height, (int)s.rect.height);
                 placed.Add(new KeyValuePair<Image, int>(img, x));
                 x += (int)s.rect.width + spacingPixels;
             }
@@ -43,6 +47,27 @@ namespace AntiBacteria.UI
             int start = align == Align.Left ? 0 : align == Align.Right ? -width : -width / 2;
             foreach (var p in placed) p.Key.rectTransform.anchoredPosition = new Vector2(start + p.Value, 0f);
             for (int i = 0; i < pool.Count; i++) pool[i].enabled = i < used;
+            if (backing) UpdateBacking(start, width, height, used > 0);
+        }
+
+        private void UpdateBacking(int start, int width, int height, bool show)
+        {
+            if (back == null)
+            {
+                var go = new GameObject("Backing", typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(transform, false);
+                go.transform.SetAsFirstSibling(); // behind the glyphs
+                back = go.GetComponent<Image>();
+                back.raycastTarget = false;
+                var rt = back.rectTransform;
+                rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+                rt.pivot = new Vector2(0f, 1f);
+                var pg = go.AddComponent<AntiBacteria.Rendering.PaletteGraphic>();
+                pg.Set(AntiBacteria.Rendering.PaletteRole.Background, false);
+            }
+            back.enabled = show;
+            back.rectTransform.anchoredPosition = new Vector2(start - 1, 1f);
+            back.rectTransform.sizeDelta = new Vector2(width + 2, height + 2);
         }
 
         private Image GetImage(int i)

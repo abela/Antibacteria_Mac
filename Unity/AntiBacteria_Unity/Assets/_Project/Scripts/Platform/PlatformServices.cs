@@ -86,16 +86,23 @@ namespace AntiBacteria.Platform
             backend = null;
         }
 
+#if UNITY_EDITOR
+        /// <summary>Editor only: drop achievements, scores and cloud writes (screenshot sessions, test runs).</summary>
+        public static bool EditorMuted;
+#else
+        private const bool EditorMuted = false;
+#endif
+
         public static void Unlock(Achievement a)
         {
-            if (backend == null) return;
+            if (backend == null || EditorMuted) return;
             string api = PlatformSettings.Current.ApiName(a);
             if (!string.IsNullOrEmpty(api)) backend.Unlock(api);
         }
 
         public static void SubmitScore(Board b, int score)
         {
-            if (backend == null || score <= 0) return;
+            if (backend == null || score <= 0 || EditorMuted) return;
             string name = PlatformSettings.Current.BoardName(b);
             if (!string.IsNullOrEmpty(name)) backend.SubmitScore(name, score);
         }
@@ -125,7 +132,7 @@ namespace AntiBacteria.Platform
 
         public static void CloudWrite(string file, byte[] bytes)
         {
-            if (CloudAvailable) backend.CloudWrite(file, bytes);
+            if (CloudAvailable && !EditorMuted) backend.CloudWrite(file, bytes);
         }
 
         public static byte[] CloudRead(string file, out long unixTime)
