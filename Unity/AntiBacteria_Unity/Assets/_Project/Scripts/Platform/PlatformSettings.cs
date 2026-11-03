@@ -10,10 +10,12 @@ namespace AntiBacteria.Platform
         ClearHard, ClearImpossible,
         FirstUpgrade, AllUpgrades, VitaminHoarder,
         FlagRunner, ZoneRunner, Pacifist,
+        // roguelike (appended: ids are serialized)
+        RogueRoom10, RogueRoom25, RogueComplete, RogueImpossible, GermBuddy, Legendary, FourLines,
     }
 
     /// <summary>One leaderboard for the campaign (sum of best scores) and one per endless mode.</summary>
-    public enum Board { Campaign, CaptureFlag, Rush, PeaceWalker }
+    public enum Board { Campaign, CaptureFlag, Rush, PeaceWalker, Roguelike }
 
     [Serializable]
     public class AchievementEntry
@@ -43,10 +45,10 @@ namespace AntiBacteria.Platform
         public const string ResourcePath = "PlatformSettings";
 
         [Header("Steam")]
-        [Tooltip("480 is Valve's test app (Spacewar). Replace with the game's App ID once it exists.")]
-        public uint steamAppId = 480;
-        [Tooltip("Builds started outside Steam relaunch through Steam. Leave off while testing with App ID 480.")]
-        public bool restartThroughSteam;
+        [Tooltip("AntiBacteria's App ID on Steam (480 = Valve's test app).")]
+        public uint steamAppId = 5554670;
+        [Tooltip("Release builds started outside Steam relaunch through Steam (development builds and the editor never do).")]
+        public bool restartThroughSteam = true;
         [Tooltip("Keep save.json in Steam Cloud too; the newer copy wins when the game starts. " +
                  "Don't also turn on Steam Auto-Cloud for the same file.")]
         public bool useSteamCloud = true;
@@ -67,6 +69,13 @@ namespace AntiBacteria.Platform
             new AchievementEntry { id = Achievement.FlagRunner, steamApiName = "ACH_FLAGS", note = "flagRunnerCount flags in one Capture the Flag run" },
             new AchievementEntry { id = Achievement.ZoneRunner, steamApiName = "ACH_ZONES", note = "zoneRunnerCount zones in one Rush run" },
             new AchievementEntry { id = Achievement.Pacifist, steamApiName = "ACH_PEACE", note = "pacifistCount flags in one Peace Walker run" },
+            new AchievementEntry { id = Achievement.RogueRoom10, steamApiName = "ACH_ROGUE_10", note = "Clear roguelike room 10" },
+            new AchievementEntry { id = Achievement.RogueRoom25, steamApiName = "ACH_ROGUE_25", note = "Clear roguelike room 25" },
+            new AchievementEntry { id = Achievement.RogueComplete, steamApiName = "ACH_ROGUE_50", note = "Clear all 50 roguelike rooms" },
+            new AchievementEntry { id = Achievement.RogueImpossible, steamApiName = "ACH_ROGUE_IMPOSSIBLE", note = "Clear roguelikeImpossibleRoom on Impossible" },
+            new AchievementEntry { id = Achievement.GermBuddy, steamApiName = "ACH_BUDDY", note = "Take the Germ Buddy perk" },
+            new AchievementEntry { id = Achievement.Legendary, steamApiName = "ACH_LEGENDARY", note = "Take a Legendary perk" },
+            new AchievementEntry { id = Achievement.FourLines, steamApiName = "ACH_FOUR_LINES", note = "Max out Extra Bullet (4 lines)" },
         };
 
         [Header("Achievement thresholds")]
@@ -74,6 +83,7 @@ namespace AntiBacteria.Platform
         [Min(1)] public int flagRunnerCount = 25;
         [Min(1)] public int zoneRunnerCount = 10;
         [Min(1)] public int pacifistCount = 10;
+        [Min(1)] public int roguelikeImpossibleRoom = 20;
 
         [Header("Leaderboards")]
         public BoardEntry[] boards =
@@ -82,6 +92,7 @@ namespace AntiBacteria.Platform
             new BoardEntry { id = Board.CaptureFlag, steamName = "Capture the Flag" },
             new BoardEntry { id = Board.Rush, steamName = "Rush" },
             new BoardEntry { id = Board.PeaceWalker, steamName = "Peace Walker" },
+            new BoardEntry { id = Board.Roguelike, steamName = "Roguelike" },
         };
 
         public string ApiName(Achievement a)

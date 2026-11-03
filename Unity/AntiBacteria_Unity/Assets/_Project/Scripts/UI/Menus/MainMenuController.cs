@@ -10,7 +10,7 @@ namespace AntiBacteria.UI.Menus
     /// <summary>
     /// Main menu scene: title + main list, game mode, options, about.
     /// Port of MainMenuLayer / ChooseGameModeLayer / SettingsLayer / AboutLayer (Docs/DesignReference/05, section 3),
-    /// minus the real-money Vitamin Store and the never-working Leaderboards.
+    /// minus the real-money Vitamin Store. Leaderboards show the Steam top 20 (only when a store is running).
     /// </summary>
     public class MainMenuController : MonoBehaviour
     {
@@ -19,7 +19,7 @@ namespace AntiBacteria.UI.Menus
         [Tooltip("The 320x180 area everything is laid out in.")]
         [SerializeField] private RectTransform root;
 
-        private MenuScreen main, modes, levelSelect, options, about, upgrade, difficulty;
+        private MenuScreen main, modes, levelSelect, options, about, upgrade, difficulty, leaderboards;
         // What the difficulty screen will start: an endless mode, or (Campaign) the level picked on the map.
         private GameMode pendingMode = GameMode.CaptureFlag;
         private int pendingLevel = 1;
@@ -47,6 +47,9 @@ namespace AntiBacteria.UI.Menus
             options = OptionsMenu.Build(skin, root, navigator, false, WatchIntro);
             about = BuildAbout();
             upgrade = UpgradeMenu.Build(skin, root, navigator);
+            leaderboards = LeaderboardMenu.Build(skin, root, navigator);
+            System.Action boardsShown = leaderboards.OnShown;
+            leaderboards.OnShown = () => { backdrop.ShowBacteria(false); boardsShown?.Invoke(); }; // the rows use the full width
             upgrade.OnShown = () => backdrop.ShowBacteria(false); // the rows use the full width
             main.OnShown = modes.OnShown = about.OnShown = () => backdrop.ShowBacteria(true);
             difficulty.OnShown = () =>
@@ -95,6 +98,11 @@ namespace AntiBacteria.UI.Menus
             y += 16f;
             s.Add(MenuButton.Create(skin, s.transform, "Upgrade", 160f, y, () => Loc.Get(WordIDs.UpgradeCharacter), () => navigator.Push(upgrade)));
             y += 16f;
+            if (AntiBacteria.Platform.PlatformServices.LeaderboardsAvailable)
+            {
+                s.Add(MenuButton.Create(skin, s.transform, "Leaderboards", 160f, y, () => Loc.Get(WordIDs.Leaderboards), () => navigator.Push(leaderboards)));
+                y += 16f;
+            }
             s.Add(MenuButton.Create(skin, s.transform, "Options", 160f, y, () => Loc.Get(WordIDs.GameOptions), () => navigator.Push(options)));
             y += 16f;
             s.Add(MenuButton.Create(skin, s.transform, "About", 160f, y, () => Loc.Get(WordIDs.About), () => navigator.Push(about)));

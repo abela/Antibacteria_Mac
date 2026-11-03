@@ -4,13 +4,16 @@ The game talks to stores only through `PlatformServices` (`Scripts/Platform`). W
 
 ## 1. Turn Steam on
 1. Package Manager → **+** → *Add package from git URL*:
-   `https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net#2025.164.1`
+   `https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net#2025.165.0`
    The `AntiBacteria.Platform` assembly detects the package, defines `STEAMWORKS_NET`, and compiles `SteamBackend`. No other change is needed.
-2. On the settings page, click **Write steam_appid.txt**. It defaults to 480 (Valve's test app). With Steam running, Play in the editor should log `Steam: signed in as …`.
-3. When the real App ID exists, set it on the page, write the file again, and turn on **Restart through Steam** for release builds.
+2. The App ID is **5554670** (set on the settings page, written to `steam_appid.txt` in the project root). With Steam running, Play in the editor logs `Steam: signed in as …, app 5554670, cloud on/on`.
+3. **Restart through Steam** is on. It only runs in release player builds (not the editor or development builds), so a release build started outside Steam relaunches through Steam.
+4. At start-up the game calls `RequestUserStats`, so the newest published achievement list is loaded before anything unlocks.
 
 ## 2. Steamworks partner site
-**Stats & Achievements:** create one achievement per API name below. The names can be changed on the settings page.
+All of the below is set up and **published** (App Admin → Publish) for app 5554670. Any later change on the partner site needs another Prepare → Publish before players (and the editor) see it.
+
+**Achievements** (20, edited at `partner.steamgames.com/apps/achievementsbeta/5554670`, icons auto-generated in the game's palette). The API names can be changed on the settings page.
 
 | API name | Unlocked by |
 |---|---|
@@ -24,8 +27,14 @@ The game talks to stores only through `PlatformServices` (`Scripts/Platform`). W
 | ACH_FLAGS | 25 flags in one Capture the Flag run |
 | ACH_ZONES | 10 zones in one Rush run |
 | ACH_PEACE | 10 flags in one Peace Walker run |
+| ACH_ROGUE_10 / 25 | Clearing room 10 / 25 in Roguelike |
+| ACH_ROGUE_50 | Clearing all 50 rooms in Roguelike |
+| ACH_ROGUE_IMPOSSIBLE | Clearing room 20 in Roguelike on Impossible (room on the page) |
+| ACH_BUDDY | Taking the Germ Buddy perk |
+| ACH_LEGENDARY | Taking a Legendary perk |
+| ACH_FOUR_LINES | Reaching 4 bullet lines (Extra Bullet ×3) |
 
-**Leaderboards** (created by the game on first use, sorted high to low, keep best):
+**Leaderboards** (all five already exist on the partner site; the game would also create them on first use. Sorted high to low, keep best):
 
 | Leaderboard | Score submitted |
 |---|---|
@@ -33,8 +42,17 @@ The game talks to stores only through `PlatformServices` (`Scripts/Platform`). W
 | Capture the Flag | Run score |
 | Rush | Run score |
 | Peace Walker | Run score |
+| Roguelike | Run score |
 
-**Steam Cloud:** give the app a byte quota, for example 1 MB and 10 files. The game writes `save.json` through ISteamRemoteStorage. When the game starts, the newer of the cloud and local copies wins. Don't also set up Auto-Cloud for the same file.
+**In-game leaderboards:** Main menu → Leaderboards (shown only when Steam is running). Left/right picks the board; each shows the global top 20 in two columns of ten, the player's own line in the accent colour, and "You #rank score" underneath even when they're outside the top 20. A board is downloaded when first shown and again after 30 s. Names arrive from Steam a moment after the scores (shown as "..." until then); letters the pixel font lacks show as "?". Code: `UI/Menus/LeaderboardMenu.cs`, `PlatformServices.FetchTop`. For checking the layout with sample data in the editor, set `LeaderboardMenu.EditorPreview` / `EditorNames` (editor-only).
+
+**Steam Cloud:** quota is 10 MB / 20 files, with Mac, Windows and Linux enabled. The game writes `save.json` through ISteamRemoteStorage (API cloud, so it works the same on all three). When the game starts, the newer of the cloud and local copies wins. Don't also set up Auto-Cloud for the same file.
+- If `SteamRemoteStorage.GetQuota` returns false / 0 bytes right after a cloud change is published, the Steam client hasn't picked up the new settings yet: quit and reopen Steam. Then quit and reopen Unity too: the editor keeps its first connection to Steam, and after a Steam restart that old connection reports cloud off and 0 achievements.
+- The local save is always written first, so a cloud failure never loses progress.
+
+**Store page:** under *Supported Features*, tick **Steam Achievements**, **Steam Cloud** and **Steam Leaderboards**.
+
+**Testing:** *AntiBacteria → Progress Tool → Reset My Steam Achievements…* clears your own unlocks (needs Play mode with Steam running).
 
 ## 3. Behaviour
 - The Steam overlay (Shift+Tab) pauses a running level.

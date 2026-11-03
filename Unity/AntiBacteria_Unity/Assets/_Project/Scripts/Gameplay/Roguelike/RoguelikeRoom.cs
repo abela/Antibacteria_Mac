@@ -112,6 +112,7 @@ namespace AntiBacteria.Gameplay.Roguelike
                 int heal = (bossRoom ? RoguelikeSettings.Current.bossRoomHeal : 0) + (RunModifiers.HealOnRoomClear ? 1 : 0);
                 if (heal > 0) p.Heal(heal);
             }
+            AchievementTracker.RoomCleared(RoguelikeRun.Room, GameSession.Difficulty);
             if (RoguelikeRun.Room >= RoguelikeRun.Rooms) { runner.CompleteRun(); return; } // the last boss: run won
             Sound.Play(Sfx.LevelWin);
             RoomCleared?.Invoke();

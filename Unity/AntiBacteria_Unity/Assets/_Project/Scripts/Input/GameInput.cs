@@ -94,6 +94,9 @@ namespace AntiBacteria.Input
         /// <summary>The device used last (keyboard, mouse or a joystick), for the button prompts.</summary>
         public static Controller LastActiveController => Player?.controllers.GetLastActiveController();
 
+        public static bool MouseLeftHeld =>
+            ReInput.isReady && ReInput.controllers.Mouse != null && ReInput.controllers.Mouse.GetButton(0);
+
         public static bool MouseLeftPressed =>
             ReInput.isReady && ReInput.controllers.Mouse != null && ReInput.controllers.Mouse.GetButtonDown(0);
 

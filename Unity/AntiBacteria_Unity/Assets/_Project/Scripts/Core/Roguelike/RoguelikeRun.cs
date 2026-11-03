@@ -174,6 +174,7 @@ namespace AntiBacteria.Core
         {
             if (ranks[(int)p] < Perks.Get(p).maxRank) ranks[(int)p]++;
             PendingLevelUps = Mathf.Max(0, PendingLevelUps - 1);
+            AchievementTracker.PerkTaken(p, ranks[(int)p]);
             PerkTaken?.Invoke(p);
             Changed?.Invoke();
         }

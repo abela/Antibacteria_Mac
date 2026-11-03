@@ -44,7 +44,27 @@ namespace AntiBacteria.Core
                     PlatformServices.SubmitScore(Board.PeaceWalker, score);
                     if (completed >= s.pacifistCount) PlatformServices.Unlock(Achievement.Pacifist);
                     break;
+                case GameMode.Roguelike:
+                    PlatformServices.SubmitScore(Board.Roguelike, score);
+                    break;
             }
+        }
+
+        /// <summary>A roguelike room is cleared (room 50: the run is won).</summary>
+        public static void RoomCleared(int room, Difficulty d)
+        {
+            if (room >= 10) PlatformServices.Unlock(Achievement.RogueRoom10);
+            if (room >= 25) PlatformServices.Unlock(Achievement.RogueRoom25);
+            if (room >= RoguelikeRun.Rooms) PlatformServices.Unlock(Achievement.RogueComplete);
+            if (d == Difficulty.Impossible && room >= PlatformSettings.Current.roguelikeImpossibleRoom)
+                PlatformServices.Unlock(Achievement.RogueImpossible);
+        }
+
+        public static void PerkTaken(PerkId p, int rank)
+        {
+            if (p == PerkId.GermBuddy) PlatformServices.Unlock(Achievement.GermBuddy);
+            if (Perks.Get(p).rarity == PerkRarity.Legendary) PlatformServices.Unlock(Achievement.Legendary);
+            if (p == PerkId.ExtraBarrel && rank >= Perks.Get(p).maxRank) PlatformServices.Unlock(Achievement.FourLines);
         }
 
         public static void UpgradeBought(int owned, int total)

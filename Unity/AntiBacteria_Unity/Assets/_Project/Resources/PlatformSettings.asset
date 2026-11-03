@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea692d76341af4e24933a384ff3158ae, type: 3}
   m_Name: PlatformSettings
   m_EditorClassIdentifier: AntiBacteria.Platform::AntiBacteria.Platform.PlatformSettings
-  steamAppId: 480
-  restartThroughSteam: 0
+  steamAppId: 5554670
+  restartThroughSteam: 1
   useSteamCloud: 1
   achievements:
   - id: 0
@@ -55,10 +55,32 @@ MonoBehaviour:
   - id: 12
     steamApiName: ACH_PEACE
     note: pacifistCount flags in one Peace Walker run
+  - id: 13
+    steamApiName: ACH_ROGUE_10
+    note: Clear roguelike room 10
+  - id: 14
+    steamApiName: ACH_ROGUE_25
+    note: Clear roguelike room 25
+  - id: 15
+    steamApiName: ACH_ROGUE_50
+    note: Clear all 50 roguelike rooms
+  - id: 16
+    steamApiName: ACH_ROGUE_IMPOSSIBLE
+    note: Clear roguelikeImpossibleRoom on Impossible
+  - id: 17
+    steamApiName: ACH_BUDDY
+    note: Take the Germ Buddy perk
+  - id: 18
+    steamApiName: ACH_LEGENDARY
+    note: Take a Legendary perk
+  - id: 19
+    steamApiName: ACH_FOUR_LINES
+    note: Max out Extra Bullet (4 lines)
   vitaminHoard: 1000
   flagRunnerCount: 25
   zoneRunnerCount: 10
   pacifistCount: 10
+  roguelikeImpossibleRoom: 20
   boards:
   - id: 0
     steamName: Campaign
@@ -68,3 +90,5 @@ MonoBehaviour:
     steamName: Rush
   - id: 3
     steamName: Peace Walker
+  - id: 4
+    steamName: Roguelike

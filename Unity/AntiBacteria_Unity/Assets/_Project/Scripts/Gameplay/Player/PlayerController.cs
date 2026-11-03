@@ -76,6 +76,9 @@ namespace AntiBacteria.Gameplay.Player
         public event Action LivesChanged;
         public event Action Died;
 
+        /// <summary>Any player's volley left the barrel (the crosshair kicks).</summary>
+        public static event Action Fired;
+
         private Rigidbody2D rb;
         private Collider2D bodyCollider;
         private Camera cam;
@@ -195,6 +198,7 @@ namespace AntiBacteria.Gameplay.Player
         private void Fire(ShotPattern pattern)
         {
             if (shotPrefab == null) return;
+            Fired?.Invoke();
             ShotFeel f = ShotFeel.Current;
             Vector2 pos = transform.position;
             float aimAngle = Mathf.Atan2(AimDirection.y, AimDirection.x) * Mathf.Rad2Deg;

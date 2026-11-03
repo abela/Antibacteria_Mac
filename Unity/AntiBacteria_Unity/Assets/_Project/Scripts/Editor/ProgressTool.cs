@@ -86,6 +86,17 @@ namespace AntiBacteria.EditorTools
             if (Directory.Exists(BackupDir) && GUILayout.Button("Show Backups in Finder")) EditorUtility.RevealInFinder(BackupDir);
 
             EditorGUILayout.Space(10f);
+            EditorGUILayout.LabelField("Steam", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Store", AntiBacteria.Platform.PlatformServices.BackendName +
+                (AntiBacteria.Platform.PlatformServices.CloudAvailable ? "  (Cloud on)" : ""));
+            using (new EditorGUI.DisabledScope(!EditorApplication.isPlaying || !AntiBacteria.Platform.PlatformServices.HasBackend))
+            {
+                if (GUILayout.Button(new GUIContent("Reset My Steam Achievements...", "Play mode with Steam running: clears this account's achievements and stats (testing).")) &&
+                    EditorUtility.DisplayDialog("Reset Steam achievements?", "Clears every AntiBacteria achievement and stat on your Steam account. For testing.", "Reset", "Cancel"))
+                    AntiBacteria.Platform.PlatformServices.ResetAllAchievements();
+            }
+
+            EditorGUILayout.Space(10f);
             EditorGUILayout.LabelField("Player settings", EditorStyles.boldLabel);
             if (GUILayout.Button(new GUIContent("Reset Settings...", "Volumes, language, palette, auto-shoot, display and remapped controls (PlayerPrefs). Progress stays.")))
             {
