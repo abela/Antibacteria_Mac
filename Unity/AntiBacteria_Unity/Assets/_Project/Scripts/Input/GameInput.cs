@@ -33,6 +33,9 @@ namespace AntiBacteria.Input
             {
                 Player p = Player;
                 if (p == null) return Vector2.zero;
+#if UNITY_EDITOR
+                if (EditorMoveOverride is Vector2 m) return Vector2.ClampMagnitude(m, 1f);
+#endif
                 var v = new Vector2(p.GetAxis(InputActions.MoveHorizontal), p.GetAxis(InputActions.MoveVertical));
                 return Vector2.ClampMagnitude(v, 1f);
             }
@@ -103,6 +106,9 @@ namespace AntiBacteria.Input
 #if UNITY_EDITOR
         /// <summary>Editor only: pretend the mouse is here (screen pixels). Used by the screenshot director.</summary>
         public static Vector2? EditorMouseOverride;
+
+        /// <summary>Editor only: replaces the movement input. Used by the screenshot director's auto-dodge.</summary>
+        public static Vector2? EditorMoveOverride;
 #endif
 
         /// <summary>Mouse position in screen pixels.</summary>
