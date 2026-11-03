@@ -1,5 +1,6 @@
 using AntiBacteria.Core;
 using AntiBacteria.Rendering;
+using AntiBacteria.UI.Intro;
 using AntiBacteria.UI.Menu;
 using TMPro;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace AntiBacteria.UI.Menus
                 pendingLevel = level;
                 navigator.Push(difficulty);
             });
-            options = OptionsMenu.Build(skin, root, navigator, false);
+            options = OptionsMenu.Build(skin, root, navigator, false, WatchIntro);
             about = BuildAbout();
             upgrade = UpgradeMenu.Build(skin, root, navigator);
             upgrade.OnShown = () => backdrop.ShowBacteria(false); // the rows use the full width
@@ -56,7 +57,31 @@ namespace AntiBacteria.UI.Menus
             options.OnShown = () => backdrop.ShowBacteria(false);
             System.Action levelShown = levelSelect.OnShown;
             levelSelect.OnShown = () => { backdrop.ShowBacteria(false); levelShown?.Invoke(); };
+            if (IntroFlow.WantsLaunchIntro)
+            {
+                // First launch: the story first, then straight into Level 1 (skipping goes there too).
+                MenuNavigator.Blocked = true;
+                IntroPlayer.Play(skin, root, skipped =>
+                {
+                    MenuNavigator.Blocked = false;
+                    IntroFlow.MarkShown();
+                    IntroFlow.GoToLevelOne();
+                });
+                return;
+            }
             navigator.Show(main);
+        }
+
+        /// <summary>Options > Watch Intro: the story again, then back to Options with the menu music.</summary>
+        private void WatchIntro()
+        {
+            MenuNavigator.Blocked = true;
+            IntroPlayer.Play(skin, root, skipped =>
+            {
+                MenuNavigator.Blocked = false;
+                IntroFlow.MarkShown();
+                AntiBacteria.Audio.Sound.Music(AntiBacteria.Audio.MusicTrack.Menu);
+            });
         }
 
         private MenuScreen BuildMain()

@@ -65,6 +65,7 @@ namespace AntiBacteria.UI.Menus
                 levelUp = BuildLevelUp();
             }
             PromptBar.Create(skin, root, navigator); // [A] Select  [B] Back on pause, options and result screens
+            if (IntroFlow.Handoff) AntiBacteria.UI.Intro.IntroHandoff.Create(skin, root); // from the intro's white flash
             if (runner != null) runner.PhaseChanged += OnPhaseChanged;
             AntiBacteria.Platform.PlatformServices.OverlayChanged += OnOverlayChanged;
         }

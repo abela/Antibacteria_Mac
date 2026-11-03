@@ -66,6 +66,11 @@ namespace AntiBacteria.Gameplay.Enemies
 
         public static event Action<Enemy> Killed;
 
+        /// <summary>Every enemy's hits are scaled by this when set up (roguelike rooms; 1 elsewhere).</summary>
+        public static float HealthMultiplier { get; set; } = 1f;
+
+        private static int Scaled(int hits) => Mathf.Max(1, Mathf.RoundToInt(hits * HealthMultiplier));
+
         protected Rigidbody2D rb;
         protected bool hidden;
         protected int hitsLeft;
@@ -98,7 +103,7 @@ namespace AntiBacteria.Gameplay.Enemies
         public virtual void Init(EnemyDefinition definition)
         {
             Definition = definition;
-            hitsLeft = MaxHits = Mathf.Max(1, definition.hits);
+            hitsLeft = MaxHits = Scaled(definition.hits);
             Invulnerable = definition.invulnerable;
             Current = State.Spawning;
             fadeTime = 0f;
@@ -129,14 +134,14 @@ namespace AntiBacteria.Gameplay.Enemies
         public void Reconfigure(EnemyDefinition definition)
         {
             Definition = definition;
-            hitsLeft = MaxHits = Mathf.Max(1, definition.hits);
+            hitsLeft = MaxHits = Scaled(definition.hits);
             Invulnerable = definition.invulnerable;
             legSpeed = SpeedPoints;
             RerollOrbit();
             PickTarget();
         }
 
-        public void SetHits(int hits) => hitsLeft = MaxHits = Mathf.Max(1, hits);
+        public void SetHits(int hits) => hitsLeft = MaxHits = Scaled(hits);
 
         /// <summary>Change the body sprite and fit the hitbox to it (chain segments).</summary>
         public void SetSprite(Sprite sprite)

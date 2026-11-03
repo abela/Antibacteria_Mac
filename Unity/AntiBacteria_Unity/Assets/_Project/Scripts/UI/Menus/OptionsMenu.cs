@@ -12,7 +12,7 @@ namespace AntiBacteria.UI.Menus
             { WordIDs.PaletteClassic, WordIDs.PalettePetriDish, WordIDs.PaletteGramStain, WordIDs.PaletteColourBlind };
 
         /// <param name="opaque">Cover whatever is behind (the paused game).</param>
-        public static MenuScreen Build(UISkin skin, Transform parent, MenuNavigator nav, bool opaque)
+        public static MenuScreen Build(UISkin skin, Transform parent, MenuNavigator nav, bool opaque, System.Action watchIntro = null)
         {
             MenuScreen s = MenuScreen.Create(parent, "Options");
             Transform t = s.transform;
@@ -46,8 +46,17 @@ namespace AntiBacteria.UI.Menus
                 () => GameSettings.MusicVolume, GameSettings.SetMusicVolume));
 
             MenuScreen controls = ControlsMenu.Build(skin, parent, nav, opaque);
-            s.Add(MenuButton.Create(skin, t, "Controls", 160f, 132f, () => Loc.Get(WordIDs.Controls), () => nav.Push(controls)));
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 152f, () => Loc.Get(WordIDs.Back), nav.Back));
+            if (watchIntro == null)
+            {
+                s.Add(MenuButton.Create(skin, t, "Controls", 160f, 132f, () => Loc.Get(WordIDs.Controls), () => nav.Push(controls)));
+                s.Add(MenuButton.Create(skin, t, "Back", 160f, 152f, () => Loc.Get(WordIDs.Back), nav.Back));
+            }
+            else
+            {
+                s.Add(MenuButton.Create(skin, t, "Controls", 160f, 126f, () => Loc.Get(WordIDs.Controls), () => nav.Push(controls)));
+                s.Add(MenuButton.Create(skin, t, "WatchIntro", 160f, 140f, () => Loc.Get(WordIDs.WatchIntro), watchIntro));
+                s.Add(MenuButton.Create(skin, t, "Back", 160f, 154f, () => Loc.Get(WordIDs.Back), nav.Back));
+            }
             return s;
         }
 

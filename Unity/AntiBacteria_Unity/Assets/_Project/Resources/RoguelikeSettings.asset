@@ -16,10 +16,20 @@ MonoBehaviour:
   enemiesPerRoom: 0.8
   bossRoomHeal: 1
   bossDelaySeconds: 1.5
+  healthPerRoom: 0.05
+  difficultyHealth:
+  - 1
+  - 1.25
+  - 1.5
+  difficultyEnemies:
+  - 1
+  - 1.2
+  - 1.4
+  baseVolley: 1
   xpBase: 8
-  xpStep: 4
+  xpStep: 8
   orbsPerKill: 1
-  orbsPerBoss: 15
+  orbsPerBoss: 10
   orbMagnetPixels: 48
   orbSpeedPixels: 260
   perkChoices: 3
@@ -270,13 +280,14 @@ MonoBehaviour:
     m_RotationOrder: 4
   difficultyLuckRooms: 00000000050000000a000000
   luckyRooms: 5
-  rapidFirePercent: 15
+  rapidFirePercent: 12
   quickFeetPercent: 12
   magnetPercent: 50
-  wisdomPercent: 25
+  wisdomPercent: 15
   goldenTouchPercent: 50
   bonusLoverPercent: 40
   timeBenderPercent: 50
+  firstAidEveryRooms: 3
   lineSpacingPixels: 4
   criticalChancePercent: 10
   bigShotScale: 2
@@ -287,16 +298,16 @@ MonoBehaviour:
   orbiterRadiusPixels: 18
   orbiterDegreesPerSecond: 240
   orbiterHitCooldown: 0.4
-  vampireKills: 40
+  vampireKills: 60
   lastStandFireMultiplier: 2
   overdriveEvery: 10
   overdriveDamage: 3
   overdriveScale: 3
-  buddyFireInterval: 0.6
+  buddyFireInterval: 0.9
   buddyRangePixels: 120
   buddyDistancePixels: 14
   buddyFollow: 6
-  buddyTriggerPercent: 20
+  buddyTriggerPercent: 15
   buddyPunchPercent: 25
   fetchPixels: 64
   gateWidthPixels: 32

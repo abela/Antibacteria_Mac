@@ -39,7 +39,7 @@ namespace AntiBacteria.Core
 
         public static readonly PerkInfo[] All =
         {
-            P(PerkId.RapidFire, 4, C, WordIDs.PerkRapidFire, WordIDs.PerkRapidFireDesc, s => s.rapidFirePercent.ToString(), new[]
+            P(PerkId.RapidFire, 3, C, WordIDs.PerkRapidFire, WordIDs.PerkRapidFireDesc, s => s.rapidFirePercent.ToString(), new[]
             {
                 ".........", "..R...R..", ".RRR.RRR.", "..R...R..", "..#...#..", "..#...#..", "..#...#..", "..#...#..", ".........",
             }),
@@ -48,7 +48,7 @@ namespace AntiBacteria.Core
             {
                 ".........", ".R.R.R.R.", ".R.R.R.R.", ".#.#.#.#.", ".#.#.#.#.", ".#.#.#.#.", ".#.#.#.#.", ".........", ".........",
             }),
-            P(PerkId.HeavyShots, 3, R, WordIDs.PerkHeavyShots, WordIDs.PerkHeavyShotsDesc, s => "1", new[]
+            P(PerkId.HeavyShots, 2, E, WordIDs.PerkHeavyShots, WordIDs.PerkHeavyShotsDesc, s => "1", new[]
             {
                 "...RRR...", "..RRRRR..", "..RRRRR..", "..#####..", "..#...#..", "..#...#..", "..#...#..", "..#####..", ".........",
             }),
@@ -60,15 +60,15 @@ namespace AntiBacteria.Core
             {
                 ".........", "#...R....", "....RR...", "##..RRR..", "....RRRR.", "##..RRR..", "....RR...", "#...R....", ".........",
             }),
-            P(PerkId.Vitality, 3, C, WordIDs.PerkVitality, WordIDs.PerkVitalityDesc, s => "1", new[]
+            P(PerkId.Vitality, 2, C, WordIDs.PerkVitality, WordIDs.PerkVitalityDesc, s => "1", new[]
             {
                 ".........", ".RR.RR...", "RRRRRRR..", "RRRRRRR..", ".RRRRR...", "..RRR..#.", "...R..###", ".......#.", ".........",
             }),
-            P(PerkId.FirstAid, 1, R, WordIDs.PerkFirstAid, WordIDs.PerkFirstAidDesc, s => "1", new[]
+            P(PerkId.FirstAid, 1, R, WordIDs.PerkFirstAid, WordIDs.PerkFirstAidDesc, s => s.firstAidEveryRooms.ToString(), new[]
             {
                 ".........", "#########", "#...R...#", "#...R...#", "#.RRRRR.#", "#...R...#", "#...R...#", "#########", ".........",
             }),
-            P(PerkId.Shield, 2, C, WordIDs.PerkShield, WordIDs.PerkShieldDesc, s => "1", new[]
+            P(PerkId.Shield, 1, R, WordIDs.PerkShield, WordIDs.PerkShieldDesc, s => "1", new[]
             {
                 "#########", "#.......#", "#..RRR..#", "#..RRR..#", ".#.RRR.#.", "..#...#..", "...#.#...", "....#....", ".........",
             }),
@@ -152,13 +152,13 @@ namespace AntiBacteria.Core
             {
                 "..#####..", ".#.....#.", "#..R.R..#", "#.......#", "#..RRR..#", "#.......#", ".#.....#.", "..#####..", ".#.....#.",
             }),
-            B(PerkId.BuddyTrigger, 3, C, WordIDs.PerkBuddyTrigger, WordIDs.PerkBuddyTriggerDesc, s => s.buddyTriggerPercent.ToString(),
+            B(PerkId.BuddyTrigger, 2, C, WordIDs.PerkBuddyTrigger, WordIDs.PerkBuddyTriggerDesc, s => s.buddyTriggerPercent.ToString(),
                 "..R.R", "..R.R", "..#.#", "..#.#", "....."),
-            B(PerkId.BuddyPunch, 3, C, WordIDs.PerkBuddyPunch, WordIDs.PerkBuddyPunchDesc, s => s.buddyPunchPercent.ToString(),
+            B(PerkId.BuddyPunch, 2, C, WordIDs.PerkBuddyPunch, WordIDs.PerkBuddyPunchDesc, s => s.buddyPunchPercent.ToString(),
                 "..R..", ".RRR.", "..R..", ".....", "....."),
             B(PerkId.Fetch, 1, C, WordIDs.PerkFetch, WordIDs.PerkFetchDesc, s => "1",
                 "..#..", ".#R#.", "#RRR#", ".#R#.", "..#.."),
-            B(PerkId.DoubleBarrel, 2, R, WordIDs.PerkDoubleBarrel, WordIDs.PerkDoubleBarrelDesc, s => "1",
+            B(PerkId.DoubleBarrel, 1, R, WordIDs.PerkDoubleBarrel, WordIDs.PerkDoubleBarrelDesc, s => "1",
                 ".R.R.", ".#.#.", ".#.#.", ".#.#.", "....."),
             B(PerkId.Sharpshooter, 2, R, WordIDs.PerkSharpshooter, WordIDs.PerkSharpshooterDesc, s => "1",
                 ".....", "..#..", "RRRRR", "..#..", "....."),

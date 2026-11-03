@@ -63,6 +63,7 @@ namespace AntiBacteria.Gameplay.Level
 
         private void Awake()
         {
+            Enemies.Enemy.HealthMultiplier = 1f; // a roguelike room sets its own when it begins
             EnemyCatalog.Active = catalog;
             Mode = EndlessMode.For(GameSession.Mode);
             if (IsEndless && !Mode.UsesLevelData) return; // no level data: the mode spawns everything
@@ -94,8 +95,9 @@ namespace AntiBacteria.Gameplay.Level
                 PlayerController.Current.Died += OnPlayerDied;
                 // 2013: more bullets per volley as the campaign goes on (1 / 2 / 3 / 4 from levels 1 / 11 / 21 / 31).
                 // Endless modes start at 1 and gain one every few objectives (EndlessMode).
-                PlayerController.Current.VolleySize = IsEndless && !Mode.UsesLevelData ? 1
-                    : WeaponSettings.Current.VolleyForLevel(GameSession.CurrentLevel); // Extra Bullet adds parallel lines, not volley
+                PlayerController.Current.VolleySize = RoguelikeRun.Active ? RoguelikeSettings.Current.baseVolley // perks are the power curve
+                    : IsEndless && !Mode.UsesLevelData ? 1
+                    : WeaponSettings.Current.VolleyForLevel(GameSession.CurrentLevel);
                 if (RoguelikeRun.Active && RoguelikeRun.CarriedLives > 0) PlayerController.Current.SetLives(RoguelikeRun.CarriedLives);
                 PlayerController.Current.CanShoot = !IsEndless || Mode.PlayerCanShoot;
             }

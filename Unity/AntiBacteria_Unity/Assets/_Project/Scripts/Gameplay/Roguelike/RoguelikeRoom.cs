@@ -38,7 +38,8 @@ namespace AntiBacteria.Gameplay.Roguelike
             base.Begin(r);
             level = r.Level;
             bossRoom = r.IsBossLevel;
-            toSpawn = bossRoom ? 0 : RoguelikeSettings.Current.EnemiesIn(RoguelikeRun.Room);
+            toSpawn = bossRoom ? 0 : RoguelikeSettings.Current.EnemiesIn(RoguelikeRun.Room, GameSession.Difficulty);
+            Enemy.HealthMultiplier = RoguelikeSettings.Current.HealthIn(RoguelikeRun.Room, GameSession.Difficulty);
             waveTimer = 0.5f; // the first wave comes quickly
             RoguelikeRun.ShieldsLeft = RunModifiers.ShieldsPerRoom;
             RoguelikeRun.BodyguardLeft = RunModifiers.Bodyguard ? 1 : 0;
@@ -51,6 +52,7 @@ namespace AntiBacteria.Gameplay.Roguelike
         {
             Enemy.Killed -= OnKilled;
             RoguelikeRun.PerkTaken -= OnPerkTaken;
+            Enemy.HealthMultiplier = 1f;
             if (gate != null) Object.Destroy(gate.gameObject);
             if (effects != null) Object.Destroy(effects.gameObject);
         }

@@ -50,6 +50,12 @@ namespace AntiBacteria.Input
         }
 
         public static bool FireHeld => Player != null && Player.GetButton(InputActions.Fire);
+
+        /// <summary>Confirm, Back, Fire, Pause or the mouse held (hold to skip the intro).</summary>
+        public static bool AnyButtonHeld =>
+            (Player != null && (Player.GetButton(InputActions.UISubmit) || Player.GetButton(InputActions.UICancel) ||
+                                Player.GetButton(InputActions.Fire) || Player.GetButton(InputActions.Pause))) ||
+            (ReInput.isReady && ReInput.controllers.Mouse != null && ReInput.controllers.Mouse.GetButton(0));
         public static bool SlowMotionPressed => Player != null && Player.GetButtonDown(InputActions.SlowMotion);
         public static bool PausePressed => Player != null && Player.GetButtonDown(InputActions.Pause);
 

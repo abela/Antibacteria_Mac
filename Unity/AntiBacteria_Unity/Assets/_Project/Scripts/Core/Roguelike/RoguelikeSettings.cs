@@ -21,13 +21,23 @@ namespace AntiBacteria.Core
         [Tooltip("Seconds before the boss of a boss room appears.")]
         public float bossDelaySeconds = 1.5f;
 
+        [Header("Challenge (rooms get tougher; harder difficulties tougher still)")]
+        [Tooltip("Enemy health grows by this share per room: 0.05 = +5% a room, so room 50 enemies take ~3.5x the hits.")]
+        public float healthPerRoom = 0.05f;
+        [Tooltip("Enemy health multiplier per difficulty (Normal, Hard, Impossible).")]
+        public float[] difficultyHealth = { 1f, 1.25f, 1.5f };
+        [Tooltip("Enemies per room multiplier per difficulty (Normal, Hard, Impossible).")]
+        public float[] difficultyEnemies = { 1f, 1.2f, 1.4f };
+        [Tooltip("Bullets per volley in the roguelike. The campaign's growing fan (up to 4) is not used: perks are the power curve.")]
+        [Min(1)] public int baseVolley = 1;
+
         [Header("XP")]
         [Tooltip("XP for the next level: base + step x (level - 1). Level 1 -> 2 needs 'base'.")]
         public int xpBase = 8;
-        public int xpStep = 4;
+        public int xpStep = 8;
         [Tooltip("XP orbs dropped by an enemy / by a boss.")]
         public int orbsPerKill = 1;
-        public int orbsPerBoss = 15;
+        public int orbsPerBoss = 10;
         [Tooltip("Orbs fly to the player from this far.")]
         public float orbMagnetPixels = 48f;
         public float orbSpeedPixels = 260f;
@@ -57,13 +67,15 @@ namespace AntiBacteria.Core
         public int luckyRooms = 5;
 
         [Header("Perk strengths (per rank)")]
-        public int rapidFirePercent = 15;
+        public int rapidFirePercent = 12;
         public int quickFeetPercent = 12;
         public int magnetPercent = 50;
-        public int wisdomPercent = 25;
+        public int wisdomPercent = 15;
         public int goldenTouchPercent = 50;
         public int bonusLoverPercent = 40;
         public int timeBenderPercent = 50;
+        [Tooltip("First Aid: heals 1 life when a room whose number divides by this is cleared.")]
+        public int firstAidEveryRooms = 3;
         [Tooltip("Extra Bullet: pixels between parallel bullet lines.")]
         public float lineSpacingPixels = 4f;
         public int criticalChancePercent = 10;
@@ -80,7 +92,7 @@ namespace AntiBacteria.Core
         public float orbiterDegreesPerSecond = 240f;
         public float orbiterHitCooldown = 0.4f;
         [Tooltip("Vampire: kills per healed life.")]
-        public int vampireKills = 40;
+        public int vampireKills = 60;
         [Tooltip("Last Stand: fire rate multiplier on the last life.")]
         public float lastStandFireMultiplier = 2f;
         [Tooltip("Overdrive: every Nth volley also fires a huge piercing blast, with this damage and scale.")]
@@ -90,13 +102,13 @@ namespace AntiBacteria.Core
 
         [Header("Germ Buddy")]
         [Tooltip("Seconds between the buddy's shots (Buddy Trigger shortens it).")]
-        public float buddyFireInterval = 0.6f;
+        public float buddyFireInterval = 0.9f;
         [Tooltip("It shoots enemies within this range.")]
         public float buddyRangePixels = 120f;
         [Tooltip("How far it floats from the player, and how quickly it catches up (higher = less lag).")]
         public float buddyDistancePixels = 14f;
         public float buddyFollow = 6f;
-        public int buddyTriggerPercent = 20;
+        public int buddyTriggerPercent = 15;
         [Tooltip("Buddy Punch: extra damage per rank (25 = a quarter of a hit, rolled per shot).")]
         public int buddyPunchPercent = 25;
         [Tooltip("Fetch: the buddy pulls pickups within this range of itself.")]
@@ -107,7 +119,14 @@ namespace AntiBacteria.Core
         public float gateWidthPixels = 32f;
 
         public int XpFor(int level) => Mathf.Max(1, xpBase + xpStep * (level - 1));
-        public int EnemiesIn(int room) => Mathf.Max(1, Mathf.RoundToInt(enemiesBase + enemiesPerRoom * (room - 1)));
+        public int EnemiesIn(int room, Difficulty d) =>
+            Mathf.Max(1, Mathf.RoundToInt((enemiesBase + enemiesPerRoom * (room - 1)) * Pick(difficultyEnemies, d, 1f)));
+
+        /// <summary>How many times tougher enemies are in this room on this difficulty.</summary>
+        public float HealthIn(int room, Difficulty d) => Mathf.Max(0.1f, (1f + healthPerRoom * (room - 1)) * Pick(difficultyHealth, d, 1f));
+
+        private static float Pick(float[] a, Difficulty d, float fallback) =>
+            a != null && (int)d >= 0 && (int)d < a.Length ? a[(int)d] : fallback;
 
         /// <summary>Chance weight of a rarity at a (luck-adjusted) room.</summary>
         public float Weight(PerkRarity r, float room)

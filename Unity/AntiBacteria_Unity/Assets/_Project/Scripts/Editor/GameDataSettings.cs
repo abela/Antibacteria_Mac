@@ -46,6 +46,19 @@ namespace AntiBacteria.EditorTools
         }
 
         /// <summary>Palette material, the pickup frame and each type's icon (Art/Sprites/Bonus).</summary>
+        public static IntroSettings IntroCfg() =>
+            GetOrCreate<IntroSettings>(Resources + "/IntroSettings.asset", IntroSettings.Use, null);
+
+        [SettingsProvider]
+        public static SettingsProvider IntroPage() => Page(
+            "Project/AntiBacteria/Intro", "Intro",
+            "The opening story: whether it plays on first launch, its frames and sound tracks, the captions (frames and " +
+            "lines), hold-to-skip, and the white fade into Level 1. Frames come from Docs/Intro/export_frames.py.",
+            IntroCfg, new HashSet<string> { "intro", "cutscene", "story", "caption", "skip", "doctor" });
+
+        [MenuItem("AntiBacteria/Settings/Intro...")]
+        private static void OpenIntro() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Intro");
+
         public static RoguelikeSettings RoguelikeCfg() =>
             GetOrCreate<RoguelikeSettings>(Resources + "/RoguelikeSettings.asset", RoguelikeSettings.Use, null);
 

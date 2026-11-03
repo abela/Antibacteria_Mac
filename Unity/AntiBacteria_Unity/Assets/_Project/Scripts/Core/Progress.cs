@@ -28,6 +28,7 @@ namespace AntiBacteria.Core
             public WalletData wallet = new WalletData();
             public ModesData modes = new ModesData();
             public int plays; // levels / runs started, ever (first-time hints)
+            public bool introSeen; // the opening story has played once
         }
 
         private const int EndlessModeCount = 4; // Capture the Flag, Rush, Peace Walker, Roguelike
@@ -202,6 +203,23 @@ namespace AntiBacteria.Core
             if (newBest) Data.campaign.best[i] = score;
             Save();
             return newBest;
+        }
+
+        /// <summary>The opening story has played (first launch) - it doesn't play by itself again.</summary>
+        public static bool IntroSeen => Data.introSeen;
+
+        public static void MarkIntroSeen()
+        {
+            if (Data.introSeen) return;
+            Data.introSeen = true;
+            Save();
+        }
+
+        /// <summary>Editor / debug: the intro plays again on the next launch.</summary>
+        public static void ResetIntro()
+        {
+            Data.introSeen = false;
+            Save();
         }
 
         /// <summary>How many levels or endless runs have been started, ever (retries count).</summary>

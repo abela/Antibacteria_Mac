@@ -212,7 +212,7 @@ namespace AntiBacteria.Core
         public static int Pierce => R(PerkId.Piercing);
         public static float SpeedMultiplier => Pct(S.quickFeetPercent, PerkId.QuickFeet);
         public static int ExtraMaxLives => R(PerkId.Vitality);
-        public static bool HealOnRoomClear => R(PerkId.FirstAid) > 0;
+        public static bool HealOnRoomClear => R(PerkId.FirstAid) > 0 && RoguelikeRun.Room % Mathf.Max(1, S.firstAidEveryRooms) == 0;
         public static int ShieldsPerRoom => R(PerkId.Shield);
         public static bool CanRevive => R(PerkId.SecondWind) > 0 && !RoguelikeRun.ReviveUsed;
         public static bool NovaOnHit => R(PerkId.Nova) > 0;

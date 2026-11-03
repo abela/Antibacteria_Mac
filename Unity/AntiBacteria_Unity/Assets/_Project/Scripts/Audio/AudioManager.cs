@@ -133,7 +133,7 @@ namespace AntiBacteria.Audio
             foreach (AudioListener l in FindObjectsByType<AudioListener>(FindObjectsSortMode.None))
                 if (l != ears && l.enabled) other = true;
             if (ears != null) ears.enabled = !other;
-            if (scene.name == SceneFlow.MainMenuScene) PlayMusic(MusicTrack.Menu);
+            if (scene.name == SceneFlow.MainMenuScene && !IntroFlow.WantsLaunchIntro) PlayMusic(MusicTrack.Menu); // the intro has its own
             // Gameplay picks Level or Boss itself (CampaignLevelRunner knows which level it is).
         }
 

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdabd15156ea47a48a89b508a856cd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Core.IntroSettings
+  playOnFirstLaunch: 1
+  frames: {fileID: 0}
+  music: {fileID: 0}
+  effects: {fileID: 0}
+  sting: {fileID: 0}
+  effectsBalance: 0.75
+  captions:
+  - startFrame: 0
+    endFrame: 75
+    line: 186
+    y: 166
+  - startFrame: 75
+    endFrame: 150
+    line: 187
+    y: 166
+  - startFrame: 150
+    endFrame: 232
+    line: 188
+    y: 166
+  - startFrame: 283
+    endFrame: 346
+    line: 189
+    y: 150
+  - startFrame: 397
+    endFrame: 472
+    line: 190
+    y: 166
+  secondsPerLetter: 0.035
+  blipEveryLetters: 2
+  dimBeforeEnd: 0.4
+  holdToSkipSeconds: 1
+  whiteFadeSeconds: 0.9
+  titleSeconds: 2.8

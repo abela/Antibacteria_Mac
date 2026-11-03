@@ -24,6 +24,9 @@ namespace AntiBacteria.UI.Menu
 
         public MenuScreen Top => stack.Count > 0 ? stack[stack.Count - 1] : null;
         public bool IsOpen => stack.Count > 0;
+
+        /// <summary>Set while the intro plays over the menus: no menu input at all.</summary>
+        public static bool Blocked { get; set; }
         /// <summary>Screens open, the current one included.</summary>
         public int Depth => stack.Count;
 
@@ -93,7 +96,7 @@ namespace AntiBacteria.UI.Menu
         private void Update()
         {
             MenuScreen top = Top;
-            if (top == null || Time.frameCount == openedFrame) return;
+            if (top == null || Time.frameCount == openedFrame || Blocked) return;
             // Controls screen listening for a new key: that key is not a menu press (nor the frame after).
             if (Remapping.IsListening || Time.frameCount <= Remapping.QuietUntilFrame) return;
 
