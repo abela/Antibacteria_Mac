@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AntiBacteria.Rendering;
@@ -20,6 +21,21 @@ namespace AntiBacteria.EditorTools
     public static class FontSetup
     {
         public const string SourceFontPath = "Assets/Fonts/m6x11cyrillic.ttf";
+        public const string LocalizationPath = "Assets/GleyPlugins/Localization/Resources/LocalizationFile.json";
+
+        /// <summary>
+        /// Pixel fonts for what m6x11 can't draw (Docs/Localization/Tools/build_fonts.py makes the TTFs): Czech carons,
+        /// Japanese, Korean, Chinese and Georgian. Each gets the characters its languages use (SystemLanguage values).
+        /// </summary>
+        private static readonly (string ttf, string asset, int[] languages)[] Fallbacks =
+        {
+            ("Assets/Fonts/Fallback/m6x11_extras.ttf", "Assets/_Project/Fonts/m6x11_Extras.asset", new[] { 7, 9, 21, 27, 28 }),
+            ("Assets/Fonts/Fallback/AB_Pixel_JA.ttf", "Assets/_Project/Fonts/AB_Pixel_JA.asset", new[] { 22 }),
+            ("Assets/Fonts/Fallback/AB_Pixel_KO.ttf", "Assets/_Project/Fonts/AB_Pixel_KO.asset", new[] { 23 }),
+            ("Assets/Fonts/Fallback/AB_Pixel_SC.ttf", "Assets/_Project/Fonts/AB_Pixel_SC.asset", new[] { 40 }),
+            ("Assets/Fonts/Fallback/AB_Pixel_TC.ttf", "Assets/_Project/Fonts/AB_Pixel_TC.asset", new[] { 41 }),
+            ("Assets/Fonts/Fallback/AB_Pixel_KA.ttf", "Assets/_Project/Fonts/AB_Pixel_KA.asset", new[] { 100 }),
+        };
         public const string CharacterSetPath = "Assets/Fonts/GameCharacterSet.txt";
         public const string OutputPath = "Assets/_Project/Fonts/m6x11_Pixel.asset";
         public const int PointSize = 16;   // 1 font pixel = 1 game pixel at this size
@@ -73,6 +89,7 @@ namespace AntiBacteria.EditorTools
             EditorUtility.SetDirty(asset.atlasTexture);
             EditorUtility.SetDirty(asset);
 
+            BuildFallbacks(asset, log);
             string missingGame = MissingFromGameSet(asset);
             log.AppendLine($"{asset.characterTable.Count} characters in the atlas.");
             log.AppendLine("Game character set: " + (missingGame.Length == 0 ? "all covered" : "MISSING " + missingGame));
@@ -97,7 +114,64 @@ namespace AntiBacteria.EditorTools
             for (int c = 0xA1; c <= 0xFF; c++) sb.Append((char)c);
             for (int c = 0x400; c <= 0x4FF; c++) sb.Append((char)c);
             sb.Append("…•№€");
+            foreach (string lang in LanguageTexts(null)) sb.Append(lang); // every translation (m6x11 keeps what it has)
             return sb.ToString();
+        }
+
+        /// <summary>All translation texts, or only those in the given languages (SystemLanguage values).</summary>
+        private static IEnumerable<string> LanguageTexts(int[] languages)
+        {
+            if (!File.Exists(LocalizationPath)) yield break;
+            string json = File.ReadAllText(LocalizationPath);
+            var all = JsonUtility.FromJson<LocFile>(json);
+            foreach (LocWord w in all.allText)
+                foreach (LocTranslation t in w.translations)
+                    if (languages == null || System.Array.IndexOf(languages, t.language) >= 0) yield return t.word;
+        }
+
+        [System.Serializable] private class LocFile { public List<LocWord> allText; }
+        [System.Serializable] private class LocWord { public string ID; public int enumID; public List<LocTranslation> translations; }
+        [System.Serializable] private class LocTranslation { public int language; public string word; }
+
+        /// <summary>Static, unhinted bitmap atlases (so their 1 px squares stay exact), chained after m6x11.</summary>
+        private static void BuildFallbacks(TMP_FontAsset primary, StringBuilder log)
+        {
+            var chain = new List<TMP_FontAsset>();
+            foreach (var (ttf, path, languages) in Fallbacks)
+            {
+                var font = AssetDatabase.LoadAssetAtPath<Font>(ttf);
+                if (font == null) { log.AppendLine("Missing " + ttf); continue; }
+                string name = Path.GetFileNameWithoutExtension(path);
+                var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+                if (fa == null)
+                {
+                    fa = TMP_FontAsset.CreateFontAsset(font, PointSize, Padding, GlyphRenderMode.RASTER, AtlasSize, AtlasSize,
+                        AtlasPopulationMode.Dynamic, false);
+                    fa.name = name;
+                    AssetDatabase.CreateAsset(fa, path);
+                    fa.atlasTexture.name = name + " Atlas";
+                    AssetDatabase.AddObjectToAsset(fa.atlasTexture, fa);
+                    fa.material.name = name + " Material";
+                    AssetDatabase.AddObjectToAsset(fa.material, fa);
+                }
+                else
+                {
+                    fa.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+                    fa.ClearFontAssetData(true);
+                }
+                var chars = new StringBuilder();
+                foreach (string s in LanguageTexts(languages)) chars.Append(s);
+                fa.TryAddCharacters(chars.ToString(), out string _);
+                fa.atlasPopulationMode = AtlasPopulationMode.Static;
+                fa.atlasTexture.filterMode = FilterMode.Point;
+                EditorUtility.SetDirty(fa.atlasTexture);
+                EditorUtility.SetDirty(fa);
+                chain.Add(fa);
+                log.AppendLine($"{name}: {fa.characterTable.Count} characters.");
+            }
+            primary.fallbackFontAssetTable = chain;
+            EditorUtility.SetDirty(primary);
+            log.AppendLine("Fallback fonts after m6x11: " + chain.Count);
         }
 
         private static void AddAliases(TMP_FontAsset asset, StringBuilder log)

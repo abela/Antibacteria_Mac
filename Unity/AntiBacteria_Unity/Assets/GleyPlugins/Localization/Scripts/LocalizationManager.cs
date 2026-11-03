@@ -164,9 +164,21 @@
         /// <returns></returns>
         SupportedLanguages GetDeviceLanguage(SupportedLanguages defaultLanguage)
         {
-            if (supportedLanguages.Contains((SupportedLanguages)Application.systemLanguage))
+            // AntiBacteria: plain "Chinese" picks a script from the OS culture; Georgian isn't a Unity SystemLanguage.
+            SystemLanguage system = Application.systemLanguage;
+            string culture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+            if (system == SystemLanguage.Chinese)
             {
-                return (SupportedLanguages)Application.systemLanguage;
+                bool traditional = culture.Contains("Hant") || culture.EndsWith("TW") || culture.EndsWith("HK") || culture.EndsWith("MO");
+                system = traditional ? SystemLanguage.ChineseTraditional : SystemLanguage.ChineseSimplified;
+            }
+            if (culture.StartsWith("ka") && Enum.IsDefined(typeof(SupportedLanguages), 100))
+            {
+                return (SupportedLanguages)100;
+            }
+            if (supportedLanguages.Contains((SupportedLanguages)system))
+            {
+                return (SupportedLanguages)system;
             }
             return defaultLanguage;
         }

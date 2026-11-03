@@ -223,6 +223,7 @@ namespace AntiBacteria.UI.Menus
             LiveText.Create(skin, t, "Original", 160f, 72f, () => Loc.Get(WordIDs.OriginalGame), dim: true);
             LiveText.Create(skin, t, "FontTitle", 160f, 96f, () => Loc.Get(WordIDs.Font) + ": m6x11");
             LiveText.Create(skin, t, "FontBy", 160f, 112f, () => "Daniel Linssen, Natto Games", dim: true);
+            LiveText.Create(skin, t, "FontsExtra", 160f, 124f, () => "Noto Sans CJK (OFL), DejaVu Sans", dim: true);
             s.Add(MenuButton.Create(skin, t, "Back", 160f, 140f, () => Loc.Get(WordIDs.Back), navigator.Back));
             return s;
         }

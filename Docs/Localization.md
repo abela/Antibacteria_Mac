@@ -4,20 +4,76 @@ The game's texts live in **Gley Localization**:
 
 - Data: `Unity/AntiBacteria_Unity/Assets/GleyPlugins/Localization/Resources/LocalizationFile.json`
 - Generated enums: `GleyPlugins/Localization/Scripts/WordIDs.cs` and `SupportedLanguages.cs`
-- Edit texts in **Window → Gley → Localization**. Its Save button rewrites all three files, so never edit them by hand.
+- Edit the JSON directly. **Do not save from Window → Gley → Localization** any more: it would drop Georgian (see below).
 
 Use them in code with `GleyLocalization.Manager.GetText(WordIDs.StartGame)`. For a UI label, add
 `TMProUGUILocalizationComponent` to a TextMeshPro text and pick the word ID; it updates when the language changes.
 
 ## Languages
 
-| Language | `SupportedLanguages` value (Unity `SystemLanguage`) | Index in the 2013 game |
-|---|---|---|
-| English (default) | 10 | 0 |
-| French | 14 | 2 |
-| German | 15 | 3 |
-| Russian | 30 | 1 |
-| Spanish | 34 | 4 |
+15 languages, 200 words each (3,000 translations).
+
+| Language | `SupportedLanguages` value | Font | Added |
+|---|---|---|---|
+| English (default) | 10 | m6x11 | 2013 |
+| French | 14 | m6x11 | 2013 |
+| German | 15 | m6x11 | 2013 |
+| Russian | 30 | m6x11 Cyrillic | 2013 |
+| Spanish (Spain) | 34 | m6x11 | 2013 |
+| Italian | 21 | m6x11 (+ `m6x11_extras`) | 2026 |
+| Portuguese (Portugal) | 28 | m6x11 (+ `m6x11_extras`) | 2026 |
+| Dutch | 9 | m6x11 (+ `m6x11_extras`) | 2026 |
+| Polish | 27 | m6x11 (+ `m6x11_extras`) | 2026 |
+| Czech | 7 | m6x11 + `m6x11_extras` (carons) | 2026 |
+| Georgian | **100** (custom) | `AB_Pixel_KA` | 2026 |
+| Japanese | 22 | `AB_Pixel_JA` | 2026 |
+| Korean | 23 | `AB_Pixel_KO` | 2026 |
+| Chinese (Simplified) | 40 | `AB_Pixel_SC` | 2026 |
+| Chinese (Traditional) | 41 | `AB_Pixel_TC` | 2026 |
+
+Values mirror Unity `SystemLanguage`, so the device language is picked automatically on first launch.
+`GetDeviceLanguage` was patched so `SystemLanguage.Chinese` picks Traditional for Hant/TW/HK/MO cultures and
+Simplified otherwise, and a `ka` culture picks Georgian. The in-game picker order is set in `Loc.cs` (`Languages`).
+
+### Source of truth: the JSON, not the Gley window
+
+From 2026 on, **`LocalizationFile.json` is the source of truth** and is edited by script, not in the Gley window.
+Georgian is not a Unity `SystemLanguage`, so it uses the custom value **100**. The Gley window does not know it:
+**saving from Window → Gley → Localization would drop Georgian and regenerate `SupportedLanguages.cs` without it.**
+Edit the JSON directly (each word has a `translations` list of `{language, word}`), keep `SupportedLanguages.cs`
+in sync by hand, and rebuild the fonts after adding new characters.
+
+Draft translation scripts are in `Docs/Localization/Tools/` (`tr_eu.py`, `tr_asia.py`). They are the first drafts:
+about 50 strings were shortened later to fit the UI, so do not re-run them over the JSON.
+
+### Fonts for the new languages
+
+The primary TMP font is m6x11 (static atlas, `RASTER_HINTED`, 16 pt). Characters it lacks come from fallback
+font assets in `Assets/Fonts/Fallback/`. Each is a pixel-square TTF (1 px = 64 units, em 1024 = 16 px) built by
+`Docs/Localization/Tools/build_fonts.py`:
+
+- `m6x11_extras.ttf`: Czech/Polish/Portuguese/Italian/Dutch letters missing from m6x11 (carons etc.), drawn from m6x11 glyphs.
+- `AB_Pixel_JA/KO/SC/TC.ttf`: Noto Sans CJK Medium rasterized at 12 px (OFL).
+- `AB_Pixel_KA.ttf`: DejaVu Sans rasterized at 14 px.
+
+Then run **AntiBacteria → UI → Build Pixel Font Asset** (`Editor/FontSetup.cs`). It collects every character
+used by any translation, builds static `RASTER` (unhinted) atlases for each fallback (16 pt, padding 2, 512², point
+filter) and reports anything still missing. It should end with "all covered".
+
+Han characters look different in Japanese, Simplified and Traditional Chinese, so `Loc.ApplyFonts()` moves the
+current language's CJK font to the front of the fallback list whenever the language changes.
+
+### Fit rules used when shortening translations
+
+At 16 px, in UI units: perk and rarity names ≤ 92, perk descriptions ≤ 4 lines at 90, option values ≤ 100,
+labels ≤ 120, buttons ≤ 180, intro captions 2 lines at 308, everything else ≤ 300. Upgrade-shop rows need the
+name + value (`Equipped`/`Owned`/price) to fit in 234 with a gap (Georgian `NormalShoot` and `Equipped` were
+shortened for this).
+
+### Before release
+
+The new translations were written without a native-speaker pass. Get each one reviewed, especially Georgian,
+Czech, Polish and the three CJK languages, and re-check the screens after any change.
 
 ## Imported from the 2013 game
 
