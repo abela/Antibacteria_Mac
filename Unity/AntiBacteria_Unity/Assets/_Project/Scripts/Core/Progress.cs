@@ -29,6 +29,7 @@ namespace AntiBacteria.Core
             public ModesData modes = new ModesData();
             public int plays; // levels / runs started, ever (first-time hints)
             public bool introSeen; // the opening story has played once
+            public bool tutorialDone; // the first-play controls tutorial has been finished
         }
 
         private const int EndlessModeCount = 4; // Capture the Flag, Rush, Peace Walker, Roguelike
@@ -219,6 +220,23 @@ namespace AntiBacteria.Core
         public static void ResetIntro()
         {
             Data.introSeen = false;
+            Save();
+        }
+
+        /// <summary>The controls tutorial (move, shoot, slow motion) has been finished once.</summary>
+        public static bool TutorialDone => Data.tutorialDone;
+
+        public static void MarkTutorialDone()
+        {
+            if (Data.tutorialDone) return;
+            Data.tutorialDone = true;
+            Save();
+        }
+
+        /// <summary>Editor / debug: the tutorial shows again in the next level.</summary>
+        public static void ResetTutorial()
+        {
+            Data.tutorialDone = false;
             Save();
         }
 

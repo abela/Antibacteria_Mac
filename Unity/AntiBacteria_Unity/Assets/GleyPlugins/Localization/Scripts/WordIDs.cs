@@ -200,4 +200,8 @@ LeaderboardOffline = 196,
 LeaderboardFailed = 197,
 LeaderboardYou = 198,
 LeaderboardUnranked = 199,
+TutorialMove = 200,
+TutorialAimShoot = 201,
+TutorialAim = 202,
+TutorialGoodLuck = 203,
 }

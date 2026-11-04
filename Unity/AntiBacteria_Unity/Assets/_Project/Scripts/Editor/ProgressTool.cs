@@ -29,6 +29,9 @@ namespace AntiBacteria.EditorTools
         [MenuItem("AntiBacteria/Progress/Replay Intro on Next Launch", priority = 11)]
         private static void ResetIntroMenu() => ResetIntro();
 
+        [MenuItem("AntiBacteria/Progress/Replay Tutorial in Next Level", priority = 11)]
+        private static void ResetTutorialMenu() => ResetTutorial();
+
         [MenuItem("AntiBacteria/Progress/Reset All Progress...", priority = 12)]
         private static void ResetAllMenu() => ResetAll();
 
@@ -52,6 +55,7 @@ namespace AntiBacteria.EditorTools
             using (new EditorGUI.DisabledScope(true))
             {
                 EditorGUILayout.Toggle("Intro seen", Progress.IntroSeen);
+                EditorGUILayout.Toggle("Tutorial done", Progress.TutorialDone);
                 EditorGUILayout.IntField("Plays started", Progress.Plays);
                 EditorGUILayout.IntField("Vitamins (wallet)", Progress.Vitamins);
                 int cleared = Enumerable.Range(1, SceneFlow.LevelCount).Count(Progress.IsClearedOnAny);
@@ -70,6 +74,8 @@ namespace AntiBacteria.EditorTools
 
             if (GUILayout.Button(new GUIContent("Replay Intro on Next Launch", "Only the 'intro seen' flag. Everything else stays.")))
                 ResetIntro();
+            if (GUILayout.Button(new GUIContent("Replay Tutorial in Next Level", "Only the 'tutorial done' flag. Everything else stays.")))
+                ResetTutorial();
 
             GUI.backgroundColor = new Color(1f, 0.55f, 0.55f);
             if (GUILayout.Button(new GUIContent("Reset All Progress...", "Campaign, scores, wallet, upgrades, roguelike records, intro. Backed up first."), GUILayout.Height(28f)))
@@ -123,10 +129,18 @@ namespace AntiBacteria.EditorTools
             RepaintAll();
         }
 
+        private static void ResetTutorial()
+        {
+            Backup();
+            Progress.ResetTutorial();
+            Debug.Log("Progress Tool: the controls tutorial will show in the next level.");
+            RepaintAll();
+        }
+
         private static void ResetAll()
         {
             if (!EditorUtility.DisplayDialog("Reset all progress?",
-                    "Clears the campaign, best scores, vitamins, bought upgrades, roguelike records, play count and the intro flag - " +
+                    "Clears the campaign, best scores, vitamins, bought upgrades, roguelike records, play count and the intro and tutorial flags - " +
                     "like a first launch.\n\nThe current save is backed up first and can be restored from this window.",
                     "Reset Everything", "Cancel"))
                 return;

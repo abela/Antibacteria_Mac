@@ -24,6 +24,8 @@ namespace AntiBacteria.UI.Menus
         [SerializeField] private LevelDatabase database;
         [Tooltip("Pause after the level ends before the result panel appears (real seconds).")]
         [SerializeField] private float resultDelaySeconds = 1.2f;
+        [Tooltip("Level won: longest extra wait for leftover vitamins to reach the player before Level Clear opens (real seconds).")]
+        [SerializeField] private float maxVitaminWaitSeconds = 1.5f;
 
         private MenuScreen pause, options, gameOver, levelWon;
         private MenuButton nextLevelButton;
@@ -59,6 +61,7 @@ namespace AntiBacteria.UI.Menus
             BuildBanner();
             BuildBossBar();
             BuildToast();
+            TutorialOverlay.CreateIfNeeded(skin, root, runner, navigator); // first play only: move, shoot, slow motion
             if (RoguelikeRun.Active)
             {
                 RoguelikeHud.Create(skin, root);
@@ -117,6 +120,13 @@ namespace AntiBacteria.UI.Menus
         private IEnumerator ShowResult(MenuScreen screen)
         {
             yield return new WaitForSecondsRealtime(resultDelaySeconds);
+            if (screen == levelWon)
+            {
+                // Leftover vitamins are still flying in: give them a moment, then credit any stragglers.
+                float until = Time.unscaledTime + maxVitaminWaitSeconds;
+                while (Gameplay.Pickups.Vitamin.LiveCount > 0 && Time.unscaledTime < until) yield return null;
+                Gameplay.Pickups.Vitamin.CreditRest();
+            }
             if (PauseController.IsPaused) PauseController.Resume();
             navigator.Show(screen);
         }

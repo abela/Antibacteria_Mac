@@ -49,6 +49,9 @@ namespace AntiBacteria.Gameplay.Level
         public float ElapsedSeconds { get; private set; }
         public int EnemiesPerWave { get; private set; } = 1;
 
+        /// <summary>The first-play tutorial is on screen: the clock, the waves and the mode wait for it.</summary>
+        public bool HoldForTutorial { get; set; }
+
         public event Action<Phase> PhaseChanged;
 
         /// <summary>Levels 10, 20 ... 50: one boss, no clock, won by killing it (Docs/DesignReference/03 section 5.2).</summary>
@@ -78,6 +81,7 @@ namespace AntiBacteria.Gameplay.Level
         private void Start()
         {
             // Roguelike rooms after the first keep the run's score, kills and vitamins.
+            Pickups.Vitamin.CollectAll = false;
             bool nextRoom = RoguelikeRun.Active && RoguelikeRun.ContinuingRoom;
             RoguelikeRun.ContinuingRoom = false;
             if (!nextRoom)
@@ -122,6 +126,7 @@ namespace AntiBacteria.Gameplay.Level
                     break;
 
                 case Phase.Playing:
+                    if (HoldForTutorial) break;
                     ElapsedSeconds += dt;
                     if (IsEndless) { Mode.Tick(dt); break; }
                     if (IsBossLevel)
@@ -248,6 +253,7 @@ namespace AntiBacteria.Gameplay.Level
                     if (RoguelikeRun.Active) NewRoomBest = Progress.RecordRoguelikeRoom(GameSession.Difficulty, RoguelikeRun.Room);
                 }
                 BonusPickup.ClearAll();
+                if (p == Phase.Won) Pickups.Vitamin.CollectAll = true; // leftover vitamins fly in (GameplayMenuController waits for them)
                 PlayerController.Current?.Buffs?.ClearAll();
                 Progress.SaveIfDirty(); // vitamins picked up this level (a win has saved already)
                 Sound.StopMusic();

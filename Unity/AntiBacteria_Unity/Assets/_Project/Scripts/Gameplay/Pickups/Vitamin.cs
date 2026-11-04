@@ -11,6 +11,7 @@ namespace AntiBacteria.Gameplay.Pickups
     /// The currency drop (vitamin orb). Spills out of the kill, then bobs, glints and sends out a pulsing ring so it
     /// reads at a glance. Homes in once the player is within magnetDistancePoints and is collected on contact
     /// (Docs/DesignReference/01, section 7). Picking several up in a row raises the pitch of the pickup sound.
+    /// When a level is won every vitamin left on the floor flies to the player (CollectAll).
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
     public class Vitamin : MonoBehaviour
@@ -34,12 +35,35 @@ namespace AntiBacteria.Gameplay.Pickups
         private const float BobPeriod = 0.9f, RingSeconds = 0.6f;
         private static float lastPickup = -10f;
         private static int streak;
+        private static readonly System.Collections.Generic.List<Vitamin> Live = new System.Collections.Generic.List<Vitamin>();
+
+        /// <summary>Level won: every vitamin, including any still spilling out of the last kill, flies to the player.
+        /// Cleared when a level starts (CampaignLevelRunner).</summary>
+        public static bool CollectAll { get; set; }
+
+        /// <summary>Vitamins still on the floor.</summary>
+        public static int LiveCount => Live.Count;
+
+        /// <summary>Credits whatever is still flying (the result screen is about to open) and removes it.</summary>
+        public static void CreditRest()
+        {
+            int total = 0;
+            for (int i = Live.Count - 1; i >= 0; i--)
+            {
+                Vitamin v = Live[i];
+                if (v == null || v.taken) continue;
+                v.taken = true;
+                total += v.value;
+                Destroy(v.gameObject);
+            }
+            if (total > 0) { GameSession.AddVitamins(total); Sound.Play(Sfx.Vitamin); }
+        }
 
         private Rigidbody2D rb;
         private SpriteRenderer body, ring;
         private Sprite[] ringFrames;
         private Transform visual;
-        private bool homing, spilling;
+        private bool homing, spilling, taken;
         private Vector2 spillFrom, spillTo;
         private float age, phase, spillT;
 
@@ -63,6 +87,9 @@ namespace AntiBacteria.Gameplay.Pickups
             }
             if (GetComponent<CircleCollider2D>() is CircleCollider2D c) c.radius = pickupRadiusPixels / Legacy.PixelsPerUnit;
         }
+
+        private void OnEnable() => Live.Add(this);
+        private void OnDisable() => Live.Remove(this);
 
         /// <summary>Fly to the player from anywhere (roguelike room cleared).</summary>
         public void Attract() => homing = true;
@@ -108,6 +135,7 @@ namespace AntiBacteria.Gameplay.Pickups
             }
             PlayerController p = PlayerController.Current;
             if (p == null || !p.IsAlive) { rb.linearVelocity = Vector2.zero; return; }
+            if (CollectAll) homing = true;
             Vector2 d = (Vector2)p.transform.position - rb.position;
             if (!homing && d.magnitude <= Legacy.Units(magnetDistancePoints) * RunModifiers.MagnetMultiplier) homing = true;
             rb.linearVelocity = homing ? d.normalized * Legacy.Units(homingSpeedPoints) : Vector2.zero;
@@ -115,7 +143,8 @@ namespace AntiBacteria.Gameplay.Pickups
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.gameObject.layer != GameLayers.Get(GameLayers.Player)) return;
+            if (taken || other.gameObject.layer != GameLayers.Get(GameLayers.Player)) return;
+            taken = true;
             GameSession.AddVitamins(value);
             // A quick run of pickups climbs in pitch (resets after half a second without one).
             streak = Time.time - lastPickup < 0.5f ? Mathf.Min(streak + 1, 12) : 0;
