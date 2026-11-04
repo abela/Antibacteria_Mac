@@ -28,15 +28,15 @@ MonoBehaviour:
     line: 187
     y: 166
   - startFrame: 150
-    endFrame: 232
+    endFrame: 234
     line: 188
     y: 166
-  - startFrame: 283
-    endFrame: 346
+  - startFrame: 240
+    endFrame: 307
     line: 189
-    y: 150
-  - startFrame: 397
-    endFrame: 472
+    y: 166
+  - startFrame: 307
+    endFrame: 388
     line: 190
     y: 166
   secondsPerLetter: 0.035

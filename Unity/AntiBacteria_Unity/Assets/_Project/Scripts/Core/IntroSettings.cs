@@ -15,9 +15,10 @@ namespace AntiBacteria.Core
     }
 
     /// <summary>
-    /// The opening story (the doctor, the cure, the injection, the dive into his blood). Frames are 320x180 palette
-    /// indices made by Docs/Intro/export_frames.py from the approved animatic; captions are drawn by the game,
-    /// translated. Edit in Project Settings > AntiBacteria > Intro.
+    /// The opening story: the doctor calls it a day and leaves a sample under the microscope, and in the dark one cell
+    /// in it wakes up (the player). Frames are 320x180 palette indices made by Docs/Intro/export_frames4.py from the
+    /// animatic (Docs/Intro/animatic4.py); captions are drawn by the game, translated. Edit in
+    /// Project Settings > AntiBacteria > Intro.
     /// </summary>
     [CreateAssetMenu(menuName = "AntiBacteria/Intro Settings", fileName = "IntroSettings")]
     public class IntroSettings : ScriptableObject
@@ -39,9 +40,9 @@ namespace AntiBacteria.Core
         {
             new IntroCaption { startFrame = 0, endFrame = 75, line = WordIDs.IntroLine1 },
             new IntroCaption { startFrame = 75, endFrame = 150, line = WordIDs.IntroLine2 },
-            new IntroCaption { startFrame = 150, endFrame = 232, line = WordIDs.IntroLine3 },
-            new IntroCaption { startFrame = 283, endFrame = 346, line = WordIDs.IntroLine4, y = 150f },
-            new IntroCaption { startFrame = 397, endFrame = 472, line = WordIDs.IntroLine5 },
+            new IntroCaption { startFrame = 150, endFrame = 234, line = WordIDs.IntroLine3 },
+            new IntroCaption { startFrame = 240, endFrame = 307, line = WordIDs.IntroLine4 },
+            new IntroCaption { startFrame = 307, endFrame = 388, line = WordIDs.IntroLine5 },
         };
         [Tooltip("Seconds per letter as a caption types out.")]
         public float secondsPerLetter = 0.035f;

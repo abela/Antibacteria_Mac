@@ -27,3 +27,7 @@ Every image is drawn from the game's own sprites and font (m6x11), in the Classi
 | `Art/icons/shortcut_icon.ico`, `shortcut_icon_256.png` | 16–256 | Client shortcut icon (Linux uses the PNG) |
 
 The PSD templates in `Unity/AntiBacteria_Unity/Assets/Steam/Steam Game Templates` were used for the sizes only.
+
+## Localized store art
+
+Japanese, Korean and Chinese capsules: `Art/Localized/<lang>/` (pixel, `Tools/make_loc.py`) and `Illustrated/Art/Localized/<lang>/` (illustrated, for the A/B test). Store texts and localized description banners: see `Localization/README.md`.

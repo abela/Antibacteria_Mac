@@ -23,6 +23,9 @@ DerivedData/
 # Steam store screenshots (large, regenerated from the game; kept locally only)
 /Steam/Screenshots/
 
+# Steam trailer videos, audio and render frames (large; kept locally only)
+/Steam/Trailer/
+
 # Python bytecode (Steam art scripts)
 __pycache__/
 
