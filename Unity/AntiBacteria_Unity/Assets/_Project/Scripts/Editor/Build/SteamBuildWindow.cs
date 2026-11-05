@@ -195,6 +195,9 @@ namespace AntiBacteria.EditorTools
             EditorGUI.BeginChangeCheck();
             string branch = EditorGUILayout.TextField(new GUIContent("Set live on branch", "e.g. beta. Empty: set the build live on Steamworks yourself."), settings.setLiveBranch);
             if (EditorGUI.EndChangeCheck()) { settings.setLiveBranch = branch.Trim(); settings.Save(); }
+            if (IsDefaultBranch(settings.setLiveBranch))
+                EditorGUILayout.HelpBox("Steam refuses to set the default branch live from SteamCMD (the commit fails). The upload " +
+                                        "leaves SetLive out; set the build live on Steamworks > SteamPipe > Builds.", MessageType.Info);
             EditorGUILayout.HelpBox("The upload opens its own window. The first time, SteamCMD asks for the password and the " +
                                     "Steam Guard code there; after that it stays logged in. Depots: Project > " + SteamBuildSettings.AssetPath + ".",
                 MessageType.None);
@@ -381,9 +384,11 @@ namespace AntiBacteria.EditorTools
             string desc = Description(build);
             if (!EditorUtility.DisplayDialog("Upload to Steam",
                     "Upload " + desc + " (" + string.Join(", ", depots.Select(d => d.folder)) + ")?\n\n" +
-                    (string.IsNullOrEmpty(settings.setLiveBranch)
-                        ? "It will not be set live: do that on Steamworks (SteamPipe > Builds)."
-                        : "It will be set live on the '" + settings.setLiveBranch + "' branch."),
+                    (string.IsNullOrEmpty(SetLiveBranch)
+                        ? (IsDefaultBranch(settings.setLiveBranch)
+                            ? "Steam doesn't let SteamCMD set the default branch live: after the upload, set it live on Steamworks (SteamPipe > Builds)."
+                            : "It will not be set live: do that on Steamworks (SteamPipe > Builds).")
+                        : "It will be set live on the '" + SetLiveBranch + "' branch."),
                     "Upload", "Cancel"))
                 return;
 
@@ -397,6 +402,13 @@ namespace AntiBacteria.EditorTools
             "v" + b.version + " build " + b.build + (b.development ? " DEV" : "") +
             (string.IsNullOrEmpty(b.commit) ? "" : " (" + b.commit + ")") + (string.IsNullOrEmpty(b.notes) ? "" : " - " + b.notes);
 
+        private static bool IsDefaultBranch(string branch) =>
+            string.Equals(branch?.Trim(), "default", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(branch?.Trim(), "public", StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>Branch for the VDF's SetLive. Empty for default/public: SteamCMD may not set those live (commit fails).</summary>
+        private string SetLiveBranch => IsDefaultBranch(settings.setLiveBranch) ? "" : settings.setLiveBranch;
+
         private string AppBuildVdf(LastBuild b, List<(uint id, string folder)> depots)
         {
             string Q(string s) => "\"" + s.Replace("\\", "\\\\").Replace("\"", "'") + "\"";
@@ -406,7 +418,7 @@ namespace AntiBacteria.EditorTools
             v.AppendLine("\t\"Desc\" " + Q(Description(b)));
             v.AppendLine("\t\"ContentRoot\" " + Q(BuildRoot + Path.DirectorySeparatorChar));
             v.AppendLine("\t\"BuildOutput\" " + Q(Path.Combine(BuildRoot, "Output") + Path.DirectorySeparatorChar));
-            if (!string.IsNullOrEmpty(settings.setLiveBranch)) v.AppendLine("\t\"SetLive\" " + Q(settings.setLiveBranch));
+            if (!string.IsNullOrEmpty(SetLiveBranch)) v.AppendLine("\t\"SetLive\" " + Q(SetLiveBranch));
             v.AppendLine("\t\"Depots\"").AppendLine("\t{");
             foreach (var d in depots)
             {

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SteamBuildSettings
   m_EditorClassIdentifier: Assembly-CSharp-Editor::AntiBacteria.EditorTools.SteamBuildSettings
   windowsDepot: 5554671
-  macDepot: 0
-  linuxDepot: 0
+  macDepot: 5554672
+  linuxDepot: 5554673
   buildFolder: Builds/Steam
   setLiveBranch: default
-  buildNumber: 3
+  buildNumber: 4
