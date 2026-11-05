@@ -31,6 +31,9 @@ namespace AntiBacteria.Platform
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
                 if (s.restartThroughSteam && SteamAPI.RestartAppIfNecessary(new AppId_t(s.steamAppId)))
                 {
+                    // Started outside Steam without steam_appid.txt next to the game: Steam starts it again (if it is
+                    // installed there). Local test builds get that file from the Steam Build window.
+                    Debug.Log("Steam: not started by Steam, asking Steam to start app " + s.steamAppId + " and quitting.");
                     Application.Quit(); // Steam starts the game again
                     return null;
                 }

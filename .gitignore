@@ -31,3 +31,6 @@ __pycache__/
 
 # Files waiting to be deleted by hand
 /Steam/_to_delete/
+
+# Unity player builds (Steam Build window): large, rebuilt any time
+/Builds/

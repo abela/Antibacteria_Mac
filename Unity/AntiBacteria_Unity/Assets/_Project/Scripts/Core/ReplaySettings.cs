@@ -80,6 +80,14 @@ namespace AntiBacteria.Core
             new Loadout { perks = new[] { new PerkGrant(PerkId.QuickFeet, 2) }, enemiesFasterPercent = 20 },
             new Loadout { perks = new[] { new PerkGrant(PerkId.Ricochet, 2) } },
             new Loadout { perks = new[] { new PerkGrant(PerkId.FrostShots, 2) } },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.Piercing, 2), new PerkGrant(PerkId.HeavyShots, 1) }, fireSlowerPercent = 30 },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.ChainZap, 2) } },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.Vampire, 1) }, extraLives = -1 },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.Orbiter, 2) } },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.ExtraBarrel, 2), new PerkGrant(PerkId.RapidFire, 1) }, enemiesFasterPercent = 15 },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.LastStand, 1), new PerkGrant(PerkId.SecondWind, 1) }, extraLives = -2 },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.Lucky, 2), new PerkGrant(PerkId.Reroll, 2) } },
+            new Loadout { perks = new[] { new PerkGrant(PerkId.Overdrive, 1), new PerkGrant(PerkId.CriticalHit, 2) }, moveSlowerPercent = 15 },
         };
 
         [Header("Campaign medals (per level and difficulty)")]

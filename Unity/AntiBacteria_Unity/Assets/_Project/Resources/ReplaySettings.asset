@@ -96,5 +96,71 @@ MonoBehaviour:
     fireSlowerPercent: 0
     moveSlowerPercent: 0
     enemiesFasterPercent: 0
+  - perks:
+    - perk: 3
+      rank: 2
+    - perk: 2
+      rank: 1
+    extraLives: 0
+    fireSlowerPercent: 30
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 0
+  - perks:
+    - perk: 21
+      rank: 2
+    extraLives: 0
+    fireSlowerPercent: 0
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 0
+  - perks:
+    - perk: 23
+      rank: 1
+    extraLives: -1
+    fireSlowerPercent: 0
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 0
+  - perks:
+    - perk: 22
+      rank: 2
+    extraLives: 0
+    fireSlowerPercent: 0
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 0
+  - perks:
+    - perk: 1
+      rank: 2
+    - perk: 0
+      rank: 1
+    extraLives: 0
+    fireSlowerPercent: 0
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 15
+  - perks:
+    - perk: 24
+      rank: 1
+    - perk: 8
+      rank: 1
+    extraLives: -2
+    fireSlowerPercent: 0
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 0
+  - perks:
+    - perk: 20
+      rank: 2
+    - perk: 17
+      rank: 2
+    extraLives: 0
+    fireSlowerPercent: 0
+    moveSlowerPercent: 0
+    enemiesFasterPercent: 0
+  - perks:
+    - perk: 25
+      rank: 1
+    - perk: 15
+      rank: 2
+    extraLives: 0
+    fireSlowerPercent: 0
+    moveSlowerPercent: 15
+    enemiesFasterPercent: 0
   silverMaxLivesLost: 1
   immortalityCapsAtBronze: 1

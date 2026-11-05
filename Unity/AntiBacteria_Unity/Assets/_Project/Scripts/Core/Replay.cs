@@ -120,7 +120,12 @@ namespace AntiBacteria.Core
     /// </summary>
     public static class DailyRun
     {
-        private static readonly WordIDs[] Names = { WordIDs.Twist0, WordIDs.Twist1, WordIDs.Twist2, WordIDs.Twist3, WordIDs.Twist4, WordIDs.Twist5 };
+        // One name per twist in ReplaySettings.dailyTwists, in the same order (extra twists get "Today's twist 15").
+        private static readonly WordIDs[] Names =
+        {
+            WordIDs.Twist0, WordIDs.Twist1, WordIDs.Twist2, WordIDs.Twist3, WordIDs.Twist4, WordIDs.Twist5, WordIDs.Twist6,
+            WordIDs.Twist7, WordIDs.Twist8, WordIDs.Twist9, WordIDs.Twist10, WordIDs.Twist11, WordIDs.Twist12, WordIDs.Twist13,
+        };
 
         /// <summary>"2026-11-05" (UTC, so everyone shares the same day).</summary>
         public static string Today => DateTime.UtcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -138,7 +143,40 @@ namespace AntiBacteria.Core
 
         public static int TwistCount => Mathf.Max(1, ReplaySettings.Current.dailyTwists != null ? ReplaySettings.Current.dailyTwists.Length : 0);
 
-        public static int TwistFor(string date) => (int)((uint)SeedFor(date + "#twist") % (uint)TwistCount);
+        /// <summary>
+        /// Twists rotate in shuffled cycles: every twist once per cycle (one cycle = TwistCount days), a new order each
+        /// cycle, and never the same twist two days in a row (also across cycles).
+        /// </summary>
+        public static int TwistFor(string date)
+        {
+            int n = TwistCount;
+            if (n <= 1) return 0;
+            if (!DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                return (int)((uint)SeedFor(date) % (uint)n);
+            int day = (int)(d.Date - new DateTime(2026, 1, 1)).TotalDays;
+            int cycle = day >= 0 ? day / n : (day - n + 1) / n; // floor, also before 2026
+            return Cycle(cycle, n)[day - cycle * n];
+        }
+
+        private static int[] Cycle(int cycle, int n)
+        {
+            int[] order = Shuffled(cycle, n);
+            if (n > 2 && order[0] == Shuffled(cycle - 1, n)[n - 1]) { int t = order[0]; order[0] = order[1]; order[1] = t; }
+            return order;
+        }
+
+        private static int[] Shuffled(int cycle, int n)
+        {
+            var order = new int[n];
+            for (int i = 0; i < n; i++) order[i] = i;
+            var rng = new System.Random(SeedFor("cycle " + cycle + " of " + n));
+            for (int i = n - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                int t = order[i]; order[i] = order[j]; order[j] = t;
+            }
+            return order;
+        }
 
         public static Loadout Twist(int index)
         {
