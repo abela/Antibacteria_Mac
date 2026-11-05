@@ -23,7 +23,8 @@ namespace AntiBacteria.UI.Menus
         private static readonly float[] ColumnX = { 8f, 166f }; // left edge of each column; 146 px wide
         private const float RankW = 18f, ScoreRight = 146f, Gap = 6f;
 
-        private static readonly Board[] Boards = { Board.Campaign, Board.Roguelike, Board.CaptureFlag, Board.Rush, Board.PeaceWalker };
+        // Rush was merged into Capture The Flag (which now plays the Rush rules): its board is no longer used.
+        private static readonly Board[] Boards = { Board.Campaign, Board.Roguelike, Board.Daily, Board.CaptureFlag, Board.PeaceWalker };
 
 #if UNITY_EDITOR
         /// <summary>Editor only: when set, every board shows this page (names from EditorNames) instead of Steam's. For checking the layout.</summary>
@@ -140,7 +141,9 @@ namespace AntiBacteria.UI.Menus
             return s;
         }
 
-        private static string BoardName(Board b) => Loc.Get((WordIDs)System.Enum.Parse(typeof(WordIDs), b.ToString()));
+        private static string BoardName(Board b) => b == Board.Daily
+            ? Loc.Get(WordIDs.DailyRun) + " " + DailyRun.Today // today's board (UTC)
+            : Loc.Get((WordIDs)System.Enum.Parse(typeof(WordIDs), b.ToString()));
 
         private static string Name(ulong user)
         {

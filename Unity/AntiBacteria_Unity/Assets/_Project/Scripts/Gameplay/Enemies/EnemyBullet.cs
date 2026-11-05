@@ -25,12 +25,15 @@ namespace AntiBacteria.Gameplay.Enemies
 
         public static int LiveCount => Live.Count;
 
+        /// <summary>Every enemy bullet flies this much faster (roguelike Mutation 5). Reset by each level.</summary>
+        public static float SpeedMultiplier { get; set; } = 1f;
+
         public static EnemyBullet Spawn(EnemyBullet prefab, Vector2 position, Vector2 direction, float speed, Enemy owner)
         {
             EnemyBullet b = Instantiate(prefab, position, Quaternion.identity);
             b.Owner = owner;
             b.rb.position = position;
-            b.rb.linearVelocity = direction.normalized * speed;
+            b.rb.linearVelocity = direction.normalized * speed * SpeedMultiplier;
             Live.Add(b);
             Sound.Play(Sfx.EnemyShoot); // rate-limited, so a ring of 20 is one sound
             return b;

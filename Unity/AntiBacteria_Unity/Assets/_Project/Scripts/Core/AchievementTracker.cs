@@ -26,26 +26,31 @@ namespace AntiBacteria.Core
             PlatformServices.SubmitScore(Board.Campaign, Progress.CampaignTotal());
         }
 
-        /// <summary>An endless run is over; completed = flags taken or zones filled.</summary>
+        /// <summary>An endless run is over; completed = rings filled (Capture The Flag) or flags reached (Peace Walker).</summary>
         public static void RunEnded(GameMode mode, int score, int completed)
         {
             PlatformSettings s = PlatformSettings.Current;
             switch (mode)
             {
+                // Capture The Flag plays the Rush rules (Rush left the menu): one board, and the two ring achievements
+                // are now two steps of the same count (zoneRunnerCount, then flagRunnerCount).
                 case GameMode.CaptureFlag:
-                    PlatformServices.SubmitScore(Board.CaptureFlag, score);
-                    if (completed >= s.flagRunnerCount) PlatformServices.Unlock(Achievement.FlagRunner);
-                    break;
                 case GameMode.Rush:
-                    PlatformServices.SubmitScore(Board.Rush, score);
+                    PlatformServices.SubmitScore(Board.CaptureFlag, score);
                     if (completed >= s.zoneRunnerCount) PlatformServices.Unlock(Achievement.ZoneRunner);
+                    if (completed >= s.flagRunnerCount) PlatformServices.Unlock(Achievement.FlagRunner);
                     break;
                 case GameMode.PeaceWalker:
                     PlatformServices.SubmitScore(Board.PeaceWalker, score);
                     if (completed >= s.pacifistCount) PlatformServices.Unlock(Achievement.Pacifist);
                     break;
                 case GameMode.Roguelike:
-                    PlatformServices.SubmitScore(Board.Roguelike, score);
+                    // Daily Run: only the day's scored attempt, on that day's board.
+                    if (RoguelikeRun.IsDaily)
+                    {
+                        if (RoguelikeRun.DailyScored) PlatformServices.SubmitScoreTo(PlatformSettings.DailyBoardName(RoguelikeRun.DailyDate), score);
+                    }
+                    else PlatformServices.SubmitScore(Board.Roguelike, score);
                     break;
             }
         }

@@ -194,7 +194,7 @@ namespace AntiBacteria.UI.Menus
         {
             if (RoguelikeRun.PendingLevelUps <= 0 || navigator.IsOpen || PauseController.IsPaused) return;
             if (runner == null || runner.Current != CampaignLevelRunner.Phase.Playing) return;
-            var offer = RoguelikeRun.Offer(RoguelikeSettings.Current.perkChoices);
+            var offer = RoguelikeRun.Offer(RunModifiers.PerkChoices);
             if (offer.Count == 0) { RoguelikeRun.ConsumeLevelUp(); return; } // every perk maxed
             PauseController.Pause();
             Sound.Play(Sfx.BonusAppear);
@@ -208,7 +208,7 @@ namespace AntiBacteria.UI.Menus
         {
             RoguelikeRun.Take(perk);
             Sound.Play(Sfx.BonusPickup);
-            var offer = RoguelikeRun.PendingLevelUps > 0 ? RoguelikeRun.Offer(RoguelikeSettings.Current.perkChoices) : null;
+            var offer = RoguelikeRun.PendingLevelUps > 0 ? RoguelikeRun.Offer(RunModifiers.PerkChoices) : null;
             if (offer != null && offer.Count > 0)
             {
                 RoguelikeRun.ResetRerolls();
@@ -224,7 +224,7 @@ namespace AntiBacteria.UI.Menus
         private void Reroll()
         {
             if (!RoguelikeRun.UseReroll()) return;
-            var offer = RoguelikeRun.Offer(RoguelikeSettings.Current.perkChoices);
+            var offer = RoguelikeRun.Offer(RunModifiers.PerkChoices);
             if (offer.Count > 0) perkCards.Show(offer);
             Sound.Play(Sfx.BonusAppear, 0.8f, 1.2f);
             UpdateReroll();
@@ -347,7 +347,9 @@ namespace AntiBacteria.UI.Menus
             UIFactory.Panel(skin, t, 68f, 14f, 252f, 168f);
             LiveText.Create(skin, t, "Title", 160f, 22f, () => Loc.Get(runner != null && runner.LostByTimeOut ? WordIDs.TimeOff : WordIDs.GameOver).ToUpperInvariant(), scale: 2,
                 role: PaletteRole.Accent, maxWidth: 176f);
-            LiveText.Create(skin, t, "Level", 160f, 50f, LevelName);
+            // Something unlocked in this run (a strain, the next Mutation) takes the level line's place.
+            LiveText.Create(skin, t, "Level", 160f, 50f, () => string.IsNullOrEmpty(Unlocks.Message) ? LevelName() : "");
+            LiveText.Create(skin, t, "Unlocked", 160f, 50f, () => Unlocks.Message ?? "", role: PaletteRole.Accent);
             AddStats(t, 84f, 236f, 70f, 14f);
             s.Add(MenuButton.Create(skin, t, "Retry", 160f, 130f, () => Loc.Get(WordIDs.Retry), SceneFlow.RestartLevel));
             s.Add(MenuButton.Create(skin, t, "MainMenu", 160f, 146f, () => Loc.Get(WordIDs.GoToMenu), SceneFlow.LoadMainMenu));
@@ -363,14 +365,18 @@ namespace AntiBacteria.UI.Menus
             UIFactory.Panel(skin, t, 68f, 6f, 252f, 176f);
             LiveText.Create(skin, t, "Title", 160f, 10f, () => IsLastLevel ? Loc.Get(WordIDs.FinishedGame) : Loc.Get(WordIDs.LevelClear).ToUpperInvariant(),
                 scale: 2, maxWidth: 176f);
-            LiveText.Create(skin, t, "Level", 160f, 38f, LevelName, role: PaletteRole.Accent);
-            AddStats(t, 84f, 236f, 56f, 13f);
+            LiveText.Create(skin, t, "Level", 160f, 38f, () => string.IsNullOrEmpty(Unlocks.Message) ? LevelName() : Unlocks.Message,
+                role: PaletteRole.Accent);
+            AddStats(t, 84f, 236f, 50f, 12f);
 
-            StatRow.Create(skin, t, "Lives", 84f, 236f, 108f, () => Loc.Get(WordIDs.Lives), null);
+            StatRow.Create(skin, t, "Lives", 84f, 236f, 98f, () => Loc.Get(WordIDs.Lives), null);
+            // Campaign medal: gold without losing a life, silver for one, bronze for a clear.
+            StatRow.Create(skin, t, "Medal", 84f, 236f, 111f, () => Loc.Get(WordIDs.Medal),
+                () => runner != null && !runner.IsEndless ? Medals.Name(runner.EarnedMedal) : "-");
             var hearts = new UnityEngine.UI.Image[3];
             float hw = skin.heartFull.rect.width, hh = skin.heartFull.rect.height;
             for (int i = 0; i < hearts.Length; i++)   // right-aligned to the stat column, 2 px apart
-                hearts[i] = UIFactory.Sprite(skin, t, "Heart" + i, skin.heartFull, 237f - (3 - i) * (hw + 2f) + 2f + hw / 2f, 112f + hh / 2f);
+                hearts[i] = UIFactory.Sprite(skin, t, "Heart" + i, skin.heartFull, 237f - (3 - i) * (hw + 2f) + 2f + hw / 2f, 102f + hh / 2f);
             s.OnShown = () =>
             {
                 PlayerController p = PlayerController.Current;
@@ -400,8 +406,11 @@ namespace AntiBacteria.UI.Menus
 
         private bool IsLastLevel => database != null ? database.IsLast(GameSession.CurrentLevel) : GameSession.CurrentLevel >= SceneFlow.LevelCount;
 
-        private string LevelName() => RoguelikeRun.Active
+        private string LevelName() => RoguelikeRun.Active && RoguelikeRun.IsDaily
+            ? Loc.Get(WordIDs.DailyRun) + "  " + Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room
+            : RoguelikeRun.Active
             ? Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room + "  " + Loc.Get(WordIDs.Best) + " " + Progress.RoguelikeBestRoom(GameSession.Difficulty)
+              + (RoguelikeRun.Mutation > 0 ? "  M" + RoguelikeRun.Mutation : "")
             : runner != null && runner.IsEndless
             ? ModeName(GameSession.Mode) + "  " + Loc.Get(WordIDs.Best) + " " + Progress.ModeBest(GameSession.Mode, GameSession.Difficulty)
             : Loc.Get(WordIDs.Level) + " " + (runner != null && runner.Level != null ? runner.Level.Label : GameSession.CurrentLevel.ToString());

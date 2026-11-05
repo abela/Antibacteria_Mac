@@ -54,19 +54,22 @@ namespace AntiBacteria.UI.Menus
             return s;
         }
 
-        /// <summary>"7/10", or "Locked" for a world whose first level isn't open yet.</summary>
+        /// <summary>"7/10   Gold 4/30", or "Locked" for a world whose first level isn't open yet.</summary>
         private static string WorldLine(WorldMap map)
         {
             if (map == null) return "";
             if (!Worlds.IsOpen(map.World)) return Loc.Get(WordIDs.Locked);
-            return Worlds.ClearedOnAny(map.World) + "/" + Worlds.LevelsPerWorld;
+            return Worlds.ClearedOnAny(map.World) + "/" + Worlds.LevelsPerWorld + "   " + Loc.Get(WordIDs.MedalGold) + " " +
+                   Progress.GoldMedals(map.World) + "/" + Worlds.LevelsPerWorld * Progress.DifficultyCount;
         }
 
         /// <summary>"Level 2-3", "Boss: Inferno", "Level 3-4   Locked".</summary>
         private static string Info(int level)
         {
             string s = Title(level, false);
-            return Progress.IsUnlocked(level) ? s : s + "   " + Loc.Get(WordIDs.Locked);
+            if (!Progress.IsUnlocked(level)) return s + "   " + Loc.Get(WordIDs.Locked);
+            Medal m = Progress.BestMedal(level); // best on any difficulty; each difficulty's is on the next screen
+            return m == Medal.None ? s : s + "   " + Medals.Name(m);
         }
 
         /// <summary>"Level 2-3" / "Boss: Inferno" (upper case for screen titles).</summary>

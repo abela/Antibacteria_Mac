@@ -31,8 +31,8 @@ namespace AntiBacteria.Gameplay.Modes
         {
             switch (mode)
             {
-                case GameMode.CaptureFlag: return new CaptureFlagMode();
-                case GameMode.Rush: return new RushMode();
+                case GameMode.CaptureFlag: // Capture The Flag plays the Rush rules
+                case GameMode.Rush: return new RushMode(); // Rush is no longer in the menu
                 case GameMode.PeaceWalker: return new PeaceWalkerMode();
                 case GameMode.Roguelike: return new Roguelike.RoguelikeRoom();
                 default: return null;
@@ -121,28 +121,10 @@ namespace AntiBacteria.Gameplay.Modes
         }
     }
 
-    public class CaptureFlagMode : ObjectiveMode
-    {
-        private FlagObjective flag;
-
-        protected override void SpawnObjective()
-        {
-            PlayerController p = PlayerController.Current;
-            Vector2 from = p != null ? (Vector2)p.transform.position : Vector2.zero;
-            flag = FlagObjective.Spawn(S.flag, BonusSpawner.SpawnPoint(from, BonusSettings.Current)); // 700-710 pt from the player
-            flag.Taken += () =>
-            {
-                Sound.Play(Sfx.BonusPickup);
-                ObjectiveDone(S.flagPoints);
-            };
-        }
-
-        public override void End()
-        {
-            if (flag != null) Object.Destroy(flag.gameObject);
-        }
-    }
-
+    /// <summary>
+    /// Rush rules: stand in the ring around a flag until it fills. Shown to the player as "Capture The Flag"
+    /// (GameMode.CaptureFlag): the old touch-a-flag rules played almost the same and were dropped.
+    /// </summary>
     public class RushMode : ObjectiveMode
     {
         private RushZone zone;

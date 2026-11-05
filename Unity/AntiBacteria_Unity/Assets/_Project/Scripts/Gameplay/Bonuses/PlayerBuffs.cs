@@ -97,6 +97,37 @@ namespace AntiBacteria.Gameplay.Bonuses
             Sound.Play(Sfx.Boom);
         }
 
+        /// <summary>The timed effects running at one moment: seconds left per slot and the bonus weapon.</summary>
+        public struct State
+        {
+            public float[] timeLeft;
+            public ShotKind weapon;
+            public BonusType weaponBonus;
+
+            public bool Any
+            {
+                get
+                {
+                    if (timeLeft == null) return false;
+                    foreach (float t in timeLeft) if (t > 0f) return true;
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>What is running now (roguelike: taken through the gate into the next room).</summary>
+        public State Save() => new State { timeLeft = (float[])left.Clone(), weapon = weapon, weaponBonus = weaponBonus };
+
+        /// <summary>Carries on a saved state with the time it had left (the next roguelike room).</summary>
+        public void Restore(State s)
+        {
+            if (!s.Any) return;
+            for (int i = 0; i < SlotCount && i < s.timeLeft.Length; i++) left[i] = Mathf.Max(0f, s.timeLeft[i]);
+            weapon = s.weapon;
+            weaponBonus = s.weaponBonus;
+            Changed?.Invoke();
+        }
+
         /// <summary>Level over or restart.</summary>
         public void ClearAll()
         {

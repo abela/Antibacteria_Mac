@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AntiBacteria.Gameplay.Bonuses;
 using AntiBacteria.Gameplay.Player;
 using UnityEngine;
 
@@ -18,12 +19,15 @@ namespace AntiBacteria.Core
         public static int Room { get; private set; } = 1;
         public static int Level { get; private set; } = 1;
         public static int Xp { get; private set; }
-        public static int XpNeeded => RoguelikeSettings.Current.XpFor(Level);
+        public static int XpNeeded => Mathf.Max(1, Mathf.CeilToInt(RoguelikeSettings.Current.XpFor(Level) *
+            (RunModifiers.M(9) ? 1f + ReplaySettings.Current.m9MoreXpPercent / 100f : 1f)));
         public static float Xp01 => Mathf.Clamp01((float)Xp / XpNeeded);
         /// <summary>Level ups waiting for a perk choice.</summary>
         public static int PendingLevelUps { get; private set; }
         /// <summary>Lives to start the next room with (-1: full).</summary>
         public static int CarriedLives { get; private set; } = -1;
+        /// <summary>Bonuses still running when the player went through the gate: they keep going in the next room.</summary>
+        public static PlayerBuffs.State CarriedBuffs { get; private set; }
         /// <summary>The scene was loaded through the gate (don't reset the score; lives carry over).</summary>
         public static bool ContinuingRoom { get; set; }
         public static float SecondsBeforeThisRoom { get; private set; }
@@ -36,6 +40,23 @@ namespace AntiBacteria.Core
         public static int RerollsLeft { get; private set; }
         /// <summary>Kills toward the next Vampire heal (kept across rooms).</summary>
         public static int VampireKills { get; set; }
+
+        /// <summary>Mutation level of this run (0 = none). Picked in the menu, never on a Daily Run.</summary>
+        public static int Mutation { get; private set; }
+        public static StrainId Strain { get; private set; }
+        /// <summary>What the run started with: the strain's, or the Daily Run twist's (null: nothing extra).</summary>
+        public static Loadout Loadout { get; private set; }
+
+        /// <summary>Set by the menu: the next run started (menu, Retry) is the Daily Run.</summary>
+        public static bool NextRunDaily { get; set; }
+        public static bool IsDaily { get; private set; }
+        /// <summary>The UTC day this Daily Run belongs to (its seed and leaderboard).</summary>
+        public static string DailyDate { get; private set; } = "";
+        /// <summary>This Daily Run is the day's scored attempt (otherwise practice).</summary>
+        public static bool DailyScored { get; private set; }
+        public static int DailyTwist { get; private set; }
+        // Daily Run: perk offers come from the day's seed, so everyone is offered the same cards for the same picks.
+        private static System.Random offerRng;
 
         private static readonly int[] ranks = new int[Perks.Count];
         private static float xpRemainder;
@@ -55,21 +76,46 @@ namespace AntiBacteria.Core
             xpRemainder = 0f;
             PendingLevelUps = 0;
             CarriedLives = -1;
+            CarriedBuffs = default;
             ContinuingRoom = false;
             SecondsBeforeThisRoom = 0f;
             ReviveUsed = false;
             RerollsLeft = 0;
             VampireKills = 0;
             Array.Clear(ranks, 0, ranks.Length);
+            IsDaily = NextRunDaily;
+            if (IsDaily)
+            {
+                DailyDate = DailyRun.Today;
+                DailyScored = DailyRun.ScoredAttemptAvailable;
+                if (DailyScored) Progress.StartDaily(DailyDate);
+                DailyTwist = DailyRun.TwistFor(DailyDate);
+                Mutation = 0;
+                Strain = StrainId.Penicillin;
+                Loadout = DailyRun.Twist(DailyTwist);
+                offerRng = new System.Random(DailyRun.SeedFor(DailyDate));
+            }
+            else
+            {
+                DailyScored = false;
+                Mutation = Progress.SelectedMutation;
+                Strain = Progress.SelectedStrain;
+                Loadout = Strains.Get(Strain);
+                offerRng = null;
+            }
+            if (Loadout != null && Loadout.perks != null)
+                foreach (PerkGrant g in Loadout.perks)
+                    ranks[(int)g.perk] = Mathf.Clamp(Mathf.Max(ranks[(int)g.perk], g.rank), 0, Perks.Get(g.perk).maxRank);
             GameSession.CurrentLevel = Room;
             Changed?.Invoke();
         }
 
-        /// <summary>Through the gate: the next room starts with these lives.</summary>
-        public static void NextRoom(int lives, float roomSeconds)
+        /// <summary>Through the gate: the next room starts with these lives and these bonuses still running.</summary>
+        public static void NextRoom(int lives, float roomSeconds, PlayerBuffs.State buffs = default)
         {
             Room = Mathf.Min(Rooms, Room + 1);
             CarriedLives = lives;
+            CarriedBuffs = buffs;
             SecondsBeforeThisRoom += roomSeconds;
             ContinuingRoom = true;
             GameSession.CurrentLevel = Room;
@@ -134,7 +180,7 @@ namespace AntiBacteria.Core
                 if (total <= 0f) bucket = open; // nothing left that the curves allow here: any open perk
                 else
                 {
-                    float roll = UnityEngine.Random.value * total;
+                    float roll = Value01() * total;
                     int rarity = 0;
                     for (; rarity < 3; rarity++)
                     {
@@ -145,12 +191,15 @@ namespace AntiBacteria.Core
                     PerkRarity chosen = (PerkRarity)rarity;
                     bucket = open.FindAll(p => p.rarity == chosen);
                 }
-                PerkInfo pick = bucket[UnityEngine.Random.Range(0, bucket.Count)];
+                PerkInfo pick = bucket[Mathf.Min(bucket.Count - 1, (int)(Value01() * bucket.Count))];
                 picked.Add(pick.id);
                 open.Remove(pick);
             }
             return picked;
         }
+
+        /// <summary>0..1 (below 1): from the day's seed on a Daily Run, otherwise Unity's random.</summary>
+        private static float Value01() => offerRng != null ? (float)offerRng.NextDouble() : UnityEngine.Random.Range(0f, 0.99999f);
 
         /// <summary>A new level up is on screen: the Reroll perk's rerolls refill.</summary>
         public static void ResetRerolls() => RerollsLeft = Rank(PerkId.Reroll);
@@ -193,6 +242,29 @@ namespace AntiBacteria.Core
     {
         private static bool On => RoguelikeRun.Active;
         private static RoguelikeSettings S => RoguelikeSettings.Current;
+        private static ReplaySettings Replay => ReplaySettings.Current;
+        private static Loadout L => On ? RoguelikeRun.Loadout : null;
+
+        /// <summary>The run's Mutation level (0 outside the roguelike).</summary>
+        public static int Mutation => On ? RoguelikeRun.Mutation : 0;
+        /// <summary>Mutation rule 1..10 is in play.</summary>
+        public static bool M(int rule) => Mutation >= rule;
+
+        /// <summary>Points are multiplied by this (Mutations pay more). 1 outside the roguelike.</summary>
+        public static float ScoreMultiplier => Mutations.ScoreMultiplier(Mutation);
+        /// <summary>Perk cards per level up (Mutation 6 takes some away; never below 2).</summary>
+        public static int PerkChoices => Mathf.Max(Mathf.Min(2, S.perkChoices), S.perkChoices - (M(6) ? Replay.m6FewerCards : 0));
+        /// <summary>Enemy movement: Mutation 10 and the Daily twist.</summary>
+        public static float EnemySpeedMultiplier =>
+            (M(10) ? 1f + Replay.m10EnemiesFasterPercent / 100f : 1f) * (1f + (L != null ? L.enemiesFasterPercent : 0) / 100f);
+        public static float EnemyBulletSpeedMultiplier => M(5) ? 1f + Replay.m5BulletsFasterPercent / 100f : 1f;
+        /// <summary>Enemy health on top of the room's own: Mutations 1 and 7 (bosses).</summary>
+        public static float EnemyHealthMultiplier(bool bossRoom) =>
+            (M(1) ? 1f + Replay.m1EnemyHealthPercent / 100f : 1f) * (bossRoom && M(7) ? 1f + Replay.m7BossHealthPercent / 100f : 1f);
+        /// <summary>Enemies per normal room (Mutation 3).</summary>
+        public static int MoreEnemies(int count) => M(3) ? Mathf.CeilToInt(count * (1f + Replay.m3MoreEnemiesPercent / 100f)) : count;
+        /// <summary>Mutation 8: clearing a room heals nothing.</summary>
+        public static bool NoRoomHeal => M(8);
         public static int R(PerkId p) => On ? RoguelikeRun.Rank(p) : 0;
         private static float Pct(int percent, PerkId p) => 1f + percent / 100f * R(p);
 
@@ -201,6 +273,7 @@ namespace AntiBacteria.Core
             get
             {
                 float m = Mathf.Pow(1f - S.rapidFirePercent / 100f, R(PerkId.RapidFire));
+                if (L != null && L.fireSlowerPercent > 0) m /= Mathf.Max(0.1f, 1f - L.fireSlowerPercent / 100f); // strain drawback
                 PlayerController pc = PlayerController.Current;
                 if (R(PerkId.LastStand) > 0 && pc != null && pc.Lives == 1) m /= Mathf.Max(1f, S.lastStandFireMultiplier);
                 return m;
@@ -211,8 +284,9 @@ namespace AntiBacteria.Core
         public static int ExtraLines => R(PerkId.ExtraBarrel);
         public static int ShotDamage => 1 + R(PerkId.HeavyShots);
         public static int Pierce => R(PerkId.Piercing);
-        public static float SpeedMultiplier => Pct(S.quickFeetPercent, PerkId.QuickFeet);
-        public static int ExtraMaxLives => R(PerkId.Vitality);
+        public static float SpeedMultiplier => Pct(S.quickFeetPercent, PerkId.QuickFeet) * (1f - (L != null ? L.moveSlowerPercent : 0) / 100f);
+        /// <summary>Vitality perk, plus the strain or twist (may be negative), minus Mutation 4. PlayerController keeps at least 1.</summary>
+        public static int ExtraMaxLives => R(PerkId.Vitality) + (L != null ? L.extraLives : 0) - (M(4) ? Replay.m4LivesLost : 0);
         public static bool HealOnRoomClear => R(PerkId.FirstAid) > 0 && RoguelikeRun.Room % Mathf.Max(1, S.firstAidEveryRooms) == 0;
         public static int ShieldsPerRoom => R(PerkId.Shield);
         public static bool CanRevive => R(PerkId.SecondWind) > 0 && !RoguelikeRun.ReviveUsed;
@@ -220,7 +294,8 @@ namespace AntiBacteria.Core
         public static float MagnetMultiplier => Pct(S.magnetPercent, PerkId.Magnet);
         public static float XpMultiplier => Pct(S.wisdomPercent, PerkId.Wisdom);
         public static float VitaminMultiplier => Pct(S.goldenTouchPercent, PerkId.GoldenTouch);
-        public static float BonusDurationMultiplier => Pct(S.bonusLoverPercent, PerkId.BonusLover);
+        public static float BonusDurationMultiplier => Pct(S.bonusLoverPercent, PerkId.BonusLover) *
+            (M(2) ? Mathf.Max(0.1f, 1f - Replay.m2BonusShorterPercent / 100f) : 1f);
         public static float SlowmoRechargeMultiplier => Pct(S.timeBenderPercent, PerkId.TimeBender);
 
         public static float CritChance => S.criticalChancePercent / 100f * R(PerkId.CriticalHit);

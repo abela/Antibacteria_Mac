@@ -48,6 +48,8 @@ namespace AntiBacteria.Gameplay.Level
         /// <summary>Seconds of play so far (shown on the result screens).</summary>
         public float ElapsedSeconds { get; private set; }
         public int EnemiesPerWave { get; private set; } = 1;
+        /// <summary>The medal of a won campaign level (Level Clear screen).</summary>
+        public Medal EarnedMedal { get; private set; }
 
         /// <summary>The first-play tutorial is on screen: the clock, the waves and the mode wait for it.</summary>
         public bool HoldForTutorial { get; set; }
@@ -68,6 +70,8 @@ namespace AntiBacteria.Gameplay.Level
         private void Awake()
         {
             Enemies.Enemy.HealthMultiplier = 1f; // a roguelike room sets its own when it begins
+            Enemies.Enemy.SpeedMultiplier = 1f;
+            EnemyBullet.SpeedMultiplier = 1f;
             EnemyCatalog.Active = catalog;
             Mode = EndlessMode.For(GameSession.Mode);
             if (IsEndless && !Mode.UsesLevelData) return; // no level data: the mode spawns everything
@@ -83,6 +87,7 @@ namespace AntiBacteria.Gameplay.Level
         {
             // Roguelike rooms after the first keep the run's score, kills and vitamins.
             Pickups.Vitamin.CollectAll = false;
+            Unlocks.Clear(); // the result screen shows only what this level or run unlocked
             bool nextRoom = RoguelikeRun.Active && RoguelikeRun.ContinuingRoom;
             RoguelikeRun.ContinuingRoom = false;
             if (!nextRoom)
@@ -104,6 +109,8 @@ namespace AntiBacteria.Gameplay.Level
                     : IsEndless && !Mode.UsesLevelData ? 1
                     : WeaponSettings.Current.VolleyForLevel(GameSession.CurrentLevel);
                 if (RoguelikeRun.Active && RoguelikeRun.CarriedLives > 0) PlayerController.Current.SetLives(RoguelikeRun.CarriedLives);
+                // A bonus picked up before the gate keeps running in this room, with the time it had left.
+                if (nextRoom) PlayerController.Current.Buffs?.Restore(RoguelikeRun.CarriedBuffs);
                 PlayerController.Current.CanShoot = !IsEndless || Mode.PlayerCanShoot;
             }
             if (IsBossLevel && GetComponent<SlowMotionAbility>() is SlowMotionAbility slow) slow.Enabled = false; // as in 2013
@@ -208,7 +215,8 @@ namespace AntiBacteria.Gameplay.Level
         {
             if (Current != Phase.Playing) return;
             PlayerController p = PlayerController.Current;
-            RoguelikeRun.NextRoom(p != null ? p.Lives : -1, ElapsedSeconds);
+            RoguelikeRun.NextRoom(p != null ? p.Lives : -1, ElapsedSeconds,
+                p != null && p.Buffs != null ? p.Buffs.Save() : default);
             Progress.SaveIfDirty();
             SceneFlow.ContinueRun();
         }
@@ -238,6 +246,11 @@ namespace AntiBacteria.Gameplay.Level
         {
             if (Current != Phase.Playing) return;
             Progress.RecordWin(GameSession.CurrentLevel, GameSession.Difficulty, GameSession.Score); // unlocks the next level
+            // Medal: gold without losing a life, silver for one, bronze for a clear (ReplaySettings).
+            PlayerController pc = PlayerController.Current;
+            EarnedMedal = Medals.For(pc != null ? pc.LivesLost : 99, Progress.ImmortalityOn);
+            Progress.RecordMedal(GameSession.CurrentLevel, GameSession.Difficulty, EarnedMedal);
+            Unlocks.MedalsChanged();
             AchievementTracker.LevelWon(GameSession.CurrentLevel, GameSession.Difficulty, IsBossLevel);
             foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None)) e.Despawn();
             EnemyBullet.ClearAll();
@@ -261,9 +274,13 @@ namespace AntiBacteria.Gameplay.Level
                 if (IsEndless)
                 {
                     EndMode();
-                    NewModeBest = Progress.RecordModeScore(GameSession.Mode, GameSession.Difficulty, GameSession.Score);
+                    bool daily = RoguelikeRun.Active && RoguelikeRun.IsDaily;
+                    // A Daily Run keeps its own score (the day's scored attempt only), not the roguelike bests.
+                    if (daily) NewModeBest = RoguelikeRun.DailyScored && Progress.RecordDailyScore(GameSession.Score);
+                    else NewModeBest = Progress.RecordModeScore(GameSession.Mode, GameSession.Difficulty, GameSession.Score);
                     AchievementTracker.RunEnded(GameSession.Mode, GameSession.Score, Mode.Completed);
-                    if (RoguelikeRun.Active) NewRoomBest = Progress.RecordRoguelikeRoom(GameSession.Difficulty, RoguelikeRun.Room);
+                    Unlocks.RunEnded(GameSession.Mode, Mode.Completed);
+                    if (RoguelikeRun.Active && !daily) NewRoomBest = Progress.RecordRoguelikeRoom(GameSession.Difficulty, RoguelikeRun.Room);
                 }
                 BonusPickup.ClearAll();
                 if (p == Phase.Won) Pickups.Vitamin.CollectAll = true; // leftover vitamins fly in (GameplayMenuController waits for them)

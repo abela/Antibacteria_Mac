@@ -107,6 +107,13 @@ namespace AntiBacteria.Platform
             if (!string.IsNullOrEmpty(name)) backend.SubmitScore(name, score);
         }
 
+        /// <summary>A score on a board given by its store name (the Daily Run's board of a given day).</summary>
+        public static void SubmitScoreTo(string boardName, int score)
+        {
+            if (backend == null || score <= 0 || EditorMuted || string.IsNullOrEmpty(boardName)) return;
+            backend.SubmitScore(boardName, score);
+        }
+
         public static bool LeaderboardsAvailable => backend != null;
 
         /// <summary>The top <paramref name="count"/> of a board plus the player's own line. Calls back with null without a store or on failure.</summary>

@@ -27,7 +27,11 @@ namespace AntiBacteria.Core
             if (mode == GameMode.Campaign) { LoadLevel(GameSession.CurrentLevel); return; }
             GameSession.Mode = mode;
             GameSession.Difficulty = GameSettings.Difficulty;
-            if (mode == GameMode.Roguelike) RoguelikeRun.Begin(); // from the menu or Retry: a fresh run, room 1
+            if (mode == GameMode.Roguelike)
+            {
+                RoguelikeRun.Begin(); // from the menu or Retry: a fresh run, room 1 (a Daily Run if RoguelikeRun.NextRunDaily)
+                if (RoguelikeRun.IsDaily) GameSession.Difficulty = Difficulty.Normal; // the same for everyone
+            }
             Load(GameplayScene);
         }
 

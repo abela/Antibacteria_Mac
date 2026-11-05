@@ -34,7 +34,8 @@ namespace AntiBacteria.Core
         public static void AddScore(int points)
         {
             // Harder difficulties pay more, in the campaign and the endless modes (DifficultySettings; 2013 modes: x1/x2/x3).
-            Score += Mathf.RoundToInt(points * DifficultySettings.Current.Score(Difficulty));
+            // Roguelike Mutations pay more on top (RunModifiers.ScoreMultiplier is 1 everywhere else).
+            Score += Mathf.RoundToInt(points * DifficultySettings.Current.Score(Difficulty) * RunModifiers.ScoreMultiplier);
             Changed?.Invoke();
         }
 

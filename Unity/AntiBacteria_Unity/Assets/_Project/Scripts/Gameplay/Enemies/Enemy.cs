@@ -58,7 +58,10 @@ namespace AntiBacteria.Gameplay.Enemies
         /// <summary>Raised on every hit that did damage.</summary>
         public event Action<Enemy> Hurt;
 
-        protected float SpeedPoints => SpeedOverridePoints > 0f ? SpeedOverridePoints : Definition.speedPoints;
+        protected float SpeedPoints => (SpeedOverridePoints > 0f ? SpeedOverridePoints : Definition.speedPoints) * SpeedMultiplier;
+
+        /// <summary>Every enemy moves this much faster (roguelike Mutation 10, Daily twists). Reset by each level.</summary>
+        public static float SpeedMultiplier { get; set; } = 1f;
         protected float ShotInterval => EnemyDefinition.ForDifficulty(Definition.shotIntervalByDifficulty, Definition.shotIntervalSeconds);
 
         /// <summary>Enemies alive right now.</summary>

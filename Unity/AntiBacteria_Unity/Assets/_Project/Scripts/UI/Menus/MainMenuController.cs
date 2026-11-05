@@ -19,7 +19,7 @@ namespace AntiBacteria.UI.Menus
         [Tooltip("The 320x180 area everything is laid out in.")]
         [SerializeField] private RectTransform root;
 
-        private MenuScreen main, modes, levelSelect, options, about, upgrade, difficulty, leaderboards;
+        private MenuScreen main, modes, levelSelect, options, about, upgrade, difficulty, leaderboards, runSetup, daily;
         // What the difficulty screen will start: an endless mode, or (Campaign) the level picked on the map.
         private GameMode pendingMode = GameMode.CaptureFlag;
         private int pendingLevel = 1;
@@ -37,6 +37,8 @@ namespace AntiBacteria.UI.Menus
             main = BuildMain();
             modes = BuildModes();
             difficulty = BuildDifficulty();
+            runSetup = BuildRunSetup();
+            daily = BuildDaily();
             PromptBar.Create(skin, root, navigator); // [A] Select  [B] Back, on every screen
             levelSelect = LevelSelectMenu.Build(skin, root, navigator, level =>
             {
@@ -51,7 +53,11 @@ namespace AntiBacteria.UI.Menus
             System.Action boardsShown = leaderboards.OnShown;
             leaderboards.OnShown = () => { backdrop.ShowBacteria(false); boardsShown?.Invoke(); }; // the rows use the full width
             upgrade.OnShown = () => backdrop.ShowBacteria(false); // the rows use the full width
-            main.OnShown = modes.OnShown = about.OnShown = () => backdrop.ShowBacteria(true);
+            main.OnShown = about.OnShown = () => backdrop.ShowBacteria(true);
+            modes.OnShown = () => backdrop.ShowBacteria(false); // the mode descriptions use the full width
+            System.Action setupShown = runSetup.OnShown, dailyShown = daily.OnShown;
+            runSetup.OnShown = () => { backdrop.ShowBacteria(false); setupShown?.Invoke(); };
+            daily.OnShown = () => { backdrop.ShowBacteria(false); dailyShown?.Invoke(); };
             difficulty.OnShown = () =>
             {
                 backdrop.ShowBacteria(true);
@@ -145,22 +151,142 @@ namespace AntiBacteria.UI.Menus
             LiveText.Create(skin, t, "Title", 160f, 22f, () => Loc.Get(WordIDs.ChooseGame).ToUpperInvariant(), role: PaletteRole.Accent);
             UIFactory.Image(t, "Rule", skin.pixel, 110f, 40f, 101f, 1f, PaletteRole.Foreground, true);
 
-            float y = 56f;
-            s.Add(MenuButton.Create(skin, t, "Campaign", 160f, y, () => Loc.Get(WordIDs.Campaign), () => navigator.Push(levelSelect)));
-            GameMode[] endless = { GameMode.Roguelike, GameMode.CaptureFlag, GameMode.Rush, GameMode.PeaceWalker };
+            // Rows a little higher than the other screens to leave two lines under them for the description.
+            // Rush is not listed: Capture The Flag plays its rules.
+            float y = 46f;
+            var described = new System.Collections.Generic.Dictionary<MenuItem, System.Func<int, string>>();
+            described[s.Add(MenuButton.Create(skin, t, "Campaign", 160f, y, () => Loc.Get(WordIDs.Campaign),
+                () => navigator.Push(levelSelect)))] = n => ModeDescription(GameMode.Campaign, n);
+            y += 16f;
+            // Roguelike: strain and Mutation first, then the difficulty.
+            described[s.Add(MenuButton.Create(skin, t, "Roguelike", 160f, y, () => Loc.Get(WordIDs.Roguelike), () =>
+            {
+                pendingMode = GameMode.Roguelike;
+                navigator.Push(runSetup);
+            }))] = n => ModeDescription(GameMode.Roguelike, n);
+            y += 16f;
+            described[s.Add(MenuButton.Create(skin, t, "DailyRun", 160f, y, () => Loc.Get(WordIDs.DailyRun), () => navigator.Push(daily)))] =
+                n => Loc.Get(n == 1 ? WordIDs.ModeDailyRunDesc1 : WordIDs.ModeDailyRunDesc2);
+            GameMode[] endless = { GameMode.CaptureFlag, GameMode.PeaceWalker };
             foreach (GameMode m in endless)
             {
                 y += 16f;
                 GameMode mode = m;
                 WordIDs id = (WordIDs)System.Enum.Parse(typeof(WordIDs), m.ToString());
                 // Endless modes: pick the difficulty on the next screen (the campaign picks it in level select).
-                s.Add(MenuButton.Create(skin, t, m.ToString(), 160f, y, () => Loc.Get(id), () =>
+                described[s.Add(MenuButton.Create(skin, t, m.ToString(), 160f, y, () => Loc.Get(id), () =>
                 {
                     pendingMode = mode;
                     navigator.Push(difficulty);
-                }));
+                }))] = n => ModeDescription(mode, n);
             }
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 140f, () => Loc.Get(WordIDs.Back), navigator.Back));
+
+            // What the highlighted mode is about, in two lines (nothing on Back).
+            System.Func<int, string> line = n =>
+                s.SelectedItem != null && described.TryGetValue(s.SelectedItem, out System.Func<int, string> text) ? text(n) : "";
+            LiveText desc1 = LiveText.Create(skin, t, "Description1", 160f, 125f, () => line(1), dim: true);
+            LiveText desc2 = LiveText.Create(skin, t, "Description2", 160f, 137f, () => line(2), dim: true);
+            SelectionWatcher.Watch(s, () => { desc1.Refresh(); desc2.Refresh(); });
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 150f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            return s;
+        }
+
+        /// <summary>Line 1 or 2 of a mode's description ("ModeRoguelikeDesc1"), in the current language.</summary>
+        private static string ModeDescription(GameMode mode, int lineNumber) =>
+            System.Enum.TryParse("Mode" + mode + "Desc" + lineNumber, out WordIDs id) ? Loc.Get(id) : "";
+
+        /// <summary>
+        /// Roguelike setup: the strain (character) and the Mutation level, each with what it means, then the difficulty.
+        /// Locked strains can be browsed (with how to unlock them) but not taken.
+        /// </summary>
+        private MenuScreen BuildRunSetup()
+        {
+            MenuScreen s = MenuScreen.Create(root, "RunSetup");
+            Transform t = s.transform;
+            LiveText.Create(skin, t, "Title", 160f, 22f, () => Loc.Get(WordIDs.Roguelike).ToUpperInvariant(), role: PaletteRole.Accent);
+            UIFactory.Image(t, "Rule", skin.pixel, 110f, 40f, 101f, 1f, PaletteRole.Foreground, true);
+
+            StrainId strain = Progress.SelectedStrain;
+            int mutation = Progress.SelectedMutation;
+            MenuButton go = null;
+            LiveText strain1 = null, strain2 = null, mut1 = null, mut2 = null;
+            System.Action changed = () =>
+            {
+                strain1?.Refresh(); strain2?.Refresh(); mut1?.Refresh(); mut2?.Refresh();
+                if (go != null) { go.Interactable = Strains.IsUnlocked(strain); go.Refresh(); }
+            };
+
+            s.Add(MenuOption.Choice(skin, t, "Strain", 48f, () => Loc.Get(WordIDs.Strain),
+                () => Strains.Name(strain) + (Strains.IsUnlocked(strain) ? "" : " (" + Loc.Get(WordIDs.Locked) + ")"), dir =>
+                {
+                    strain = (StrainId)(((int)strain + dir + Strains.Count) % Strains.Count);
+                    changed();
+                }));
+            strain1 = LiveText.Create(skin, t, "Strain1", 160f, 64f, () => Strains.Line1(strain), dim: true);
+            strain2 = LiveText.Create(skin, t, "Strain2", 160f, 76f, () => Strains.Line2(strain), dim: true);
+
+            s.Add(MenuOption.Choice(skin, t, "Mutation", 94f, () => Loc.Get(WordIDs.Mutation),
+                () => mutation == 0 ? Loc.Get(WordIDs.Off) : mutation.ToString(), dir =>
+                {
+                    int top = Progress.MutationUnlocked;
+                    mutation = top == 0 ? 0 : (mutation + dir + top + 1) % (top + 1);
+                    changed();
+                }));
+            // The rule this level adds (all lower ones apply too) and what it pays; or how to get the first one.
+            mut1 = LiveText.Create(skin, t, "Mutation1", 160f, 110f, () =>
+                Progress.MutationUnlocked == 0 ? Loc.Get(WordIDs.MutationLocked)
+                : mutation == 0 ? Loc.Get(WordIDs.MutationNone)
+                : "+ " + Mutations.Rule(mutation), dim: true);
+            mut2 = LiveText.Create(skin, t, "Mutation2", 160f, 122f, () => mutation > 0 ? Mutations.ScoreLine(mutation) : "",
+                role: PaletteRole.Accent);
+
+            go = s.Add(MenuButton.Create(skin, t, "Continue", 160f, 136f, () => Loc.Get(WordIDs.Continue), () =>
+            {
+                if (!Strains.IsUnlocked(strain)) return;
+                Progress.SelectedStrain = strain;
+                Progress.SelectedMutation = mutation;
+                navigator.Push(difficulty);
+            }));
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 152f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            s.OnShown = () =>
+            {
+                strain = Progress.SelectedStrain;
+                mutation = Progress.SelectedMutation;
+                changed();
+                s.RefreshAll();
+            };
+            return s;
+        }
+
+        /// <summary>
+        /// The Daily Run: today's date and twist, whether the scored attempt is still there, and Start.
+        /// Always Normal, no Mutations, Penicillin (the same run for everyone).
+        /// </summary>
+        private MenuScreen BuildDaily()
+        {
+            MenuScreen s = MenuScreen.Create(root, "Daily");
+            Transform t = s.transform;
+            LiveText.Create(skin, t, "Title", 160f, 22f, () => Loc.Get(WordIDs.DailyRun).ToUpperInvariant(), role: PaletteRole.Accent);
+            UIFactory.Image(t, "Rule", skin.pixel, 110f, 40f, 101f, 1f, PaletteRole.Foreground, true);
+            int twist() => DailyRun.TwistFor(DailyRun.Today);
+            var texts = new System.Collections.Generic.List<LiveText>
+            {
+                LiveText.Create(skin, t, "Date", 160f, 46f, () => DailyRun.Today, dim: true),
+                LiveText.Create(skin, t, "TwistLabel", 160f, 62f, () => Loc.Get(WordIDs.DailyTwist), dim: true),
+                LiveText.Create(skin, t, "TwistName", 160f, 74f, () => DailyRun.TwistName(twist()), role: PaletteRole.Accent),
+                LiveText.Create(skin, t, "Twist1", 160f, 88f, () => Loadouts.PerksLine(DailyRun.Twist(twist()))),
+                LiveText.Create(skin, t, "Twist2", 160f, 100f, () => Loadouts.DrawbackLine(DailyRun.Twist(twist())), dim: true),
+                LiveText.Create(skin, t, "Status", 160f, 116f, () => DailyRun.ScoredAttemptAvailable
+                    ? Loc.Get(WordIDs.DailyReady)
+                    : Loc.Get(WordIDs.DailyPractice).Replace("{0}", Progress.DailyScore.ToString()), role: PaletteRole.Accent),
+            };
+            s.Add(MenuButton.Create(skin, t, "Start", 160f, 134f, () => Loc.Get(WordIDs.Start), () =>
+            {
+                RoguelikeRun.NextRunDaily = true;
+                SceneFlow.LoadMode(GameMode.Roguelike);
+            }));
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 150f, () => Loc.Get(WordIDs.Back), navigator.Back));
+            s.OnShown = () => { foreach (LiveText lt in texts) lt.Refresh(); }; // the day may have changed
             return s;
         }
 
@@ -188,13 +314,15 @@ namespace AntiBacteria.UI.Menus
                 s.Add(MenuButton.Create(skin, t, w.ToString(), 160f, y, () => Loc.Get(w), () =>
                 {
                     GameSettings.SetDifficulty(d);
+                    RoguelikeRun.NextRunDaily = false; // the Daily Run starts from its own screen
                     if (campaign()) SceneFlow.LoadLevel(pendingLevel);
                     else SceneFlow.LoadMode(pendingMode);
                 }));
                 LiveText.Create(skin, t, "Best" + i, 214f, y, () =>
                 {
                     int best = campaign() ? Progress.Best(pendingLevel, d) : Progress.ModeBest(pendingMode, d);
-                    return best > 0 ? Loc.Get(WordIDs.Best) + " " + best : "";
+                    Medal medal = campaign() ? Progress.GetMedal(pendingLevel, d) : Medal.None;
+                    return (best > 0 ? Loc.Get(WordIDs.Best) + " " + best : "") + (medal != Medal.None ? "  " + Medals.Name(medal) : "");
                 }, HorizontalAlignmentOptions.Left, dim: true);
             }
             // What the highlighted difficulty means and what it pays: the reason to pick a harder one.

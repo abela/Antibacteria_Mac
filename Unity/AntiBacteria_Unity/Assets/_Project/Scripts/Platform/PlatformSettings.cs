@@ -14,8 +14,9 @@ namespace AntiBacteria.Platform
         RogueRoom10, RogueRoom25, RogueComplete, RogueImpossible, GermBuddy, Legendary, FourLines,
     }
 
-    /// <summary>One leaderboard for the campaign (sum of best scores) and one per endless mode.</summary>
-    public enum Board { Campaign, CaptureFlag, Rush, PeaceWalker, Roguelike }
+    /// <summary>One leaderboard for the campaign (sum of best scores) and one per endless mode, plus one per day
+    /// for the Daily Run (named dailyBoardPrefix + the UTC date, created on first use). Appended: ids are serialized.</summary>
+    public enum Board { Campaign, CaptureFlag, Rush, PeaceWalker, Roguelike, Daily }
 
     [Serializable]
     public class AchievementEntry
@@ -101,8 +102,15 @@ namespace AntiBacteria.Platform
             return null;
         }
 
+        [Tooltip("Daily Run boards are named this plus the UTC date, e.g. \"Daily 2026-11-05\" (a new board every day).")]
+        public string dailyBoardPrefix = "Daily ";
+
+        /// <summary>The Daily Run board of a UTC day ("2026-11-05").</summary>
+        public static string DailyBoardName(string date) => Current.dailyBoardPrefix + date;
+
         public string BoardName(Board b)
         {
+            if (b == Board.Daily) return DailyBoardName(DateTime.UtcNow.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
             foreach (BoardEntry e in boards) if (e != null && e.id == b) return e.steamName;
             return null;
         }

@@ -50,7 +50,9 @@ namespace AntiBacteria.Gameplay.Player
         public static PlayerController Current { get; private set; }
 
         public int Lives { get; private set; }
-        public int MaxLives => maxLives + RunModifiers.ExtraMaxLives; // roguelike Vitality perk
+        public int MaxLives => Mathf.Max(1, maxLives + RunModifiers.ExtraMaxLives); // roguelike Vitality perk, strains, Mutation 4
+        /// <summary>Lives lost in this level (campaign medals).</summary>
+        public int LivesLost { get; private set; }
         public bool IsAlive => Lives > 0;
         public bool IsShooting { get; private set; }
 
@@ -305,6 +307,7 @@ namespace AntiBacteria.Gameplay.Player
                 return;
             }
             Lives--;
+            LivesLost++;
             if (Lives <= 0 && RunModifiers.CanRevive) { RoguelikeRun.ReviveUsed = true; Lives = 1; } // Second Wind perk
             LivesChanged?.Invoke();
             if (RunModifiers.NovaOnHit && Buffs != null) Buffs.Apply(BonusType.Boom); // Nova perk

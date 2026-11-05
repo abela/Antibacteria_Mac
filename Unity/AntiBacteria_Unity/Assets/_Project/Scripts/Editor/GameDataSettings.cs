@@ -72,6 +72,19 @@ namespace AntiBacteria.EditorTools
         [MenuItem("AntiBacteria/Settings/Roguelike...")]
         private static void OpenRoguelike() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Roguelike");
 
+        public static ReplaySettings ReplayCfg() =>
+            GetOrCreate<ReplaySettings>(Resources + "/ReplaySettings.asset", ReplaySettings.Use, null);
+
+        [SettingsProvider]
+        public static SettingsProvider ReplayPage() => Page(
+            "Project/AntiBacteria/Replay", "Replay",
+            "What brings players back: roguelike Mutations (rules per level and the score bonus), Strains (starting perks, " +
+            "drawbacks and how they unlock), the Daily Run twists, and the campaign medal rules. Changes apply at once.",
+            ReplayCfg, new HashSet<string> { "mutation", "strain", "daily", "twist", "medal", "gold", "unlock", "replay" });
+
+        [MenuItem("AntiBacteria/Settings/Replay...")]
+        private static void OpenReplay() => SettingsService.OpenProjectSettings("Project/AntiBacteria/Replay");
+
         public static DifficultySettings DifficultyCfg() =>
             GetOrCreate<DifficultySettings>(Resources + "/DifficultySettings.asset", DifficultySettings.Use, null);
 

@@ -38,8 +38,13 @@ namespace AntiBacteria.Gameplay.Roguelike
             base.Begin(r);
             level = r.Level;
             bossRoom = r.IsBossLevel;
-            toSpawn = bossRoom ? 0 : RoguelikeSettings.Current.EnemiesIn(RoguelikeRun.Room, GameSession.Difficulty);
-            Enemy.HealthMultiplier = RoguelikeSettings.Current.HealthIn(RoguelikeRun.Room, GameSession.Difficulty, bossRoom);
+            // Daily Run: the same spawns for everyone (the room's draws start from the day's seed).
+            if (RoguelikeRun.IsDaily) Random.InitState(DailyRun.SeedFor(RoguelikeRun.DailyDate) + RoguelikeRun.Room * 7919);
+            toSpawn = bossRoom ? 0 : RunModifiers.MoreEnemies(RoguelikeSettings.Current.EnemiesIn(RoguelikeRun.Room, GameSession.Difficulty));
+            Enemy.HealthMultiplier = RoguelikeSettings.Current.HealthIn(RoguelikeRun.Room, GameSession.Difficulty, bossRoom) *
+                                     RunModifiers.EnemyHealthMultiplier(bossRoom);
+            Enemy.SpeedMultiplier = RunModifiers.EnemySpeedMultiplier;
+            EnemyBullet.SpeedMultiplier = RunModifiers.EnemyBulletSpeedMultiplier;
             if (level != null) perWave = RoguelikeSettings.Current.FirstWave(RoguelikeRun.Room, level.maxEnemiesPerWave);
             waveTimer = 0.5f; // the first wave comes quickly
             RoguelikeRun.ShieldsLeft = RunModifiers.ShieldsPerRoom;
@@ -54,6 +59,8 @@ namespace AntiBacteria.Gameplay.Roguelike
             Enemy.Killed -= OnKilled;
             RoguelikeRun.PerkTaken -= OnPerkTaken;
             Enemy.HealthMultiplier = 1f;
+            Enemy.SpeedMultiplier = 1f;
+            EnemyBullet.SpeedMultiplier = 1f;
             if (gate != null) Object.Destroy(gate.gameObject);
             if (effects != null) Object.Destroy(effects.gameObject);
         }
@@ -108,13 +115,18 @@ namespace AntiBacteria.Gameplay.Roguelike
             XpOrb.CallAll();
             foreach (Pickups.Vitamin v in Object.FindObjectsByType<Pickups.Vitamin>(FindObjectsSortMode.None)) v.Attract(); // and the vitamins
             PlayerController p = PlayerController.Current;
-            if (p != null && p.IsAlive)
+            if (p != null && p.IsAlive && !RunModifiers.NoRoomHeal) // Mutation 8: no healing
             {
                 int heal = (bossRoom ? RoguelikeSettings.Current.bossRoomHeal : 0) + (RunModifiers.HealOnRoomClear ? 1 : 0);
                 if (heal > 0) p.Heal(heal);
             }
             AchievementTracker.RoomCleared(RoguelikeRun.Room, GameSession.Difficulty);
-            if (RoguelikeRun.Room >= RoguelikeRun.Rooms) { runner.CompleteRun(); return; } // the last boss: run won
+            if (RoguelikeRun.Room >= RoguelikeRun.Rooms)
+            {
+                if (!RoguelikeRun.IsDaily) Unlocks.RoguelikeCompleted(RoguelikeRun.Mutation); // the next Mutation opens
+                runner.CompleteRun();
+                return;
+            } // the last boss: run won
             Sound.Play(Sfx.LevelWin);
             RoomCleared?.Invoke();
             gate = RoomGate.Spawn(Mat, () => runner.NextRoom());
