@@ -96,6 +96,12 @@ namespace AntiBacteria.Dev
                 push += Away(from, e.transform.position, Personal);
             foreach (EnemyBullet b in FindObjectsByType<EnemyBullet>(FindObjectsSortMode.None))
                 push += Away(from, b.transform.position, Personal * 0.6f) * 1.5f;
+            // Stay off the walls: being pinned in a corner is how auto-dodge gets stuck.
+            const float wall = 2.5f;
+            if (from.x < r.xMin + wall) push.x += (r.xMin + wall - from.x) / wall * 2f;
+            if (from.x > r.xMax - wall) push.x -= (from.x - (r.xMax - wall)) / wall * 2f;
+            if (from.y < r.yMin + wall) push.y += (r.yMin + wall - from.y) / wall * 2f;
+            if (from.y > r.yMax - wall) push.y -= (from.y - (r.yMax - wall)) / wall * 2f;
             if (push.sqrMagnitude > 4f && Vector2.Dot(push, move) < -0.5f * push.magnitude) orbitDir = -orbitDir;
             return Vector2.ClampMagnitude(move + push, 1f);
         }

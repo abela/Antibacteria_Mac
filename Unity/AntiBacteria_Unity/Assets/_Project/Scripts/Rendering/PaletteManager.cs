@@ -33,6 +33,9 @@ namespace AntiBacteria.Rendering
         public int Count => palettes != null ? palettes.Length : 0;
         public int CurrentIndex => currentIndex;
 
+        /// <summary>The palette at index i, or null if there is none.</summary>
+        public Palette GetPalette(int i) => palettes != null && i >= 0 && i < palettes.Length ? palettes[i] : null;
+
         private void OnEnable()
         {
             if (Application.isPlaying) currentIndex = Core.GameSettings.PaletteIndex; // the player's saved choice

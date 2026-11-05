@@ -52,7 +52,11 @@ namespace AntiBacteria.Input
             }
         }
 
-        public static bool FireHeld => Player != null && Player.GetButton(InputActions.Fire);
+        public static bool FireHeld =>
+#if UNITY_EDITOR
+            EditorFireOverride ||
+#endif
+            (Player != null && Player.GetButton(InputActions.Fire));
 
         /// <summary>Confirm, Back, Fire, Pause or the mouse held (hold to skip the intro).</summary>
         public static bool AnyButtonHeld =>
@@ -109,6 +113,9 @@ namespace AntiBacteria.Input
 
         /// <summary>Editor only: replaces the movement input. Used by the screenshot director's auto-dodge.</summary>
         public static Vector2? EditorMoveOverride;
+
+        /// <summary>Editor only: fire is held (balance bot).</summary>
+        public static bool EditorFireOverride;
 #endif
 
         /// <summary>Mouse position in screen pixels.</summary>

@@ -22,7 +22,13 @@ MonoBehaviour:
   blinkLastSeconds: 3
   cycleTypes: 1
   cycleSeconds: 1.6
-  durationSeconds: 12
+  brackets: 1
+  bracketPulseSeconds: 0.6
+  spawnFlash: 1
+  labelForFirstPlays: 5
+  offscreenArrow: 1
+  arrowMarginPixels: 10
+  durationSeconds: 13.33
   warnSeconds: 2
   speedMultiplier: 2
   immortalAlpha: 0.5

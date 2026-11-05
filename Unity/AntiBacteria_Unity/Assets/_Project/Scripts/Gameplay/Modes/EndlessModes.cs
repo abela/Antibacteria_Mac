@@ -44,11 +44,14 @@ namespace AntiBacteria.Gameplay.Modes
         /// <summary>The run is over: remove the objective.</summary>
         public virtual void End() { }
 
-        /// <summary>A point a given distance from the centre of the screen, inside the arena (SpawnManager getRandomPointAroundPoint).</summary>
+        /// <summary>The middle of the arena: 2013's "screen centre" (winSize / 2) was a fixed world point, the arena centre.</summary>
+        protected static Vector2 ArenaCentre => Arena.Current != null ? Arena.Current.Bounds.center : Vector2.zero;
+
+        /// <summary>A point a given distance from the arena centre, inside the arena (SpawnManager getRandomPointAroundPoint).
+        /// 2013 measured from winSize / 2, a fixed point, not from the camera, which follows the player.</summary>
         protected static Vector2 AroundScreenCentre(float minPoints, float maxPoints, float marginUnits)
         {
-            Camera cam = Camera.main;
-            Vector2 centre = cam != null ? (Vector2)cam.transform.position : Vector2.zero;
+            Vector2 centre = ArenaCentre;
             float a = Random.Range(0f, Mathf.PI * 2f);
             Vector2 p = centre + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * Legacy.Units(Random.Range(minPoints, maxPoints));
             return Arena.Current != null ? Arena.Current.Clamp(p, marginUnits) : p;
@@ -190,7 +193,7 @@ namespace AntiBacteria.Gameplay.Modes
             if (flagTimer < S.objectiveDelaySeconds) return;
             flagTimer = 0f;
             flags++;
-            Vector2 centre = Camera.main != null ? (Vector2)Camera.main.transform.position : Vector2.zero;
+            Vector2 centre = ArenaCentre;
             flag = FlagObjective.Spawn(S.peaceFlag, AroundScreenCentre(S.flagDistanceMinPoints, S.flagDistanceMaxPoints, 1f));
             flag.Taken += () =>
             {

@@ -24,6 +24,11 @@ namespace AntiBacteria.Core
         [Header("Challenge (rooms get tougher; harder difficulties tougher still)")]
         [Tooltip("Enemy health grows by this share per room: 0.05 = +5% a room, so room 50 enemies take ~3.5x the hits.")]
         public float healthPerRoom = 0.05f;
+        [Tooltip("Boss health grows by this share per room instead (bosses already get harder level by level).")]
+        public float bossHealthPerRoom = 0.02f;
+        [Tooltip("Rooms are short, so the campaign's slowly growing waves never get going: the first wave of a room is " +
+                 "1 enemy bigger every this many rooms (up to the level's own cap).")]
+        [Min(1)] public int startWaveEveryRooms = 4;
         [Tooltip("Enemy health multiplier per difficulty (Normal, Hard, Impossible).")]
         public float[] difficultyHealth = { 1f, 1.25f, 1.5f };
         [Tooltip("Enemies per room multiplier per difficulty (Normal, Hard, Impossible).")]
@@ -62,7 +67,7 @@ namespace AntiBacteria.Core
         public AnimationCurve epicWeight = Linear(3, 7, 12, 18, 23, 27);
         public AnimationCurve legendaryWeight = Linear(0, 1, 4, 7, 11, 15);
         [Tooltip("Extra rooms of luck per difficulty (Normal, Hard, Impossible): harder runs roll rarer perks.")]
-        public int[] difficultyLuckRooms = { 0, 5, 10 };
+        public int[] difficultyLuckRooms = { 0, 2, 4 };
         [Tooltip("Rooms of luck per rank of the Lucky perk.")]
         public int luckyRooms = 5;
 
@@ -123,7 +128,11 @@ namespace AntiBacteria.Core
             Mathf.Max(1, Mathf.RoundToInt((enemiesBase + enemiesPerRoom * (room - 1)) * Pick(difficultyEnemies, d, 1f)));
 
         /// <summary>How many times tougher enemies are in this room on this difficulty.</summary>
-        public float HealthIn(int room, Difficulty d) => Mathf.Max(0.1f, (1f + healthPerRoom * (room - 1)) * Pick(difficultyHealth, d, 1f));
+        public float HealthIn(int room, Difficulty d, bool boss = false) =>
+            Mathf.Max(0.1f, (1f + (boss ? bossHealthPerRoom : healthPerRoom) * (room - 1)) * Pick(difficultyHealth, d, 1f));
+
+        /// <summary>Enemies in a room's first wave (grows with the room, capped by the level).</summary>
+        public int FirstWave(int room, int levelCap) => Mathf.Clamp(1 + (room - 1) / Mathf.Max(1, startWaveEveryRooms), 1, Mathf.Max(1, levelCap));
 
         private static float Pick(float[] a, Difficulty d, float fallback) =>
             a != null && (int)d >= 0 && (int)d < a.Length ? a[(int)d] : fallback;

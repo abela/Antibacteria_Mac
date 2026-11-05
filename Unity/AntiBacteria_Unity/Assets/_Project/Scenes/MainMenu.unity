@@ -338,6 +338,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c2137583811c947c89e56c48129abf3b, type: 2}
   - {fileID: 11400000, guid: 4aaf0153d64a24bc9801c03663d52b61, type: 2}
   - {fileID: 11400000, guid: 34678504aff644cf0a254dfe5b9e3a72, type: 2}
+  - {fileID: 11400000, guid: ee56d156fe6e7471cbe584973fdacdbe, type: 2}
+  - {fileID: 11400000, guid: 8e49fd20d3f754a91bd47f82a35d2bb2, type: 2}
+  - {fileID: 11400000, guid: 5dbdd6a63c7cb4553b425658f3739637, type: 2}
+  - {fileID: 11400000, guid: 6b721e06d8afb426ea552c6120162b4f, type: 2}
+  - {fileID: 11400000, guid: 8a1d3aa9182c944d09552f78a39d3d53, type: 2}
+  - {fileID: 11400000, guid: 69f80a4b129a44e06ace1579f5adb520, type: 2}
+  - {fileID: 11400000, guid: 14e10517896e341e2b7b6933f2271574, type: 2}
+  - {fileID: 11400000, guid: 6fb30e440e40946bbb0928ba918c669d, type: 2}
   currentIndex: 0
   cameras: []
 --- !u!4 &768988936
@@ -464,7 +472,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 16
-  m_ScaleFactor: 5
+  m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0

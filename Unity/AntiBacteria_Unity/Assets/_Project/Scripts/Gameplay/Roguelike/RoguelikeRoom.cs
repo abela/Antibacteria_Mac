@@ -39,7 +39,8 @@ namespace AntiBacteria.Gameplay.Roguelike
             level = r.Level;
             bossRoom = r.IsBossLevel;
             toSpawn = bossRoom ? 0 : RoguelikeSettings.Current.EnemiesIn(RoguelikeRun.Room, GameSession.Difficulty);
-            Enemy.HealthMultiplier = RoguelikeSettings.Current.HealthIn(RoguelikeRun.Room, GameSession.Difficulty);
+            Enemy.HealthMultiplier = RoguelikeSettings.Current.HealthIn(RoguelikeRun.Room, GameSession.Difficulty, bossRoom);
+            if (level != null) perWave = RoguelikeSettings.Current.FirstWave(RoguelikeRun.Room, level.maxEnemiesPerWave);
             waveTimer = 0.5f; // the first wave comes quickly
             RoguelikeRun.ShieldsLeft = RunModifiers.ShieldsPerRoom;
             RoguelikeRun.BodyguardLeft = RunModifiers.Bodyguard ? 1 : 0;

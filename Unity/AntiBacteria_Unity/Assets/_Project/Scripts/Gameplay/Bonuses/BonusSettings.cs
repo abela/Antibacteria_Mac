@@ -65,7 +65,7 @@ namespace AntiBacteria.Gameplay.Bonuses
         [Header("Effects")]
         [Tooltip("Weapon, Immortality and Double Speed last this long. 2013: 800 frames (13.3 s at 60 fps). " +
                  "Picking the same kind again restarts the full time (bug 18).")]
-        [Min(1f)] public float durationSeconds = 12f;
+        [Min(1f)] public float durationSeconds = 13.33f; // 2013: 800 frames at 60 fps
         [Tooltip("The HUD icon blinks for the last this many seconds.")]
         public float warnSeconds = 2f;
         [Tooltip("Double Speed multiplies movement by this.")]

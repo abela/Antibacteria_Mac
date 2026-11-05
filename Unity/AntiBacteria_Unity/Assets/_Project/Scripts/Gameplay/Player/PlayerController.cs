@@ -114,7 +114,8 @@ namespace AntiBacteria.Gameplay.Player
         private void Start()
         {
             cam = Camera.main;
-            baseShot = Progress.SelectedShot; // upgrade shop
+            // Upgrade shop. Not in the roguelike: every run starts the same, perks are its only power (and its leaderboard stays fair).
+            baseShot = RoguelikeRun.Active ? ShotKind.Normal : Progress.SelectedShot;
         }
 
         private void OnDestroy()
@@ -136,7 +137,7 @@ namespace AntiBacteria.Gameplay.Player
         {
             if (!IsAlive) return;
             // The bought Double Speed and the bonus don't stack (2013: the bonus did nothing with the upgrade on).
-            float upgrade = Progress.DoubleSpeedOn ? ShopSettings.Current.doubleSpeedMultiplier : 1f;
+            float upgrade = Progress.DoubleSpeedOn && !RoguelikeRun.Active ? ShopSettings.Current.doubleSpeedMultiplier : 1f;
             float speed = Legacy.Units(maxSpeedPoints) * Mathf.Max(upgrade, Buffs != null ? Buffs.SpeedMultiplier : 1f) * RunModifiers.SpeedMultiplier;
             Vector2 target = ControlsEnabled ? GameInput.Move * speed : Vector2.zero;
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, target, 1f - Mathf.Exp(-responsiveness * Time.fixedDeltaTime));
@@ -265,18 +266,24 @@ namespace AntiBacteria.Gameplay.Player
 
         /// <summary>Lose one life unless still blinking from the last hit.</summary>
 #if UNITY_EDITOR
-        /// <summary>Editor only: hits do nothing (screenshot director).</summary>
+        /// <summary>Editor only: hits do nothing (screenshot director, balance bot).</summary>
         public static bool EditorInvincible;
+        /// <summary>Editor only: hits an invincible player would have taken (2 s blink respected), for the balance bot.</summary>
+        public static int EditorHitsTaken;
 #endif
 
         public void Hit()
         {
 #if UNITY_EDITOR
-            if (EditorInvincible) return;
+            if (EditorInvincible)
+            {
+                if (IsAlive && Time.time >= invulnerableUntil) { EditorHitsTaken++; invulnerableUntil = Time.time + invulnerableSeconds; }
+                return;
+            }
 #endif
             if (!IsAlive || Time.time < invulnerableUntil) return;
             if (Buffs != null && Buffs.IsImmortal) return;
-            if (Progress.ImmortalityOn) return; // bought Immortality: never lose a life (2013 upgrade)
+            if (Progress.ImmortalityOn && !RoguelikeRun.Active) return; // bought Immortality: never lose a life (2013 upgrade; not in the roguelike)
             if (RoguelikeRun.Active && RoguelikeRun.ShieldsLeft > 0)
             {
                 // Shield perk: this hit is blocked (once per room per rank).

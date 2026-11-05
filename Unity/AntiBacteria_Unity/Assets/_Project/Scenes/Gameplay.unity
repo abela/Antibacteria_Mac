@@ -228,6 +228,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c2137583811c947c89e56c48129abf3b, type: 2}
   - {fileID: 11400000, guid: 4aaf0153d64a24bc9801c03663d52b61, type: 2}
   - {fileID: 11400000, guid: 34678504aff644cf0a254dfe5b9e3a72, type: 2}
+  - {fileID: 11400000, guid: ee56d156fe6e7471cbe584973fdacdbe, type: 2}
+  - {fileID: 11400000, guid: 8e49fd20d3f754a91bd47f82a35d2bb2, type: 2}
+  - {fileID: 11400000, guid: 5dbdd6a63c7cb4553b425658f3739637, type: 2}
+  - {fileID: 11400000, guid: 6b721e06d8afb426ea552c6120162b4f, type: 2}
+  - {fileID: 11400000, guid: 8a1d3aa9182c944d09552f78a39d3d53, type: 2}
+  - {fileID: 11400000, guid: 69f80a4b129a44e06ace1579f5adb520, type: 2}
+  - {fileID: 11400000, guid: 14e10517896e341e2b7b6933f2271574, type: 2}
+  - {fileID: 11400000, guid: 6fb30e440e40946bbb0928ba918c669d, type: 2}
   currentIndex: 0
   cameras:
   - {fileID: 1168799280}
@@ -285,6 +293,7 @@ MonoBehaviour:
   runner: {fileID: 1999825096}
   database: {fileID: 11400000, guid: db65d3bf0f45a4fd08127cd3aa1481df, type: 2}
   resultDelaySeconds: 1.2
+  maxVitaminWaitSeconds: 1.5
 --- !u!114 &330460927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,7 +419,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -46, y: -8}
-  m_SizeDelta: {x: 5, y: 3}
+  m_SizeDelta: {x: 6, y: 3}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &514711731
 MonoBehaviour:
@@ -497,6 +506,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: b70fd501603da4abfb6e2451e2183b95, type: 2}
   spacingPixels: 1
   align: 0
+  backing: 1
 --- !u!224 &766239752
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1031,6 +1041,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: b70fd501603da4abfb6e2451e2183b95, type: 2}
   spacingPixels: 1
   align: 1
+  backing: 1
 --- !u!224 &1426626249
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1338,6 +1349,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: b70fd501603da4abfb6e2451e2183b95, type: 2}
   spacingPixels: 1
   align: 0
+  backing: 1
 --- !u!224 &1872155575
 RectTransform:
   m_ObjectHideFlags: 0

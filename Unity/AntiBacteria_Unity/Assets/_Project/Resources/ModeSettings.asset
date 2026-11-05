@@ -27,7 +27,7 @@ MonoBehaviour:
   zoneFillSeconds: 3.33
   zoneDistanceMinPoints: 500
   zoneDistanceMaxPoints: 520
-  secondsPerFlag: 15
+  secondsPerFlag: 16.67
   startTentacles: 2
   tentacleId: 17
   peaceFlagPoints: 100

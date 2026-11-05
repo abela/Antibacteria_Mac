@@ -8,9 +8,6 @@ namespace AntiBacteria.UI.Menus
     /// <summary>The Options screen, used by the main menu and the pause menu.</summary>
     public static class OptionsMenu
     {
-        private static readonly WordIDs[] PaletteWords =
-            { WordIDs.PaletteClassic, WordIDs.PalettePetriDish, WordIDs.PaletteGramStain, WordIDs.PaletteColourBlind };
-
         /// <param name="opaque">Cover whatever is behind (the paused game).</param>
         public static MenuScreen Build(UISkin skin, Transform parent, MenuNavigator nav, bool opaque, System.Action watchIntro = null)
         {
@@ -29,8 +26,11 @@ namespace AntiBacteria.UI.Menus
             s.Add(MenuOption.Toggle(skin, t, "AutoShoot", y, () => Loc.Get(WordIDs.AutoShoot),
                 () => GameSettings.AutoShoot, GameSettings.SetAutoShoot));
             y += 16f;
-            s.Add(MenuOption.Choice(skin, t, "Palette", y, () => Loc.Get(WordIDs.Palette),
-                () => Loc.Get(PaletteWords[Mathf.Clamp(CurrentPalette(), 0, PaletteWords.Length - 1)]), StepPalette));
+            // The palettes as a row of colour swatches (no names): the frame marks the one in use.
+            s.Add(PaletteSwatches.Create(skin, t, "Palette", y, () => Loc.Get(WordIDs.Palette),
+                () => Palettes() != null ? Palettes().Count : 0,
+                i => Palettes() != null ? Palettes().GetPalette(i) : null,
+                CurrentPalette, SetPalette));
             y += 16f;
             if (GameSettings.HasDisplayOption)
             {
@@ -63,17 +63,19 @@ namespace AntiBacteria.UI.Menus
         public static WordIDs DifficultyWord(Difficulty d) =>
             d == Difficulty.Hard ? WordIDs.Hard : d == Difficulty.Impossible ? WordIDs.Impossible : WordIDs.Normal;
 
+        private static PaletteManager Palettes() => Object.FindFirstObjectByType<PaletteManager>();
+
         private static int CurrentPalette()
         {
-            var pm = Object.FindFirstObjectByType<PaletteManager>();
+            var pm = Palettes();
             return pm != null ? pm.CurrentIndex : GameSettings.PaletteIndex;
         }
 
-        private static void StepPalette(int direction)
+        private static void SetPalette(int index)
         {
-            var pm = Object.FindFirstObjectByType<PaletteManager>();
+            var pm = Palettes();
             if (pm == null) return;
-            pm.SetPalette(pm.CurrentIndex + direction);
+            pm.SetPalette(index);
             GameSettings.SetPaletteIndex(pm.CurrentIndex);
         }
     }

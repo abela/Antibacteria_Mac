@@ -51,7 +51,7 @@ namespace AntiBacteria.Gameplay.Modes
 
         [Header("Peace Walker (no shooting)")]
         [Tooltip("Seconds to reach each flag (2013 showed 10 but each 'second' was 100 frames, 16.7 s at 60 fps).")]
-        public float secondsPerFlag = 15f;
+        public float secondsPerFlag = 16.67f;
         [Tooltip("Tentacles at the start (2013: 2); one more joins with every flag.")]
         public int startTentacles = 2;
         public int tentacleId = 17;

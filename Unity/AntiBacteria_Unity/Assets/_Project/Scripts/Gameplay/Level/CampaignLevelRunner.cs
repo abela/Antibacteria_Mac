@@ -61,6 +61,7 @@ namespace AntiBacteria.Gameplay.Level
         public IBoss Boss { get; private set; }
 
         private bool bossSpawned;
+        private bool modeBegun, modeEnded;
 
         private float phaseTimer, spawnTimer, growTimer;
 
@@ -112,6 +113,18 @@ namespace AntiBacteria.Gameplay.Level
         private void OnDestroy()
         {
             if (PlayerController.Current != null) PlayerController.Current.Died -= OnPlayerDied;
+            // A roguelike room is left through the gate (the scene reloads) without a Won/Lost: end it here too, or its
+            // listeners on Enemy.Killed / RoguelikeRun.PerkTaken outlive the room and every later kill pays XP again,
+            // once per room passed (and Vitality / Shield apply once per room passed).
+            EndMode();
+        }
+
+        /// <summary>Ends the endless mode exactly once (run over, or the scene unloading).</summary>
+        private void EndMode()
+        {
+            if (Mode == null || !modeBegun || modeEnded) return;
+            modeEnded = true;
+            Mode.End();
         }
 
         private void Update()
@@ -242,12 +255,12 @@ namespace AntiBacteria.Gameplay.Level
         {
             Current = p;
             phaseTimer = duration;
-            if (p == Phase.Playing && IsEndless) Mode.Begin(this);
+            if (p == Phase.Playing && IsEndless) { Mode.Begin(this); modeBegun = true; }
             if (p == Phase.Won || p == Phase.Lost)
             {
                 if (IsEndless)
                 {
-                    Mode.End();
+                    EndMode();
                     NewModeBest = Progress.RecordModeScore(GameSession.Mode, GameSession.Difficulty, GameSession.Score);
                     AchievementTracker.RunEnded(GameSession.Mode, GameSession.Score, Mode.Completed);
                     if (RoguelikeRun.Active) NewRoomBest = Progress.RecordRoguelikeRoom(GameSession.Difficulty, RoguelikeRun.Room);

@@ -17,6 +17,8 @@ MonoBehaviour:
   bossRoomHeal: 1
   bossDelaySeconds: 1.5
   healthPerRoom: 0.05
+  bossHealthPerRoom: 0.02
+  startWaveEveryRooms: 4
   difficultyHealth:
   - 1
   - 1.25
@@ -278,7 +280,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  difficultyLuckRooms: 00000000050000000a000000
+  difficultyLuckRooms: 000000000200000004000000
   luckyRooms: 5
   rapidFirePercent: 12
   quickFeetPercent: 12
