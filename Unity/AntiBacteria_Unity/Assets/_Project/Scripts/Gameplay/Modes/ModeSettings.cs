@@ -65,6 +65,31 @@ namespace AntiBacteria.Gameplay.Modes
         public float flagDistanceMinPoints = 500f;
         public float flagDistanceMaxPoints = 520f;
 
+        [Header("Peace Walker: chasers (Normal, Hard, Impossible)")]
+        [Tooltip("Enemy that hunts the player (Loctopus: flies straight at you). It can't be shot here, so it pops after a while.")]
+        public int chaserId = 1;
+        [Tooltip("Chasers start coming after this many flags (0: from the start).")]
+        [Min(0)] public int chasersFromFlag = 0;
+        [Tooltip("Seconds into the mode before the first chaser.")]
+        [Min(0f)] public float firstChaserSeconds = 3f;
+        [Tooltip("Seconds between chasers at the start.")]
+        public float[] chaserEverySeconds = { 6f, 4.5f, 3.5f };
+        [Tooltip("Each flag taken shortens the gap by this, down to the minimum.")]
+        public float chaserEveryStepSeconds = 0.15f;
+        public float[] chaserEveryMinSeconds = { 3f, 2.2f, 1.6f };
+        [Tooltip("A chaser pops after this long (it blinks for the last second).")]
+        public float[] chaserLifeSeconds = { 8f, 10f, 12f };
+        [Tooltip("Never more chasers at once than this.")]
+        public int[] chaserMax = { 3, 5, 7 };
+        [Tooltip("Chaser speed in points/s (the player moves at 480).")]
+        public float[] chaserSpeedPoints = { 200f, 245f, 290f };
+
+        public static T ByDifficulty<T>(T[] values, T fallback)
+        {
+            int d = (int)Core.GameSession.Difficulty;
+            return values != null && values.Length > 0 ? values[Mathf.Clamp(d, 0, values.Length - 1)] : fallback;
+        }
+
         [Header("Art (filled in automatically)")]
         public Material material;
         public Sprite flag;

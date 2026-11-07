@@ -277,7 +277,8 @@ namespace AntiBacteria.UI.Menus
         /// <summary>"GET READY" / "GET READY FOR THE BOSS" during the level's opening seconds (2013 HUD label).</summary>
         private void BuildBanner()
         {
-            banner = LiveText.Create(skin, root, "Banner", 160f, 70f,
+            // Well above the middle of the screen: the camera keeps the player there, and the text must not cover them.
+            banner = LiveText.Create(skin, root, "Banner", 160f, 44f,
                 () => RoguelikeRun.Active
                     ? (Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room + (runner != null && runner.IsBossLevel ? "  " + Loc.Get(WordIDs.Boss) : "")).ToUpperInvariant()
                     : Loc.Get(runner != null && runner.IsBossLevel ? WordIDs.GetReadyForBoss : WordIDs.GetReady).ToUpperInvariant(),
@@ -372,7 +373,7 @@ namespace AntiBacteria.UI.Menus
             StatRow.Create(skin, t, "Lives", 84f, 236f, 98f, () => Loc.Get(WordIDs.Lives), null);
             // Campaign medal: gold without losing a life, silver for one, bronze for a clear.
             StatRow.Create(skin, t, "Medal", 84f, 236f, 111f, () => Loc.Get(WordIDs.Medal),
-                () => runner != null && !runner.IsEndless ? Medals.Name(runner.EarnedMedal) : "-");
+                () => runner != null && !runner.IsEndless && runner.EarnedMedal != Medal.None ? Medals.Stars(runner.EarnedMedal) : "-");
             var hearts = new UnityEngine.UI.Image[3];
             float hw = skin.heartFull.rect.width, hh = skin.heartFull.rect.height;
             for (int i = 0; i < hearts.Length; i++)   // right-aligned to the stat column, 2 px apart

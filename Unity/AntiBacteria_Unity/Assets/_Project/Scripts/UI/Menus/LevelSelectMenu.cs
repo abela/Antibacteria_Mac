@@ -38,10 +38,10 @@ namespace AntiBacteria.UI.Menus
             LiveText progress = LiveText.Create(skin, t, "WorldProgress", 160f, 44f, () => WorldLine(map), dim: true);
 
             map = s.Add(WorldMap.Create(skin, t, 160f - WorldMap.Width / 2f, 62f, skin.bossMark, onPick));
-            LiveText info = LiveText.Create(skin, t, "Info", 160f, 124f, () => Info(map.SelectedLevel));
+            LiveText info = LiveText.Create(skin, t, "Info", 160f, 128f, () => Info(map.SelectedLevel));
             map.Changed = () => { info.Refresh(); worldName.Refresh(); progress.Refresh(); picker.Refresh(); };
 
-            s.Add(MenuButton.Create(skin, t, "Back", 160f, 146f, () => Loc.Get(WordIDs.Back), nav.Back));
+            s.Add(MenuButton.Create(skin, t, "Back", 160f, 148f, () => Loc.Get(WordIDs.Back), nav.Back));
 
 #if UNITY_EDITOR
             // Testing aid, compiled out of builds: open every level without touching the save.
@@ -54,13 +54,13 @@ namespace AntiBacteria.UI.Menus
             return s;
         }
 
-        /// <summary>"7/10   Gold 4/30", or "Locked" for a world whose first level isn't open yet.</summary>
+        /// <summary>"7/10   ★ 14/30", or "Locked" for a world whose first level isn't open yet.</summary>
         private static string WorldLine(WorldMap map)
         {
             if (map == null) return "";
             if (!Worlds.IsOpen(map.World)) return Loc.Get(WordIDs.Locked);
-            return Worlds.ClearedOnAny(map.World) + "/" + Worlds.LevelsPerWorld + "   " + Loc.Get(WordIDs.MedalGold) + " " +
-                   Progress.GoldMedals(map.World) + "/" + Worlds.LevelsPerWorld * Progress.DifficultyCount;
+            return Worlds.ClearedOnAny(map.World) + "/" + Worlds.LevelsPerWorld + "   " + Medals.StarFull + " " +
+                   Progress.WorldStars(map.World) + "/" + Worlds.LevelsPerWorld * 3;
         }
 
         /// <summary>"Level 2-3", "Boss: Inferno", "Level 3-4   Locked".</summary>
@@ -69,7 +69,7 @@ namespace AntiBacteria.UI.Menus
             string s = Title(level, false);
             if (!Progress.IsUnlocked(level)) return s + "   " + Loc.Get(WordIDs.Locked);
             Medal m = Progress.BestMedal(level); // best on any difficulty; each difficulty's is on the next screen
-            return m == Medal.None ? s : s + "   " + Medals.Name(m);
+            return m == Medal.None ? s : s + "   " + Medals.Stars(m);
         }
 
         /// <summary>"Level 2-3" / "Boss: Inferno" (upper case for screen titles).</summary>

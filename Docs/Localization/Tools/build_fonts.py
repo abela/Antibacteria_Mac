@@ -1,7 +1,8 @@
 """
 Builds the pixel fallback fonts for the new languages, with only the characters the game's texts use.
 
-- m6x11_extras.ttf: Czech letters m6x11 lacks (č ř š ž ě ň ď ť ů and capitals), drawn from m6x11's own letters.
+- m6x11_extras.ttf: Czech letters m6x11 lacks (č ř š ž ě ň ď ť ů and capitals), drawn from m6x11's own letters,
+  plus the medal stars ★ ☆.
 - AB_Pixel_JA/KO/SC/TC.ttf: Japanese, Korean, Simplified and Traditional Chinese, from Noto Sans CJK Medium
   (SIL Open Font License) rendered as 1-bit pixels at 12 px.
 - AB_Pixel_KA.ttf: Georgian, from DejaVu Sans (Bitstream Vera licence) as 1-bit pixels at 14 px.
@@ -176,6 +177,31 @@ def czech(m6x11_path):
     return glyphs, out
 
 
+# ---------------------------------------------------------------- medal stars (★ earned, ☆ not), 9x9 on the cap height
+
+STAR9 = ["....#....",
+         "....#....",
+         "...###...",
+         "#########",
+         ".#######.",
+         "..#####..",
+         "..##.##..",
+         ".##...##.",
+         ".#.....#."]
+
+
+def stars():
+    full = np.array([[c == "#" for c in r] for r in STAR9], dtype=bool)
+    p = np.pad(full, 1)
+    inner = p[1:-1, 1:-1] & p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:]
+    hollow = full & ~inner
+    glyphs = {}
+    for ch, bits in (("\u2605", full), ("\u2606", hollow)):
+        # rows 0..8 sit one pixel above the baseline, so the star is centred on m6x11's 11 px capitals
+        glyphs[ch] = (glyph_from_bitmap(bits, 10, 0), 10, 0)
+    return glyphs
+
+
 # ---------------------------------------------------------------- CJK and Georgian from outline fonts
 
 def pixel_font(font, chars, adv_fn=None, dy=0):
@@ -200,6 +226,7 @@ def main(loc_path, m6x11_path, out_dir):
     missing = sorted(c for c in eu if ord(c) not in m6cmap)
     cz, preview = czech(m6x11_path)
     still = [c for c in missing if c not in cz]
+    cz.update(stars())
     save_font(os.path.join(out_dir, "m6x11_extras.ttf"), "m6x11 extras", cz)
     print("m6x11_extras:", "".join(sorted(cz)), "| still missing:", "".join(still) or "none")
 

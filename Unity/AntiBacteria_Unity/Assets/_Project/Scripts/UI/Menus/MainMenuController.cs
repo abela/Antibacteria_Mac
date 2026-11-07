@@ -322,7 +322,7 @@ namespace AntiBacteria.UI.Menus
                 {
                     int best = campaign() ? Progress.Best(pendingLevel, d) : Progress.ModeBest(pendingMode, d);
                     Medal medal = campaign() ? Progress.GetMedal(pendingLevel, d) : Medal.None;
-                    return (best > 0 ? Loc.Get(WordIDs.Best) + " " + best : "") + (medal != Medal.None ? "  " + Medals.Name(medal) : "");
+                    return (best > 0 ? Loc.Get(WordIDs.Best) + " " + best : "") + (medal != Medal.None ? "  " + Medals.Stars(medal) : "");
                 }, HorizontalAlignmentOptions.Left, dim: true);
             }
             // What the highlighted difficulty means and what it pays: the reason to pick a harder one.

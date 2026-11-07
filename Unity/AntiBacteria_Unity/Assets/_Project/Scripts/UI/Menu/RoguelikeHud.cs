@@ -49,9 +49,10 @@ namespace AntiBacteria.UI.Menu
             h.perksRow = UIFactory.Rect(rt, "Perks", 0f, 0f, 200f, 14f, new Vector2(0f, 0f));
             PinToScreenCorner.Pin(h.perksRow, Vector2.zero, new Vector2(4f, 3f));
 
-            h.clearTitle = LiveText.Create(skin, rt, "RoomClear", 160f, 52f, () => Loc.Get(WordIDs.RoomClear).ToUpperInvariant(),
+            // Above the player (the camera keeps them in the middle of the screen).
+            h.clearTitle = LiveText.Create(skin, rt, "RoomClear", 160f, 34f, () => Loc.Get(WordIDs.RoomClear).ToUpperInvariant(),
                 scale: 2, role: PaletteRole.Accent, maxWidth: 300f);
-            h.clearHint = LiveText.Create(skin, rt, "GateHint", 160f, 80f, () => Loc.Get(WordIDs.GoThroughGate));
+            h.clearHint = LiveText.Create(skin, rt, "GateHint", 160f, 58f, () => Loc.Get(WordIDs.GoThroughGate));
             h.clearTitle.gameObject.SetActive(false);
             h.clearHint.gameObject.SetActive(false);
 

@@ -16,7 +16,7 @@ namespace AntiBacteria.Core
     /// </summary>
     public static class Progress
     {
-        public const int Version = 4; // 2: wallet and upgrades; 3: endless-mode best scores; 4: medals, mutations, strains, daily run
+        public const int Version = 5; // 2: wallet and upgrades; 3: endless-mode best scores; 4: medals, mutations, strains, daily run; 5: levelled upgrades (2013 items refunded)
         public const int LevelCount = 50;
         public const int DifficultyCount = 3;
 
@@ -47,9 +47,11 @@ namespace AntiBacteria.Core
         private class WalletData
         {
             public int vitamins;
-            // index = (int)UpgradeItem (2013 bug 48: explicit keys instead of an empty-string "Normal" row)
-            public bool[] owned = new bool[UpgradeCount];
-            public int selectedShot; // (int)ShotKind
+            // Version 5: level of each upgrade, index = (int)CharacterUpgrade.
+            public int[] upgradeLevels = new int[UpgradeCount];
+            // Up to version 4: the 2013 items owned, index = (int)UpgradeItem. Refunded once, then cleared.
+            public bool[] owned = new bool[LegacyItemCount];
+            public int selectedShot;
             public bool doubleSpeedOn;
             public bool immortalityOn;
         }
@@ -65,7 +67,8 @@ namespace AntiBacteria.Core
             public int dailyScore;            // that attempt's score
         }
 
-        private static readonly int UpgradeCount = Enum.GetValues(typeof(UpgradeItem)).Length;
+        private static readonly int UpgradeCount = Enum.GetValues(typeof(CharacterUpgrade)).Length;
+        private static readonly int LegacyItemCount = Enum.GetValues(typeof(UpgradeItem)).Length;
         private static bool dirty;
 
         [Serializable]
@@ -107,51 +110,46 @@ namespace AntiBacteria.Core
             Changed?.Invoke();
         }
 
-        public static bool Owns(UpgradeItem item) => Data.wallet.owned[(int)item];
-
-        /// <summary>Buy an upgrade if it isn't owned yet and the wallet can pay. Saves straight away.</summary>
-        public static bool TryBuy(UpgradeItem item, int price)
+        /// <summary>Levels bought of an upgrade (0 = not bought).</summary>
+        public static int UpgradeLevel(CharacterUpgrade u)
         {
-            if (Owns(item) || Data.wallet.vitamins < price) return false;
+            int[] l = Data.wallet.upgradeLevels;
+            return l != null && (int)u < l.Length ? l[(int)u] : 0;
+        }
+
+        /// <summary>Buy the next level if there is one and the wallet can pay. Saves straight away.</summary>
+        public static bool TryBuyLevel(CharacterUpgrade u)
+        {
+            UpgradeDef def = ShopSettings.Current.Get(u);
+            int level = UpgradeLevel(u);
+            if (def == null || level >= def.MaxLevel) return false;
+            int price = def.prices[level];
+            if (Data.wallet.vitamins < price) return false;
             Data.wallet.vitamins -= price;
-            Data.wallet.owned[(int)item] = true;
+            Data.wallet.upgradeLevels[(int)u] = level + 1;
             Save();
-            int owned = 0;
-            foreach (bool o in Data.wallet.owned) if (o) owned++;
-            AchievementTracker.UpgradeBought(owned, UpgradeCount);
+            int bought = 0;
+            foreach (int n in Data.wallet.upgradeLevels) bought += n;
+            AchievementTracker.UpgradeBought(bought, ShopSettings.Current.TotalLevels);
             return true;
         }
 
-        /// <summary>The player's own shot. Falls back to Normal if the saved one isn't owned.</summary>
-        public static ShotKind SelectedShot
+        /// <summary>
+        /// Version 5 replaced the 2013 shop (shots, Double Speed, Immortality) with levelled upgrades: whatever an old
+        /// save owned is paid back in full, so nobody loses what they earned. Returns the vitamins refunded.
+        /// </summary>
+        private static int RefundLegacyItems(SaveData d)
         {
-            get
-            {
-                var shot = (ShotKind)Data.wallet.selectedShot;
-                UpgradeItem? item = ShopSettings.ItemFor(shot);
-                return item.HasValue && !Owns(item.Value) ? ShotKind.Normal : shot;
-            }
-        }
-
-        public static void SelectShot(ShotKind shot)
-        {
-            Data.wallet.selectedShot = (int)shot;
-            Save();
-        }
-
-        public static bool DoubleSpeedOn => Owns(UpgradeItem.DoubleSpeed) && Data.wallet.doubleSpeedOn;
-        public static bool ImmortalityOn => Owns(UpgradeItem.Immortality) && Data.wallet.immortalityOn;
-
-        public static void SetDoubleSpeed(bool on)
-        {
-            Data.wallet.doubleSpeedOn = on;
-            Save();
-        }
-
-        public static void SetImmortality(bool on)
-        {
-            Data.wallet.immortalityOn = on;
-            Save();
+            if (d.wallet.owned == null) return 0;
+            int[] prices = ShopSettings.Current.legacyPrices;
+            int refund = 0;
+            for (int i = 0; i < d.wallet.owned.Length; i++)
+                if (d.wallet.owned[i]) refund += prices != null && i < prices.Length ? prices[i] : 0;
+            d.wallet.vitamins += refund;
+            d.wallet.owned = new bool[LegacyItemCount];
+            d.wallet.selectedShot = 0;
+            d.wallet.doubleSpeedOn = d.wallet.immortalityOn = false;
+            return refund;
         }
 
         public static void SaveIfDirty()
@@ -249,6 +247,14 @@ namespace AntiBacteria.Core
         {
             int n = 0;
             foreach (int m in Data.campaign.medal) if (m == (int)Medal.Gold) n++;
+            return n;
+        }
+
+        /// <summary>Stars in one world: each level's best medal on any difficulty, 3 for gold (at most 30).</summary>
+        public static int WorldStars(int world)
+        {
+            int n = 0, first = Worlds.FirstLevel(world);
+            for (int level = first; level < first + Worlds.LevelsPerWorld; level++) n += Medals.StarCount(BestMedal(level));
             return n;
         }
 
@@ -430,8 +436,15 @@ namespace AntiBacteria.Core
             Array.Resize(ref data.replay.strains, Strains.Count);
             if (data.replay.dailyDate == null) data.replay.dailyDate = "";
             if (data.wallet == null) data.wallet = new WalletData(); // version 1 saves had no wallet
-            if (data.wallet.owned == null) data.wallet.owned = new bool[UpgradeCount];
-            Array.Resize(ref data.wallet.owned, UpgradeCount);
+            if (data.wallet.owned == null) data.wallet.owned = new bool[LegacyItemCount];
+            Array.Resize(ref data.wallet.owned, LegacyItemCount);
+            if (data.wallet.upgradeLevels == null) data.wallet.upgradeLevels = new int[UpgradeCount];
+            Array.Resize(ref data.wallet.upgradeLevels, UpgradeCount);
+            if (data.version < 5)
+            {
+                int refund = RefundLegacyItems(data);
+                if (refund > 0) { dirty = true; Debug.Log("Progress: the 2013 upgrades were refunded (" + refund + " vitamins)."); }
+            }
             if (data.modes == null) data.modes = new ModesData(); // version 2 saves had no mode scores
             if (data.modes.best == null) data.modes.best = new int[EndlessModeCount * DifficultyCount];
             Array.Resize(ref data.modes.best, EndlessModeCount * DifficultyCount);

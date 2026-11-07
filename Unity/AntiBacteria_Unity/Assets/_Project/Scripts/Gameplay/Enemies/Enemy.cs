@@ -62,7 +62,10 @@ namespace AntiBacteria.Gameplay.Enemies
 
         /// <summary>Every enemy moves this much faster (roguelike Mutation 10, Daily twists). Reset by each level.</summary>
         public static float SpeedMultiplier { get; set; } = 1f;
-        protected float ShotInterval => EnemyDefinition.ForDifficulty(Definition.shotIntervalByDifficulty, Definition.shotIntervalSeconds);
+        protected float ShotInterval => EnemyDefinition.ForDifficulty(Definition.shotIntervalByDifficulty, Definition.shotIntervalSeconds) / Mathf.Max(0.1f, FireRateMultiplier);
+
+        /// <summary>Every enemy shoots this much more often (later worlds and rooms, harder difficulties). Reset by each level.</summary>
+        public static float FireRateMultiplier { get; set; } = 1f;
 
         /// <summary>Enemies alive right now.</summary>
         public static int AliveCount { get; private set; }
@@ -72,7 +75,31 @@ namespace AntiBacteria.Gameplay.Enemies
         /// <summary>Every enemy's hits are scaled by this when set up (roguelike rooms; 1 elsewhere).</summary>
         public static float HealthMultiplier { get; set; } = 1f;
 
-        private static int Scaled(int hits) => Mathf.Max(1, Mathf.RoundToInt(hits * HealthMultiplier));
+        /// <summary>Added to every non-boss enemy's hits (later worlds and rooms, harder difficulties).</summary>
+        public static int ExtraHits { get; set; }
+
+        /// <summary>No enemy takes fewer hits than this (2 on Hard and Impossible: nothing dies to one shot).</summary>
+        public static int MinHits { get; set; } = 1;
+
+        /// <summary>Resets the level-wide enemy tuning (each level and room sets its own).</summary>
+        public static void ResetTuning()
+        {
+            HealthMultiplier = 1f;
+            SpeedMultiplier = 1f;
+            FireRateMultiplier = 1f;
+            ExtraHits = 0;
+            MinHits = 1;
+        }
+
+        private int Scaled(int hits)
+        {
+            bool boss = Definition != null && Definition.isBoss;
+            // Chain segments come many at a time: half the extra hits, so a long chain isn't a wall of hits.
+            bool segment = Definition != null && Definition.movement == EnemyMovement.Controlled;
+            int extra = boss ? 0 : segment ? ExtraHits / 2 : ExtraHits;
+            int h = Mathf.RoundToInt(hits * HealthMultiplier) + extra;
+            return Mathf.Max(Mathf.Max(1, MinHits), h);
+        }
 
         protected Rigidbody2D rb;
         protected bool hidden;
@@ -108,6 +135,7 @@ namespace AntiBacteria.Gameplay.Enemies
             Definition = definition;
             hitsLeft = MaxHits = Scaled(definition.hits);
             Invulnerable = definition.invulnerable;
+            if (!definition.isBoss && !definition.invulnerable) EnemyHealthBar.Attach(this);
             Current = State.Spawning;
             fadeTime = 0f;
             fadeSeconds = definition.fadeInSeconds;

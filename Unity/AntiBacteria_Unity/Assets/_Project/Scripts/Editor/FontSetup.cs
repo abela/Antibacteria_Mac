@@ -161,6 +161,7 @@ namespace AntiBacteria.EditorTools
                 }
                 var chars = new StringBuilder();
                 foreach (string s in LanguageTexts(languages)) chars.Append(s);
+                chars.Append("\u2605\u2606"); // medal stars, in m6x11_extras, for every language
                 fa.TryAddCharacters(chars.ToString(), out string _);
                 fa.atlasPopulationMode = AtlasPopulationMode.Static;
                 fa.atlasTexture.filterMode = FilterMode.Point;

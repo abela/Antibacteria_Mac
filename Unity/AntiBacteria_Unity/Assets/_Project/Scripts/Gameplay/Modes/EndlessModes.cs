@@ -149,12 +149,16 @@ namespace AntiBacteria.Gameplay.Modes
     /// <summary>
     /// No shooting: reach each white flag before the clock runs out while Tentacles pile up. Every flag resets the
     /// clock, adds a Tentacle and (after the first) drops vitamins near the centre; every 8th brings a +1 Life.
+    /// After the first flag, chasers come in from the walls and hunt the player; they can't be shot, so each pops after
+    /// a few seconds. More, faster and longer-lived on Hard and Impossible, and more often with every flag.
     /// </summary>
     public class PeaceWalkerMode : EndlessMode
     {
         private FlagObjective flag;
-        private float flagTimer;
+        private float flagTimer, chaserTimer;
+        private bool chasersStarted;
         private int flags;
+        private readonly System.Collections.Generic.List<GameObject> chasers = new System.Collections.Generic.List<GameObject>();
 
         public override bool ShowsTimer => true;
         public override bool PlayerCanShoot => false;
@@ -170,6 +174,7 @@ namespace AntiBacteria.Gameplay.Modes
         {
             runner.TimeLeft = Mathf.Max(0f, runner.TimeLeft - dt);
             if (runner.TimeLeft <= 0f) { runner.LoseByTimeOut(); return; }
+            TickChasers(dt);
             if (flag != null) return;
             flagTimer += dt;
             if (flagTimer < S.objectiveDelaySeconds) return;
@@ -193,6 +198,23 @@ namespace AntiBacteria.Gameplay.Modes
                 Vector2 from = p != null ? (Vector2)p.transform.position : centre;
                 BonusPickup.Spawn(BonusType.Life, BonusSpawner.SpawnPoint(from, BonusSettings.Current), false);
             }
+        }
+
+        private void TickChasers(float dt)
+        {
+            if (Completed < S.chasersFromFlag) return;
+            if (!chasersStarted) { chasersStarted = true; chaserTimer = S.firstChaserSeconds; }
+            chasers.RemoveAll(c => c == null);
+            chaserTimer -= dt;
+            if (chaserTimer > 0f) return;
+            float every = ModeSettings.ByDifficulty(S.chaserEverySeconds, 6f) - S.chaserEveryStepSeconds * (Completed - S.chasersFromFlag);
+            chaserTimer = Mathf.Max(ModeSettings.ByDifficulty(S.chaserEveryMinSeconds, 3f), every);
+            if (chasers.Count >= ModeSettings.ByDifficulty(S.chaserMax, 3)) return;
+            GameObject go = runner.SpawnAtBorder(S.chaserId);
+            if (go == null) return;
+            if (go.GetComponent<Enemies.Enemy>() is Enemies.Enemy e) e.SpeedOverridePoints = ModeSettings.ByDifficulty(S.chaserSpeedPoints, 200f);
+            go.AddComponent<Expire>().Seconds = ModeSettings.ByDifficulty(S.chaserLifeSeconds, 8f);
+            chasers.Add(go);
         }
 
         public override void End()

@@ -43,7 +43,13 @@ namespace AntiBacteria.Gameplay.Roguelike
             toSpawn = bossRoom ? 0 : RunModifiers.MoreEnemies(RoguelikeSettings.Current.EnemiesIn(RoguelikeRun.Room, GameSession.Difficulty));
             Enemy.HealthMultiplier = RoguelikeSettings.Current.HealthIn(RoguelikeRun.Room, GameSession.Difficulty, bossRoom) *
                                      RunModifiers.EnemyHealthMultiplier(bossRoom);
-            Enemy.SpeedMultiplier = RunModifiers.EnemySpeedMultiplier;
+            // Deeper rooms: more hits and faster, more aggressive enemies (DifficultySettings); 2+ hits on Hard.
+            DifficultySettings ds = DifficultySettings.Current;
+            float aggression = ds.RoguelikeAggression(GameSession.Difficulty, RoguelikeRun.Room);
+            Enemy.ExtraHits = ds.RoguelikeExtraHits(GameSession.Difficulty, RoguelikeRun.Room);
+            Enemy.MinHits = ds.MinHits(GameSession.Difficulty);
+            Enemy.SpeedMultiplier = RunModifiers.EnemySpeedMultiplier * aggression;
+            Enemy.FireRateMultiplier = aggression;
             EnemyBullet.SpeedMultiplier = RunModifiers.EnemyBulletSpeedMultiplier;
             if (level != null) perWave = RoguelikeSettings.Current.FirstWave(RoguelikeRun.Room, level.maxEnemiesPerWave);
             waveTimer = 0.5f; // the first wave comes quickly
@@ -58,8 +64,7 @@ namespace AntiBacteria.Gameplay.Roguelike
         {
             Enemy.Killed -= OnKilled;
             RoguelikeRun.PerkTaken -= OnPerkTaken;
-            Enemy.HealthMultiplier = 1f;
-            Enemy.SpeedMultiplier = 1f;
+            Enemy.ResetTuning();
             EnemyBullet.SpeedMultiplier = 1f;
             if (gate != null) Object.Destroy(gate.gameObject);
             if (effects != null) Object.Destroy(effects.gameObject);

@@ -27,6 +27,22 @@ namespace AntiBacteria.Gameplay.Level
 
         public bool IsBoss => levelInWorld == 10;
 
+        /// <summary>
+        /// Seconds to survive, by world (1..5). The 2013 data says 80 s for every level, which leaves most levels
+        /// at full intensity for half a minute or more: these keep each level short and rising, and later worlds a
+        /// little longer. timeSeconds (80) is kept as the 2013 reference.
+        /// </summary>
+        public static readonly float[] WorldSeconds = { 45f, 50f, 55f, 60f, 65f };
+
+        /// <summary>How long this level lasts.</summary>
+        public float Seconds => WorldSeconds[Mathf.Clamp(world - 1, 0, WorldSeconds.Length - 1)];
+
+        /// <summary>
+        /// Seconds between "one more enemy per wave", squeezed with the level's length so each level still builds up to
+        /// its full wave size at the same point of the clock as in 2013.
+        /// </summary>
+        public float GrowInterval => timeSeconds > 0f ? growIntervalSeconds * Seconds / timeSeconds : growIntervalSeconds;
+
         public string Label => world + "-" + levelInWorld;
 
         public float SpawnInterval(Difficulty difficulty)

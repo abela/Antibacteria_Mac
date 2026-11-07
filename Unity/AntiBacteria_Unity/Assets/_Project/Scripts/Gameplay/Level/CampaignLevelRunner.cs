@@ -69,8 +69,7 @@ namespace AntiBacteria.Gameplay.Level
 
         private void Awake()
         {
-            Enemies.Enemy.HealthMultiplier = 1f; // a roguelike room sets its own when it begins
-            Enemies.Enemy.SpeedMultiplier = 1f;
+            Enemies.Enemy.ResetTuning(); // a roguelike room sets its own when it begins
             EnemyBullet.SpeedMultiplier = 1f;
             EnemyCatalog.Active = catalog;
             Mode = EndlessMode.For(GameSession.Mode);
@@ -83,8 +82,28 @@ namespace AntiBacteria.Gameplay.Level
             if (level != null) GameSession.CurrentLevel = level.number;
         }
 
+        /// <summary>
+        /// Campaign levels: enemies take more hits and move and shoot faster in later worlds and on harder difficulties
+        /// (DifficultySettings). Other modes only get the minimum hits (2 on Hard: nothing dies to one shot); a roguelike
+        /// room sets the rest itself when it begins.
+        /// </summary>
+        private void TuneEnemies()
+        {
+            DifficultySettings ds = DifficultySettings.Current;
+            Difficulty d = GameSession.Difficulty;
+            Enemies.Enemy.MinHits = ds.MinHits(d);
+            if (IsEndless || level == null || IsBossLevel) return; // bosses and their minions are tuned per difficulty already
+            int world = Mathf.Clamp(level.world, 1, Worlds.Count);
+            Enemies.Enemy.ExtraHits = ds.CampaignExtraHits(d, world);
+            float a = ds.CampaignAggression(d, world);
+            Enemies.Enemy.SpeedMultiplier = a;
+            Enemies.Enemy.FireRateMultiplier = a;
+        }
+
         private void Start()
         {
+            TuneEnemies();
+            Upgrades.ArmorLeft = Upgrades.ArmorPerLevel; // bought Armor: one blocked hit per level / run (not in the roguelike)
             // Roguelike rooms after the first keep the run's score, kills and vitamins.
             Pickups.Vitamin.CollectAll = false;
             Unlocks.Clear(); // the result screen shows only what this level or run unlocked
@@ -95,7 +114,7 @@ namespace AntiBacteria.Gameplay.Level
                 GameSession.ResetRun();
                 Progress.CountPlay(); // first-time hints fade out after a few plays
             }
-            TimeLeft = IsEndless ? (Mode.ShowsTimer ? ModeSettings.Current.secondsPerFlag : 0f) : level != null ? level.timeSeconds : 0f;
+            TimeLeft = IsEndless ? (Mode.ShowsTimer ? ModeSettings.Current.secondsPerFlag : 0f) : level != null ? level.Seconds : 0f;
             spawnTimer = level != null ? level.SpawnInterval(GameSession.Difficulty) : 1f;
             SetPhase(Phase.GetReady, getReadySeconds);
             Sound.Music(IsBossLevel ? MusicTrack.Boss : MusicTrack.Level);
@@ -159,9 +178,9 @@ namespace AntiBacteria.Gameplay.Level
                     if (level.growIntervalSeconds > 0f)
                     {
                         growTimer += dt;
-                        if (growTimer >= level.growIntervalSeconds)
+                        if (growTimer >= level.GrowInterval)
                         {
-                            growTimer -= level.growIntervalSeconds;
+                            growTimer -= level.GrowInterval;
                             EnemiesPerWave = Mathf.Min(EnemiesPerWave + 1, Mathf.Max(1, level.maxEnemiesPerWave));
                         }
                     }
@@ -189,13 +208,13 @@ namespace AntiBacteria.Gameplay.Level
         }
 
         /// <summary>One enemy from the catalog on the arena border (used by the endless modes).</summary>
-        public void SpawnAtBorder(int enemyId)
+        public GameObject SpawnAtBorder(int enemyId)
         {
-            if (catalog == null || Arena.Current == null) return;
+            if (catalog == null || Arena.Current == null) return null;
             EnemyDefinition def = catalog.Get(enemyId);
-            if (def == null) { Debug.LogWarning("CampaignLevelRunner: no enemy with id " + enemyId); return; }
+            if (def == null) { Debug.LogWarning("CampaignLevelRunner: no enemy with id " + enemyId); return null; }
             Vector2 pos = Arena.Current.RandomPointOnBorder(Legacy.Units(spawnInsetPoints) + 0.5f);
-            EnemyCatalog.Spawn(def, pos);
+            return EnemyCatalog.Spawn(def, pos);
         }
 
         /// <summary>Peace Walker: the clock ran out.</summary>
@@ -248,7 +267,7 @@ namespace AntiBacteria.Gameplay.Level
             Progress.RecordWin(GameSession.CurrentLevel, GameSession.Difficulty, GameSession.Score); // unlocks the next level
             // Medal: gold without losing a life, silver for one, bronze for a clear (ReplaySettings).
             PlayerController pc = PlayerController.Current;
-            EarnedMedal = Medals.For(pc != null ? pc.LivesLost : 99, Progress.ImmortalityOn);
+            EarnedMedal = Medals.For(pc != null ? pc.LivesLost : 99, false);
             Progress.RecordMedal(GameSession.CurrentLevel, GameSession.Difficulty, EarnedMedal);
             Unlocks.MedalsChanged();
             AchievementTracker.LevelWon(GameSession.CurrentLevel, GameSession.Difficulty, IsBossLevel);

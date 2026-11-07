@@ -23,10 +23,18 @@ namespace AntiBacteria.UI
 
         private PlayerController player;
 
+        // Capture the Flag: flags taken, with a small flag drawn left of the number, where the clock is elsewhere.
+        private bool showFlags;
+        private RectTransform flagIcon;
+
         // Active timed bonuses: an icon and a draining 1 px bar per slot, under the hearts.
         private const float BuffIconPixels = 7f;
         private const float BuffBlinkPeriod = 0.15f;
         private Image[] buffIcons, buffBars;
+
+        // Armor upgrade: a small shield right of the hearts while this level's blocked hit is still unused.
+        private RectTransform shieldIcon;
+        private int shownArmor = -1;
 
         private void OnEnable() => GameSession.Changed += RefreshSession;
         private void OnDisable() => GameSession.Changed -= RefreshSession;
@@ -38,8 +46,10 @@ namespace AntiBacteria.UI
             if (levelText != null && RoguelikeRun.Active) levelText.SetText(Loc.Get(WordIDs.Room) + " " + RoguelikeRun.Room);
             else if (levelText != null && runner != null && runner.IsEndless) levelText.SetText(Loc.Get((WordIDs)System.Enum.Parse(typeof(WordIDs), GameSession.Mode.ToString())));
             else if (levelText != null && runner != null && runner.Level != null) levelText.SetText(runner.Level.Label);
-            if (runner != null && !runner.IsBossLevel && !runner.ShowsTimer && transform.Find("Timer") is Transform clock)
-                clock.gameObject.SetActive(false); // Capture the Flag and Rush: no clock
+            showFlags = runner != null && runner.IsEndless && GameSession.Mode == GameMode.CaptureFlag;
+            if (showFlags) BuildFlagIcon();
+            else if (runner != null && !runner.IsBossLevel && !runner.ShowsTimer && transform.Find("Timer") is Transform clock)
+                clock.gameObject.SetActive(false); // Rush and the roguelike: no clock
             // Boss levels: no clock and no slow motion; the boss bar (GameplayMenuController) takes the meter's place.
             if (runner != null && runner.IsBossLevel)
                 foreach (string n in new[] { "MeterFrame", "MeterFill", "Timer" })
@@ -61,8 +71,121 @@ namespace AntiBacteria.UI
                 float w = Mathf.Round(meterFillMaxPixels * Mathf.Clamp01(slowMotion.Meter01));
                 meterFill.sizeDelta = new Vector2(w, meterFill.sizeDelta.y);
             }
-            if (timerText != null && runner != null) timerText.SetText(Mathf.CeilToInt(runner.TimeLeft).ToString());
+            if (timerText != null && runner != null)
+            {
+                if (showFlags)
+                {
+                    string n = (runner.Mode != null ? runner.Mode.Completed : 0).ToString();
+                    timerText.SetText(n);
+                    // 3 px glyphs and 1 px gaps, centred: the flag goes 2 px left of the first digit.
+                    float half = Mathf.Floor((n.Length * 4 - 1) / 2f);
+                    if (flagIcon != null) flagIcon.anchoredPosition = new Vector2(timerText.GetComponent<RectTransform>().anchoredPosition.x - half - 7f,
+                        timerText.GetComponent<RectTransform>().anchoredPosition.y + 1f);
+                }
+                else timerText.SetText(Mathf.CeilToInt(runner.TimeLeft).ToString());
+            }
             UpdateBuffSlots();
+            UpdateShield();
+        }
+
+        private static readonly string[] ShieldRows = { "#######", "#.....#", "#.....#", "#.....#", ".#...#.", ".#...#.", "..#.#..", "...#..." };
+
+        /// <summary>A 7x8 px shield (white outline, accent inside) built from 1 px images, like the flag.</summary>
+        private void BuildShieldIcon()
+        {
+            Sprite pixel = BonusSettings.Current.pixel;
+            var go = new GameObject("ArmorIcon", typeof(RectTransform));
+            go.layer = gameObject.layer;
+            go.transform.SetParent(transform, false);
+            shieldIcon = (RectTransform)go.transform;
+            shieldIcon.anchorMin = shieldIcon.anchorMax = shieldIcon.pivot = new Vector2(0f, 1f);
+            shieldIcon.sizeDelta = new Vector2(7f, 8f);
+            for (int y = 0; y < ShieldRows.Length; y++)
+            {
+                string row = ShieldRows[y];
+                int first = row.IndexOf('#'), last = row.LastIndexOf('#');
+                for (int x = first; x <= last; x++)
+                {
+                    bool edge = row[x] == '#';
+                    // One image per outline pixel; the inside of the row as one accent run.
+                    if (!edge) { int e = x; while (e + 1 < last && row[e + 1] != '#') e++; Pixel(x, y, e - x + 1, Rendering.PaletteRole.Accent); x = e; }
+                    else Pixel(x, y, 1, Rendering.PaletteRole.Foreground);
+                }
+            }
+
+            void Pixel(int x, int y, int w, Rendering.PaletteRole role)
+            {
+                var p = new GameObject("P", typeof(RectTransform), typeof(Image));
+                p.layer = gameObject.layer;
+                p.transform.SetParent(shieldIcon, false);
+                var img = p.GetComponent<Image>();
+                img.sprite = pixel;
+                img.raycastTarget = false;
+                RectTransform rt = img.rectTransform;
+                rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0f, 1f);
+                rt.anchoredPosition = new Vector2(x, -y);
+                rt.sizeDelta = new Vector2(w, 1f);
+                p.AddComponent<Rendering.PaletteGraphic>().Set(role, false);
+            }
+        }
+
+        private void UpdateShield()
+        {
+            int armor = player != null && Upgrades.On ? Upgrades.ArmorLeft : 0;
+            if (armor == shownArmor) return;
+            shownArmor = armor;
+            if (armor > 0 && shieldIcon == null) BuildShieldIcon();
+            if (shieldIcon == null) return;
+            shieldIcon.gameObject.SetActive(armor > 0);
+            PlaceShield();
+        }
+
+        /// <summary>One heart step right of the last heart in use.</summary>
+        private void PlaceShield()
+        {
+            if (shieldIcon == null || player == null || hearts.Length == 0) return;
+            int last = Mathf.Clamp(player.MaxLives - 1, 0, hearts.Length - 1);
+            if (hearts[last] == null) return;
+            RectTransform h = hearts[last].rectTransform;
+            float step = hearts.Length > 1 && hearts[1] != null && hearts[0] != null
+                ? hearts[1].rectTransform.anchoredPosition.x - hearts[0].rectTransform.anchoredPosition.x : h.rect.width + 2f;
+            // Hearts may be anchored differently; work in the HUD's own space through world positions.
+            Vector3[] c = new Vector3[4];
+            h.GetWorldCorners(c); // 1 = top-left
+            Vector3 topLeft = ((RectTransform)transform).InverseTransformPoint(c[1]);
+            Rect r = ((RectTransform)transform).rect;
+            shieldIcon.anchoredPosition = new Vector2(Mathf.Round(topLeft.x - r.xMin + step), Mathf.Round(topLeft.y - r.yMax));
+        }
+
+        /// <summary>A 5x7 px flag (white pole, accent cloth) for the Capture the Flag counter, on a background box.</summary>
+        private void BuildFlagIcon()
+        {
+            Sprite pixel = BonusSettings.Current.pixel;
+            var go = new GameObject("FlagIcon", typeof(RectTransform));
+            go.layer = gameObject.layer;
+            go.transform.SetParent(transform, false);
+            flagIcon = (RectTransform)go.transform;
+            flagIcon.anchorMin = flagIcon.anchorMax = new Vector2(0.5f, 1f);
+            flagIcon.pivot = new Vector2(0f, 1f);
+            flagIcon.sizeDelta = new Vector2(5f, 7f);
+            Part("Backing", 0f, 0f, 6f, 8f, Rendering.PaletteRole.Background);
+            Part("Pole", 1f, -1f, 1f, 6f, Rendering.PaletteRole.Foreground);
+            Part("Cloth", 2f, -1f, 3f, 3f, Rendering.PaletteRole.Accent);
+
+            void Part(string n, float x, float y, float w, float h, Rendering.PaletteRole role)
+            {
+                var p = new GameObject(n, typeof(RectTransform), typeof(Image));
+                p.layer = gameObject.layer;
+                p.transform.SetParent(flagIcon, false);
+                var img = p.GetComponent<Image>();
+                img.sprite = pixel;
+                img.raycastTarget = false;
+                RectTransform rt = img.rectTransform;
+                rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0f, 1f);
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.sizeDelta = new Vector2(w, h);
+                p.AddComponent<Rendering.PaletteGraphic>().Set(role, false);
+            }
         }
 
         /// <summary>More hearts when the maximum grows (roguelike Vitality perk), same spacing as the scene's.</summary>
@@ -148,6 +271,7 @@ namespace AntiBacteria.UI
                 hearts[i].enabled = i < player.MaxLives;
                 hearts[i].sprite = i < player.Lives ? heartFull : heartEmpty;
             }
+            PlaceShield();
         }
 
         private void RefreshSession()

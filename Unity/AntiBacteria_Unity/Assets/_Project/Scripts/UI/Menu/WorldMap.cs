@@ -11,7 +11,8 @@ namespace AntiBacteria.UI.Menu
     /// <summary>
     /// One world of the campaign as a little map: levels 1-5 left to right, 6-9 back right to left, and the boss
     /// (big accent node with the boss mark) at the end of the path. Dotted links light up as levels are cleared.
-    /// States: locked (dim), open (outline), cleared on any difficulty (filled).
+    /// States: locked (dim), open (outline), cleared on any difficulty (filled, with 1-3 medal stars under it:
+    /// the best medal on any difficulty, bronze 1, silver 2, gold 3).
     /// Arrows / stick / d-pad move along the map; up from the top row goes to the world picker, down from the
     /// bottom row to the difficulty row.
     /// </summary>
@@ -32,7 +33,21 @@ namespace AntiBacteria.UI.Menu
             public Image fill, mark;
             public PaletteGraphic[] frame;
             public TextMeshProUGUI number;
+            public PaletteGraphic[][] stars; // 3 stars, each made of row runs
+            public Rect starArea;            // map space, y down
         }
+
+        private const float StarSize = 7f, StarPitch = 8f;
+        private static readonly string[] Star =
+        {
+            "...#...",
+            "..###..",
+            "#######",
+            ".#####.",
+            "..###..",
+            ".##.##.",
+            ".#...#.",
+        };
 
         private readonly Cell[] cells = new Cell[Worlds.LevelsPerWorld];
         private readonly List<Image>[] links = new List<Image>[Worlds.LevelsPerWorld - 1];
@@ -86,6 +101,25 @@ namespace AntiBacteria.UI.Menu
                 {
                     c.number = UIFactory.Text(skin, holder, "Number", x0 + s / 2f, y0, HorizontalAlignmentOptions.Center);
                     c.number.text = (i + 1).ToString();
+                }
+                // Medal stars, centred under the node.
+                float sx = Mathf.Round(Centres[i].x - (2f * StarPitch + StarSize) / 2f), sy = y0 + s + 2f;
+                c.starArea = new Rect(sx - 1f, sy - 1f, 2f * StarPitch + StarSize + 2f, StarSize + 2f);
+                c.stars = new PaletteGraphic[3][];
+                for (int k = 0; k < 3; k++)
+                {
+                    var runs = new List<PaletteGraphic>();
+                    for (int row = 0; row < Star.Length; row++)
+                        for (int col = 0; col < Star[row].Length; col++)
+                        {
+                            if (Star[row][col] != '#') continue;
+                            int end = col;
+                            while (end + 1 < Star[row].Length && Star[row][end + 1] == '#') end++;
+                            Image run = UIFactory.Image(holder, "Star" + k, skin.pixel, sx + k * StarPitch + col, sy + row, end - col + 1, 1f);
+                            runs.Add(run.GetComponent<PaletteGraphic>());
+                            col = end;
+                        }
+                    c.stars[k] = runs.ToArray();
                 }
                 m.cells[i] = c;
             }
@@ -199,9 +233,28 @@ namespace AntiBacteria.UI.Menu
                 c.fill.GetComponent<PaletteGraphic>().Set(role, false);
                 if (c.number != null) c.number.GetComponent<PaletteGraphic>().Set(cleared ? PaletteRole.Background : role, !open);
                 if (c.mark != null) c.mark.color = new Color(1f, 1f, 1f, cleared ? 0f : open ? 1f : 0.35f);
-                if (i < links.Length)
-                    foreach (Image dot in links[i])
-                        dot.GetComponent<PaletteGraphic>().Set(PaletteRole.Foreground, !cleared);
+                int stars = cleared ? Medals.StarCount(Progress.BestMedal(level)) : 0;
+                for (int k = 0; k < c.stars.Length; k++)
+                    foreach (PaletteGraphic g in c.stars[k])
+                    {
+                        g.gameObject.SetActive(cleared);
+                        g.Set(k < stars ? PaletteRole.Accent : PaletteRole.Foreground, k >= stars);
+                    }
+            }
+            // Links: lit once cleared; dots under a node's stars are hidden so the stars read cleanly.
+            for (int i = 0; i < links.Length; i++)
+            {
+                bool cleared = Progress.IsUnlocked(first + i) && Progress.IsClearedOnAny(first + i);
+                foreach (Image dot in links[i])
+                {
+                    dot.GetComponent<PaletteGraphic>().Set(PaletteRole.Foreground, !cleared);
+                    Vector2 p = dot.rectTransform.anchoredPosition;
+                    var at = new Vector2(p.x + 0.5f, -p.y + 0.5f);
+                    bool covered = false;
+                    for (int n = 0; n < cells.Length && !covered; n++)
+                        covered = cells[n].stars[0][0].gameObject.activeSelf && cells[n].starArea.Contains(at);
+                    dot.enabled = !covered;
+                }
             }
 
             bool show = Selected;

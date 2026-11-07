@@ -272,6 +272,7 @@ namespace AntiBacteria.Core
         {
             get
             {
+                if (!On) return Upgrades.FireIntervalMultiplier; // bought Rapid Fire (campaign and arcade modes)
                 float m = Mathf.Pow(1f - S.rapidFirePercent / 100f, R(PerkId.RapidFire));
                 if (L != null && L.fireSlowerPercent > 0) m /= Mathf.Max(0.1f, 1f - L.fireSlowerPercent / 100f); // strain drawback
                 PlayerController pc = PlayerController.Current;
@@ -284,22 +285,24 @@ namespace AntiBacteria.Core
         public static int ExtraLines => R(PerkId.ExtraBarrel);
         public static int ShotDamage => 1 + R(PerkId.HeavyShots);
         public static int Pierce => R(PerkId.Piercing);
-        public static float SpeedMultiplier => Pct(S.quickFeetPercent, PerkId.QuickFeet) * (1f - (L != null ? L.moveSlowerPercent : 0) / 100f);
+        public static float SpeedMultiplier => !On ? Upgrades.SpeedMultiplier // bought Swift Cell
+            : Pct(S.quickFeetPercent, PerkId.QuickFeet) * (1f - (L != null ? L.moveSlowerPercent : 0) / 100f);
         /// <summary>Vitality perk, plus the strain or twist (may be negative), minus Mutation 4. PlayerController keeps at least 1.</summary>
-        public static int ExtraMaxLives => R(PerkId.Vitality) + (L != null ? L.extraLives : 0) - (M(4) ? Replay.m4LivesLost : 0);
+        public static int ExtraMaxLives => !On ? Upgrades.ExtraLives // bought Extra Heart
+            : R(PerkId.Vitality) + (L != null ? L.extraLives : 0) - (M(4) ? Replay.m4LivesLost : 0);
         public static bool HealOnRoomClear => R(PerkId.FirstAid) > 0 && RoguelikeRun.Room % Mathf.Max(1, S.firstAidEveryRooms) == 0;
         public static int ShieldsPerRoom => R(PerkId.Shield);
         public static bool CanRevive => R(PerkId.SecondWind) > 0 && !RoguelikeRun.ReviveUsed;
         public static bool NovaOnHit => R(PerkId.Nova) > 0;
-        public static float MagnetMultiplier => Pct(S.magnetPercent, PerkId.Magnet);
+        public static float MagnetMultiplier => !On ? Upgrades.MagnetMultiplier : Pct(S.magnetPercent, PerkId.Magnet);
         public static float XpMultiplier => Pct(S.wisdomPercent, PerkId.Wisdom);
         public static float VitaminMultiplier => Pct(S.goldenTouchPercent, PerkId.GoldenTouch);
-        public static float BonusDurationMultiplier => Pct(S.bonusLoverPercent, PerkId.BonusLover) *
+        public static float BonusDurationMultiplier => !On ? Upgrades.BonusDurationMultiplier : Pct(S.bonusLoverPercent, PerkId.BonusLover) *
             (M(2) ? Mathf.Max(0.1f, 1f - Replay.m2BonusShorterPercent / 100f) : 1f);
         public static float SlowmoRechargeMultiplier => Pct(S.timeBenderPercent, PerkId.TimeBender);
 
         public static float CritChance => S.criticalChancePercent / 100f * R(PerkId.CriticalHit);
-        public static int ShotScale => R(PerkId.BigShots) > 0 ? Mathf.Max(1, S.bigShotScale) : 1;
+        public static int ShotScale => !On ? Upgrades.ShotScale : R(PerkId.BigShots) > 0 ? Mathf.Max(1, S.bigShotScale) : 1;
         public static int Bounces => R(PerkId.Ricochet);
         public static float FrostChance => S.frostChancePercent / 100f * R(PerkId.FrostShots);
         public static int ChainZaps => R(PerkId.ChainZap);

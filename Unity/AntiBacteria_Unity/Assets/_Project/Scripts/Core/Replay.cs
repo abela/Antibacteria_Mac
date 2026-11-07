@@ -202,6 +202,20 @@ namespace AntiBacteria.Core
             return livesLost <= s.silverMaxLivesLost ? Medal.Silver : Medal.Bronze;
         }
 
+        /// <summary>Medal stars, drawn by the m6x11_extras font: bronze 1, silver 2, gold 3.</summary>
+        public const string StarFull = "\u2605", StarEmpty = "\u2606";
+
+        public static int StarCount(Medal m) => Mathf.Clamp((int)m, 0, 3);
+
+        /// <summary>"★★☆" for silver; "☆☆☆" for none.</summary>
+        public static string Stars(Medal m)
+        {
+            int n = StarCount(m);
+            var sb = new System.Text.StringBuilder(3);
+            for (int i = 0; i < 3; i++) sb.Append(i < n ? StarFull : StarEmpty);
+            return sb.ToString();
+        }
+
         public static string Name(Medal m)
         {
             switch (m)

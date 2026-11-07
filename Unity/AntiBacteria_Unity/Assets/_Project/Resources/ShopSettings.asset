@@ -12,23 +12,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8664a2862444f1798ae128fca8869f, type: 3}
   m_Name: ShopSettings
   m_EditorClassIdentifier: Assembly-CSharp::AntiBacteria.Core.ShopSettings
-  entries:
-  - item: 0
-    nameId: 17
-    price: 20000
-  - item: 1
-    nameId: 18
-    price: 20000
-  - item: 2
-    nameId: 19
-    price: 20000
-  - item: 3
-    nameId: 20
-    price: 20000
-  - item: 4
-    nameId: 21
-    price: 40000
-  - item: 5
-    nameId: 22
-    price: 1000000
-  doubleSpeedMultiplier: 2
+  upgrades:
+  - upgrade: 0
+    nameId: 270
+    descId: 271
+    prices: e02e0000a08c0000
+    perLevel: 1
+  - upgrade: 1
+    nameId: 272
+    descId: 273
+    prices: 50460000
+    perLevel: 1
+  - upgrade: 2
+    nameId: 274
+    descId: 275
+    prices: 94110000e02e0000c05d0000
+    perLevel: 8
+  - upgrade: 3
+    nameId: 276
+    descId: 277
+    prices: 78690000
+    perLevel: 1
+  - upgrade: 4
+    nameId: 278
+    descId: 279
+    prices: 70170000983a000030750000
+    perLevel: 10
+  - upgrade: 5
+    nameId: 280
+    descId: 281
+    prices: c409000070170000e02e0000
+    perLevel: 40
+  - upgrade: 6
+    nameId: 282
+    descId: 283
+    prices: b80b00004c1d0000983a0000
+    perLevel: 20
+  legacyPrices: 204e0000204e0000204e0000204e0000409c000040420f00

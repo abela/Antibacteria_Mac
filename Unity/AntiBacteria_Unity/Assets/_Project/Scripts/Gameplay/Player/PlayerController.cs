@@ -50,6 +50,9 @@ namespace AntiBacteria.Gameplay.Player
         public static PlayerController Current { get; private set; }
 
         public int Lives { get; private set; }
+        /// <summary>The Armor upgrade blocked a hit (the HUD redraws its shield).</summary>
+        public static event System.Action ArmorChanged;
+
         public int MaxLives => Mathf.Max(1, maxLives + RunModifiers.ExtraMaxLives); // roguelike Vitality perk, strains, Mutation 4
         /// <summary>Lives lost in this level (campaign medals).</summary>
         public int LivesLost { get; private set; }
@@ -116,8 +119,9 @@ namespace AntiBacteria.Gameplay.Player
         private void Start()
         {
             cam = Camera.main;
-            // Upgrade shop. Not in the roguelike: every run starts the same, perks are its only power (and its leaderboard stays fair).
-            baseShot = RoguelikeRun.Active ? ShotKind.Normal : Progress.SelectedShot;
+            // Every level starts with the Normal shot: the other shots are bonus pickups. The bought upgrades
+            // (Upgrades / RunModifiers) don't apply in the roguelike: every run starts the same.
+            baseShot = ShotKind.Normal;
         }
 
         private void OnDestroy()
@@ -138,9 +142,8 @@ namespace AntiBacteria.Gameplay.Player
         private void FixedUpdate()
         {
             if (!IsAlive) return;
-            // The bought Double Speed and the bonus don't stack (2013: the bonus did nothing with the upgrade on).
-            float upgrade = Progress.DoubleSpeedOn && !RoguelikeRun.Active ? ShopSettings.Current.doubleSpeedMultiplier : 1f;
-            float speed = Legacy.Units(maxSpeedPoints) * Mathf.Max(upgrade, Buffs != null ? Buffs.SpeedMultiplier : 1f) * RunModifiers.SpeedMultiplier;
+            // RunModifiers: roguelike perks, or the bought Swift Cell outside the roguelike.
+            float speed = Legacy.Units(maxSpeedPoints) * (Buffs != null ? Buffs.SpeedMultiplier : 1f) * RunModifiers.SpeedMultiplier;
             Vector2 target = ControlsEnabled ? GameInput.Move * speed : Vector2.zero;
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, target, 1f - Mathf.Exp(-responsiveness * Time.fixedDeltaTime));
         }
@@ -285,7 +288,17 @@ namespace AntiBacteria.Gameplay.Player
 #endif
             if (!IsAlive || Time.time < invulnerableUntil) return;
             if (Buffs != null && Buffs.IsImmortal) return;
-            if (Progress.ImmortalityOn && !RoguelikeRun.Active) return; // bought Immortality: never lose a life (2013 upgrade; not in the roguelike)
+            if (!RoguelikeRun.Active && Upgrades.ArmorLeft > 0)
+            {
+                // Armor upgrade: the first hit of each level is blocked.
+                Upgrades.ArmorLeft--;
+                Sound.Play(Sfx.ShieldHit);
+                Fx.Sparks(transform.position, Vector2.zero, 0f, 16, 0.2f);
+                invulnerableUntil = Time.time + invulnerableSeconds;
+                GetComponent<SpriteFlash>()?.Flash();
+                ArmorChanged?.Invoke();
+                return;
+            }
             if (RoguelikeRun.Active && RoguelikeRun.ShieldsLeft > 0)
             {
                 // Shield perk: this hit is blocked (once per room per rank).
