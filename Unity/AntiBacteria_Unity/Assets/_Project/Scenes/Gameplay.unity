@@ -236,6 +236,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 69f80a4b129a44e06ace1579f5adb520, type: 2}
   - {fileID: 11400000, guid: 14e10517896e341e2b7b6933f2271574, type: 2}
   - {fileID: 11400000, guid: 6fb30e440e40946bbb0928ba918c669d, type: 2}
+  - {fileID: 11400000, guid: 20eeb1d7df8ff4f7a9e913cb7f338d1c, type: 2}
+  - {fileID: 11400000, guid: c45911b779b924d1b898f8d113f28987, type: 2}
   currentIndex: 0
   cameras:
   - {fileID: 1168799280}

@@ -13,7 +13,13 @@ namespace AntiBacteria.Core
 
         public static Difficulty Difficulty { get; private set; } = Difficulty.Normal;
         public static bool AutoShoot { get; private set; }
-        public static int PaletteIndex { get; private set; }
+        /// <summary>
+        /// Palette for players who never picked one: 12 = Handheld (grey LCD). New palettes are always added at the
+        /// end of the PaletteManager list, because a player's choice is saved as an index.
+        /// </summary>
+        public const int DefaultPaletteIndex = 12;
+
+        public static int PaletteIndex { get; private set; } = DefaultPaletteIndex;
         public static bool Fullscreen { get; private set; } = true;
         /// <summary>0..10</summary>
         public static int SfxVolume { get; private set; } = 8;
@@ -38,7 +44,7 @@ namespace AntiBacteria.Core
         {
             Difficulty = (Difficulty)Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "difficulty", 0), 0, 2);
             AutoShoot = PlayerPrefs.GetInt(Prefix + "autoShoot", 0) == 1;
-            PaletteIndex = PlayerPrefs.GetInt(Prefix + "palette", 0);
+            PaletteIndex = PlayerPrefs.GetInt(Prefix + "palette", DefaultPaletteIndex);
             Fullscreen = PlayerPrefs.GetInt(Prefix + "fullscreen", 1) == 1;
             SfxVolume = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "sfx", 8), 0, 10);
             MusicVolume = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "music", 6), 0, 10);
