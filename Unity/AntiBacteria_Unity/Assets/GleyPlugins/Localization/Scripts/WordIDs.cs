@@ -283,4 +283,5 @@ UpgMagnetDesc = 281,
 UpgBonusTime = 282,
 UpgBonusTimeDesc = 283,
 Max = 284,
+ScreenShake = 285,
 }

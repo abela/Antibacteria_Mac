@@ -34,7 +34,7 @@ namespace AntiBacteria.Gameplay
         /// <summary>Push the camera by this many pixels; it springs back (every shot pushes away from the aim).</summary>
         public static void Kick(Vector2 pixels)
         {
-            if (active == null) return;
+            if (active == null || !Core.GameSettings.ScreenShake) return;
             float scale = Effects.ShotFeel.Current.screenShakeScale;
             active.kick = Vector2.ClampMagnitude(active.kick + pixels * scale / Legacy.PixelsPerUnit,
                 MaxKickPixels / Legacy.PixelsPerUnit);
@@ -43,7 +43,7 @@ namespace AntiBacteria.Gameplay
         /// <summary>Shake the screen. A weaker shake never cuts a stronger one short.</summary>
         public static void Shake(float pixels, float seconds)
         {
-            if (active == null || seconds <= 0f) return;
+            if (active == null || seconds <= 0f || !Core.GameSettings.ScreenShake) return;
             float amp = pixels * Effects.ShotFeel.Current.screenShakeScale;
             float current = active.shakeLeft > 0f ? active.shakePixels * active.shakeLeft / active.shakeDuration : 0f;
             if (amp <= current) return;

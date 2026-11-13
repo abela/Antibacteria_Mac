@@ -13,6 +13,8 @@ namespace AntiBacteria.Core
 
         public static Difficulty Difficulty { get; private set; } = Difficulty.Normal;
         public static bool AutoShoot { get; private set; }
+        /// <summary>Camera shake and the firing kick (on by default; some players get motion sick).</summary>
+        public static bool ScreenShake { get; private set; } = true;
         /// <summary>
         /// Palette for players who never picked one: 12 = Handheld (grey LCD). New palettes are always added at the
         /// end of the PaletteManager list, because a player's choice is saved as an index.
@@ -44,6 +46,7 @@ namespace AntiBacteria.Core
         {
             Difficulty = (Difficulty)Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "difficulty", 0), 0, 2);
             AutoShoot = PlayerPrefs.GetInt(Prefix + "autoShoot", 0) == 1;
+            ScreenShake = PlayerPrefs.GetInt(Prefix + "screenShake", 1) == 1;
             PaletteIndex = PlayerPrefs.GetInt(Prefix + "palette", DefaultPaletteIndex);
             Fullscreen = PlayerPrefs.GetInt(Prefix + "fullscreen", 1) == 1;
             SfxVolume = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "sfx", 8), 0, 10);
@@ -59,6 +62,8 @@ namespace AntiBacteria.Core
         }
 
         public static void SetAutoShoot(bool on) { AutoShoot = on; Save("autoShoot", on ? 1 : 0); }
+
+        public static void SetScreenShake(bool on) { ScreenShake = on; Save("screenShake", on ? 1 : 0); }
 
         public static void SetPaletteIndex(int index) { PaletteIndex = index; Save("palette", index); }
 
